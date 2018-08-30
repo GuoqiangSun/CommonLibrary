@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Common</string>
+    <string name="file_allow_permission">您必须允许这个权限，否则无法保存数据</string>
+</resources>

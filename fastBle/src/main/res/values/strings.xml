@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">FastBle</string>
+    <string name="scan_ble_allow_permission">您必须允许这个权限，否则无法搜索到BLE设备</string>
+</resources>
