@@ -3,8 +3,8 @@ package cn.com.common.test;
 import android.content.res.Configuration;
 import android.os.Build;
 
-import cn.com.common.baselib.app.BaseApplication;
-import cn.com.common.baselib.app.Tlog;
+import cn.com.swain.baselib.app.BaseApplication;
+import cn.com.swain.baselib.app.Tlog;
 
 
 /**

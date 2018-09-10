@@ -1,6 +1,5 @@
 package cn.com.common.test;
 
-import android.bluetooth.BluetoothGatt;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -10,19 +9,13 @@ import android.support.v7.app.AppCompatActivity;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import cn.com.common.baselib.app.Tlog;
-import cn.com.common.support.ble.connect.AbsBleConnect;
-import cn.com.common.support.ble.connect.BleConnectEngine;
-import cn.com.common.support.ble.connect.IBleConCallBack;
-import cn.com.common.support.ble.scan.BleScanAuto;
-import cn.com.common.support.ble.scan.IBleScanObserver;
-import cn.com.common.support.ble.scan.ScanBle;
-import cn.com.common.support.protocolEngine.ProtocolProcessor;
-import cn.com.common.support.protocolEngine.datagram.SocketDataArray;
-import cn.com.common.support.protocolEngine.datagram.dataproducer.SocketDataQueueProducer;
-import cn.com.common.support.protocolEngine.pack.ReceivesData;
-import cn.com.common.support.protocolEngine.result.SimpleProtocolResult;
-import cn.com.common.support.protocolEngine.task.FailTaskResult;
+import cn.com.swain.baselib.app.Tlog;
+import cn.com.swain.support.protocolEngine.ProtocolProcessor;
+import cn.com.swain.support.protocolEngine.datagram.SocketDataArray;
+import cn.com.swain.support.protocolEngine.datagram.dataproducer.SocketDataQueueProducer;
+import cn.com.swain.support.protocolEngine.pack.ReceivesData;
+import cn.com.swain.support.protocolEngine.result.SimpleProtocolResult;
+import cn.com.swain.support.protocolEngine.task.FailTaskResult;
 
 /**
  * author: Guoqiang_Sun

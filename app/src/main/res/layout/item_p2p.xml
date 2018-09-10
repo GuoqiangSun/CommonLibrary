@@ -1,0 +1,240 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:singleLine="true"
+            android:text="name:"
+            android:textColor="#FF00FF"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:singleLine="true"
+            android:text="name"
+            android:textColor="#FF00FF"
+            android:textSize="16sp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:singleLine="true"
+            android:text="address:"
+            android:textColor="#00FF00"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/address"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:singleLine="true"
+            android:text="address"
+            android:textColor="#00FF00"
+            android:textSize="16sp" />
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="primaryType:"
+            android:textColor="#FF00FF"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/primaryDeviceType"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="primaryType"
+            android:textColor="#FF00FF"
+            android:textSize="16sp" />
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="secondaryType:"
+            android:textColor="#00FF00"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/secondaryDeviceType"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="secondaryType"
+            android:textColor="#00FF00"
+            android:textSize="16sp" />
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="status:"
+            android:textColor="#FF00FF"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="status"
+            android:textColor="#FF00FF"
+            android:textSize="16sp" />
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="groupOwner:"
+            android:textColor="#00FF00"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/groupOwner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="groupOwner"
+            android:textColor="#00FF00"
+            android:textSize="16sp" />
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="serviceDiscoveryCapable:"
+            android:textColor="#FF00FF"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/serviceDiscoveryCapable"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="serviceDiscoveryCapable"
+            android:textColor="#FF00FF"
+            android:textSize="16sp" />
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="wpsDisplaySupported:"
+            android:textColor="#00FF00"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/wpsDisplaySupported"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="wpsDisplaySupported"
+            android:textColor="#00FF00"
+            android:textSize="16sp" />
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="wpsKeypadSupported:"
+            android:textColor="#FF00FF"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/wpsKeypadSupported"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="wpsKeypadSupported"
+            android:textColor="#FF00FF"
+            android:textSize="16sp" />
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="wpsPbcSupported:"
+            android:textColor="#00FF00"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/wpsPbcSupported"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="wpsPbcSupported"
+            android:textColor="#00FF00"
+            android:textSize="16sp" />
+
+    </LinearLayout>
+
+
+</LinearLayout>

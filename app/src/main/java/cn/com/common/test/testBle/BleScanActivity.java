@@ -20,12 +20,12 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import cn.com.common.support.ble.enable.AbsBleEnable;
-import cn.com.common.support.ble.enable.BleEnabler;
-import cn.com.common.support.ble.scan.AbsBleScan;
-import cn.com.common.support.ble.scan.BleScanAuto;
-import cn.com.common.support.ble.scan.IBleScanObserver;
-import cn.com.common.support.ble.scan.ScanBle;
+import cn.com.swain.support.ble.enable.AbsBleEnable;
+import cn.com.swain.support.ble.enable.BleEnabler;
+import cn.com.swain.support.ble.scan.AbsBleScan;
+import cn.com.swain.support.ble.scan.BleScanAuto;
+import cn.com.swain.support.ble.scan.IBleScanObserver;
+import cn.com.swain.support.ble.scan.ScanBle;
 import cn.com.common.test.LooperManager;
 import cn.com.common.test.R;
 

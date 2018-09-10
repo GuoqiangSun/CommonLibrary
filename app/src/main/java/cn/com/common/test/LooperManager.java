@@ -8,8 +8,8 @@ import android.os.Process;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import cn.com.common.baselib.app.IApp.IApp;
-import cn.com.common.baselib.app.Tlog;
+import cn.com.swain.baselib.app.IApp.IApp;
+import cn.com.swain.baselib.app.Tlog;
 
 /**
  * author: Guoqiang_Sun

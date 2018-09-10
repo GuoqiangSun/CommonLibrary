@@ -17,16 +17,16 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
-import cn.com.common.baselib.app.Tlog;
-import cn.com.common.baselib.util.StrUtil;
-import cn.com.common.support.ble.connect.AbsBleConnect;
-import cn.com.common.support.ble.connect.BleConnectEngine;
-import cn.com.common.support.ble.connect.IBleConCallBack;
-import cn.com.common.support.ble.scan.ScanBle;
-import cn.com.common.support.ble.send.AbsBleSend;
-import cn.com.common.support.ble.send.BleDataSendProduce;
 import cn.com.common.test.LooperManager;
 import cn.com.common.test.R;
+import cn.com.swain.baselib.app.Tlog;
+import cn.com.swain.baselib.util.StrUtil;
+import cn.com.swain.support.ble.connect.AbsBleConnect;
+import cn.com.swain.support.ble.connect.BleConnectEngine;
+import cn.com.swain.support.ble.connect.IBleConCallBack;
+import cn.com.swain.support.ble.scan.ScanBle;
+import cn.com.swain.support.ble.send.AbsBleSend;
+import cn.com.swain.support.ble.send.BleDataSendProduce;
 
 /**
  * author: Guoqiang_Sun
@@ -203,8 +203,10 @@ public class BleConActivity extends AppCompatActivity {
             absBleSends.clear();
             absBleSends = null;
         }
-        mBleSend.release();
-        mBleSend = null;
+        if (mBleSend != null) {
+            mBleSend.release();
+            mBleSend = null;
+        }
     }
 
     public void lookService(View v) {

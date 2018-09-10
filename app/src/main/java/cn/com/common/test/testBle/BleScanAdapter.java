@@ -13,8 +13,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
-import cn.com.common.support.ble.scan.ScanBle;
 import cn.com.common.test.R;
+import cn.com.swain.support.ble.scan.ScanBle;
 
 
 public class BleScanAdapter extends BaseAdapter {
@@ -31,34 +31,50 @@ public class BleScanAdapter extends BaseAdapter {
             @Override
             public void handleMessage(Message msg) {
                 super.handleMessage(msg);
-                BleScanAdapter.this.notifyDataSetChanged();
+
+                if (msg.what == MSG_CLEAR_DATA) {
+                    data.clear();
+                    BleScanAdapter.this.notifyDataSetChanged();
+                } else {
+                    if (msg.obj == null) {
+                        return;
+                    }
+                    ScanBle mScanBle = (ScanBle) msg.obj;
+                    boolean add = true;
+                    if (data.size() > 0) {
+                        for (ScanBle ble : data) {
+                            if (ble.address.equalsIgnoreCase(mScanBle.address)) {
+                                add = false;
+                                break;
+                            }
+                        }
+                    }
+                    if (add) {
+                        data.add(mScanBle);
+                    }
+                    Collections.sort(data, mBleSort);
+                    BleScanAdapter.this.notifyDataSetChanged();
+                }
+
             }
         };
 
     }
 
-    public void clearData() {
-        data.clear();
-        notifyDataSetChanged();
-    }
+    private static final int MSG_CLEAR_DATA = 0x00;
 
-    public void onBleScan(ScanBle mScanBle) {
-        boolean add = true;
-        if (data.size() > 0) {
-            for (ScanBle ble : data) {
-                if (ble.address.equalsIgnoreCase(mScanBle.address)) {
-                    add = false;
-                    break;
-                }
-            }
-        }
-        if (add) {
-            data.add(mScanBle);
-        }
-        Collections.sort(data, mBleSort);
+    public void clearData() {
 
         if (mUIHandler != null) {
-            mUIHandler.sendEmptyMessage(0);
+            mUIHandler.sendEmptyMessage(MSG_CLEAR_DATA);
+        }
+    }
+
+    private static final int MSG_OBTAIN_DATA = 0x01;
+
+    public void onBleScan(ScanBle mScanBle) {
+        if (mUIHandler != null) {
+            mUIHandler.obtainMessage(MSG_OBTAIN_DATA, mScanBle).sendToTarget();
         }
     }
 

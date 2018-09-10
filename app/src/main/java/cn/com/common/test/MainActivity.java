@@ -1,10 +1,11 @@
 package cn.com.common.test;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
+import cn.com.common.test.p2p.P2pComServerActivity;
 import cn.com.common.test.testBle.BleScanActivity;
 import cn.com.common.test.testScrollView.ScrollViewActivity;
 
@@ -20,8 +21,12 @@ public class MainActivity extends AppCompatActivity {
         startActivity(new Intent(this, BleScanActivity.class));
     }
 
-    public void skipScrollTxt(View v){
+    public void skipScrollTxt(View v) {
         startActivity(new Intent(this, ScrollViewActivity.class));
+    }
+
+    public void skipP2p(View v) {
+        startActivity(new Intent(this, P2pComServerActivity.class));
     }
 
 }

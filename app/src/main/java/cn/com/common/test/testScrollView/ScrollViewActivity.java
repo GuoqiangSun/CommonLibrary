@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import cn.com.common.test.R;
-import cn.com.common.view.scrollview.AutoScrollMarqueeView;
+import cn.com.swain.view.scrollview.AutoScrollMarqueeView;
 
 public class ScrollViewActivity extends AppCompatActivity {
 
