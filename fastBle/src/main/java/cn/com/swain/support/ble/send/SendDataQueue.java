@@ -15,7 +15,7 @@ import java.lang.ref.WeakReference;
 public class SendDataQueue extends AbsBleSend {
 
     private final AbsBleSend mBleSend;
-    private SendHandler mSendHandler;
+    private final SendHandler mSendHandler;
     private final long DELAY;
 
 
@@ -69,13 +69,14 @@ public class SendDataQueue extends AbsBleSend {
     }
 
     @Override
-    public void release() {
-        if (mSendHandler != null) {
-            mSendHandler.removeCallbacksAndMessages(null);
-        }
-        if (mBleSend != null) {
-            mBleSend.release();
-        }
+    public void removeMsg() {
+        mBleSend.removeMsg();
+        mSendHandler.removeCallbacksAndMessages(null);
+    }
+
+    @Override
+    public void closeGatt() {
+        mBleSend.closeGatt();
     }
 
     @Override

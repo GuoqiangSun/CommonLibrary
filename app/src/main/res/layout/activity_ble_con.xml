@@ -174,7 +174,6 @@
                 android:id="@+id/txtSend"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:maxLines="6"
                 android:textSize="16sp" />
         </ScrollView>
 

@@ -15,19 +15,6 @@ public class BaseApplication extends MultiDexApplication implements Thread.Uncau
     public void onCreate() {
         super.onCreate();
         Thread.setDefaultUncaughtExceptionHandler(this);
-
-    }
-
-    public void setTlogDebug(boolean flag) {
-        Tlog.setDebug(flag);
-    }
-
-    public void setTlogRecordDebug(boolean flag) {
-        Tlog.setLogRecordDebug(flag);
-    }
-
-    public void setGlobalTlogTAG(String TAG) {
-        Tlog.setGlobalTag(TAG);
     }
 
     @Override

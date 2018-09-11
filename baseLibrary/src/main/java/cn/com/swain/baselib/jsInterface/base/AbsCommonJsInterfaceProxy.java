@@ -3,7 +3,6 @@ package cn.com.swain.baselib.jsInterface.base;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import cn.com.swain.baselib.app.Tlog;
 import cn.com.swain.baselib.jsInterface.AbsJsInterface;
 import cn.com.swain.baselib.jsInterface.bean.BaseCommonJsRequestBean;
 import cn.com.swain.baselib.jsInterface.method.BaseCommonJsUtils;
@@ -26,10 +25,6 @@ public abstract class AbsCommonJsInterfaceProxy extends AbsCommonJsInterfaceWrap
 
     @Override
     public void handleJsRequest(String jsonData) {
-
-        if (Tlog.isDebug()) {
-            Tlog.d(TAG, " handleJs:" + jsonData);
-        }
 
         try {
             JSONObject json = new JSONObject(jsonData);

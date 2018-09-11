@@ -1,10 +1,11 @@
-package cn.com.common.test;
+package cn.com.common.test.main;
 
 import android.content.res.Configuration;
 import android.os.Build;
 
+import cn.com.common.test.global.LooperManager;
 import cn.com.swain.baselib.app.BaseApplication;
-import cn.com.swain.baselib.app.Tlog;
+import cn.com.swain169.log.Tlog;
 
 
 /**
@@ -20,8 +21,6 @@ public class SocketApplication extends BaseApplication {
     @Override
     public void onCreate() {
         super.onCreate();
-
-        setGlobalTlogTAG(TAG);
 
         LooperManager.getInstance().init(this);
 

@@ -11,8 +11,8 @@ import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 
-import cn.com.swain.baselib.app.Tlog;
 import cn.com.swain.support.ble.R;
+import cn.com.swain169.log.Tlog;
 
 /**
  * author: Guoqiang_Sun

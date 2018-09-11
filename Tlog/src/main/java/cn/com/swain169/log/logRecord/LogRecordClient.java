@@ -1,4 +1,4 @@
-package cn.com.swain.baselib.file.logRecord;
+package cn.com.swain169.log.logRecord;
 
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -8,17 +8,12 @@ import android.util.Log;
 
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileDescriptor;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
-
-import cn.com.swain.baselib.file.FileUtil;
 
 /**
  * author: Guoqiang_Sun
@@ -196,7 +191,6 @@ public class LogRecordClient implements ILogRecord {
     }
 
     private File msgFile;
-    private FileDescriptor fd;
     private BufferedWriter mBufferWriter;
 
     private void reGeneralBufferWriterInThread() {
@@ -204,10 +198,6 @@ public class LogRecordClient implements ILogRecord {
         releaseBufferWriteInThread();
 
         msgFile = generalSaveFile();
-
-//        fd = generaFD(msgFile);
-//        mBufferWriter = generalBufferedWriterByFd(fd);
-
         mBufferWriter = generalBufferedWriter(msgFile);
 
     }
@@ -222,25 +212,6 @@ public class LogRecordClient implements ILogRecord {
                 + String.valueOf(random)
                 + fileNameSuffix;
         return new File(logRootDir, name);
-    }
-
-    private FileDescriptor generaFD(File msgFile) {
-        try {
-            FileOutputStream fos = new FileOutputStream(msgFile);
-            return fos.getFD();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    private BufferedWriter generalBufferedWriterByFd(FileDescriptor fd) {
-        if (fd == null) {
-            return null;
-        }
-        return new BufferedWriter(new FileWriter(fd));
     }
 
     private BufferedWriter generalBufferedWriter(File fd) {
@@ -264,9 +235,6 @@ public class LogRecordClient implements ILogRecord {
                 e.printStackTrace();
             }
         }
-        if (fd != null) {
-            FileUtil.syncFile(fd);
-        }
 
         writeTimes = 0;
     }
@@ -287,7 +255,6 @@ public class LogRecordClient implements ILogRecord {
         }
         mBufferWriter = null;
         msgFile = null;
-        fd = null;
     }
 
     @Override

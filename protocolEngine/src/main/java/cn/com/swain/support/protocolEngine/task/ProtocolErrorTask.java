@@ -1,8 +1,8 @@
 package cn.com.swain.support.protocolEngine.task;
 
-import cn.com.swain.baselib.app.Tlog;
 import cn.com.swain.support.protocolEngine.datagram.SocketDataArray;
 import cn.com.swain.support.protocolEngine.utils.ProtocolCode;
+import cn.com.swain169.log.Tlog;
 
 /**
  * author: Guoqiang_Sun
@@ -63,7 +63,7 @@ public class ProtocolErrorTask extends SocketResponseTask {
                 break;
         }
 
-        Tlog.e(TAG, description);
+        Tlog.e(TAG, "description :" + description);
         mTask.description = description;
         if (mSocketDataArray != null) {
             mTask.type = mSocketDataArray.getProtocolType();

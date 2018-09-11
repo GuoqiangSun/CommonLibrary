@@ -12,7 +12,9 @@ public abstract class AbsBleSend {
 
     public abstract String getUuidStr();
 
-    public abstract void release();
+    public abstract void removeMsg();
+
+    public abstract void closeGatt();
 
     public abstract String getMac();
 

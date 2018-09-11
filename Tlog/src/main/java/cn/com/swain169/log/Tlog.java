@@ -1,8 +1,8 @@
-package cn.com.swain.baselib.app;
+package cn.com.swain169.log;
 
 import android.util.Log;
 
-import cn.com.swain.baselib.file.logRecord.ILogRecord;
+import cn.com.swain169.log.logRecord.ILogRecord;
 
 /**
  * author: Guoqiang_Sun
@@ -17,7 +17,7 @@ public class Tlog {
 
     private static boolean DEBUG = true;
 
-    static void setDebug(boolean flag) {
+    public static void setDebug(boolean flag) {
         DEBUG = flag;
     }
 
@@ -27,7 +27,7 @@ public class Tlog {
 
     private static boolean LOG_RECORD_DEBUG = false;
 
-    static void setLogRecordDebug(boolean flag) {
+    public static void setLogRecordDebug(boolean flag) {
         LOG_RECORD_DEBUG = flag;
     }
 
@@ -178,9 +178,9 @@ public class Tlog {
 
     /********/
 
-    private static String TAG_GLOBAL = "startai";
+    private static String TAG_GLOBAL = "swain";
 
-    static void setGlobalTag(String TAG) {
+    public static void setGlobalTag(String TAG) {
         TAG_GLOBAL = TAG;
     }
 

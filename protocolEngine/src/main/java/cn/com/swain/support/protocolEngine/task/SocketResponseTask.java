@@ -1,8 +1,8 @@
 package cn.com.swain.support.protocolEngine.task;
 
-import cn.com.swain.baselib.app.Tlog;
 import cn.com.swain.support.protocolEngine.IO.IDataProtocolOutput;
 import cn.com.swain.support.protocolEngine.pack.ResponseData;
+import cn.com.swain169.log.Tlog;
 
 /**
  * author: Guoqiang_Sun

@@ -15,8 +15,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import cn.com.swain.baselib.app.Tlog;
 import cn.com.swain.baselib.util.StrUtil;
+import cn.com.swain169.log.Tlog;
 
 /**
  * author: Guoqiang_Sun

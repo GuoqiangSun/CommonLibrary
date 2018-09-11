@@ -1,4 +1,4 @@
-package cn.com.swain.baselib.file.logRecord;
+package cn.com.swain169.log.logRecord;
 
 import java.io.File;
 

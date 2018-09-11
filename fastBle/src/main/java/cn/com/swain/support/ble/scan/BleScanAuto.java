@@ -11,7 +11,7 @@ import android.os.ParcelUuid;
 import java.lang.ref.WeakReference;
 import java.util.List;
 
-import cn.com.swain.baselib.app.Tlog;
+import cn.com.swain169.log.Tlog;
 
 /**
  * author: Guoqiang_Sun

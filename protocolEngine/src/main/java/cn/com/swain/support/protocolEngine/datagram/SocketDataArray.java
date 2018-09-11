@@ -1,6 +1,5 @@
 package cn.com.swain.support.protocolEngine.datagram;
 
-import cn.com.swain.baselib.app.Tlog;
 import cn.com.swain.support.protocolEngine.ProtocolBuild;
 import cn.com.swain.support.protocolEngine.ProtocolProcessor;
 import cn.com.swain.support.protocolEngine.datagram.ProtocolDatagram.AbsProtocolDataPack;
@@ -9,6 +8,7 @@ import cn.com.swain.support.protocolEngine.datagram.ProtocolDatagram.ProtocolDat
 import cn.com.swain.support.protocolEngine.datagram.ProtocolException.DatagramStateException;
 import cn.com.swain.support.protocolEngine.datagram.escape.EscapeDataArray;
 import cn.com.swain.support.protocolEngine.datagram.escape.IEscapeDataArray;
+import cn.com.swain169.log.Tlog;
 
 public class SocketDataArray extends AbsProtocolDataPack implements Cloneable, IProtocolComData, IEscapeDataArray {
 

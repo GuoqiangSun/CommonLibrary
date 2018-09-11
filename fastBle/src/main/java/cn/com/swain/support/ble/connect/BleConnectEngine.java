@@ -17,8 +17,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import cn.com.swain.baselib.app.Tlog;
 import cn.com.swain.support.ble.scan.ScanBle;
+import cn.com.swain169.log.Tlog;
 
 /**
  * author: Guoqiang_Sun
@@ -436,8 +436,13 @@ public class BleConnectEngine extends AbsBleConnect {
 
             case MSG_WHAT_WRITE_FAIL:
 
-                ScanBle mScanBle = (ScanBle) msg.obj;
-                mBleConCallBack.onWriteDataFail(mScanBle);
+                String address = (String) msg.obj;
+
+                BleConnecter mBleConnecterWriteError = getBleConnecter(address);
+                if (mBleConnecterWriteError != null) {
+                    ScanBle scanBleWriteError = mBleConnecterWriteError.getScanBle();
+                    mBleConCallBack.onWriteDataFail(scanBleWriteError);
+                }
 
                 break;
             case MSG_WHAT_CHECK_CONNECT_RESULT:
@@ -562,13 +567,8 @@ public class BleConnectEngine extends AbsBleConnect {
                 Tlog.e(TAG, "onCharacteristicWrite error:" + status);
 
                 final String address = gatt.getDevice().getAddress();
-                BleConnecter mBleConnecter = getBleConnecter(address);
-                if (mBleConnecter != null) {
-                    ScanBle scanBle = mBleConnecter.getScanBle();
-                    if (scanBle != null) {
-                        mBleConHandler.obtainMessage(MSG_WHAT_WRITE_FAIL, scanBle).sendToTarget();
-                    }
-                }
+                mBleConHandler.obtainMessage(MSG_WHAT_WRITE_FAIL, address).sendToTarget();
+
             }
         }
 

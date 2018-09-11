@@ -1,4 +1,4 @@
-package cn.com.common.test;
+package cn.com.common.test.global;
 
 import android.app.Application;
 import android.os.HandlerThread;
@@ -9,7 +9,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import cn.com.swain.baselib.app.IApp.IApp;
-import cn.com.swain.baselib.app.Tlog;
+import cn.com.swain169.log.Tlog;
 
 /**
  * author: Guoqiang_Sun

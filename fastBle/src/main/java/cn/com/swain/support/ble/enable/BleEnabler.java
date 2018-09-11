@@ -11,7 +11,7 @@ import android.provider.Settings;
 
 import java.lang.ref.WeakReference;
 
-import cn.com.swain.baselib.app.Tlog;
+import cn.com.swain169.log.Tlog;
 
 /**
  * author: Guoqiang_Sun

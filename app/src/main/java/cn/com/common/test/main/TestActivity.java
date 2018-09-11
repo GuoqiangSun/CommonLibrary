@@ -1,4 +1,4 @@
-package cn.com.common.test;
+package cn.com.common.test.main;
 
 import android.os.Bundle;
 import android.os.Handler;
@@ -9,13 +9,14 @@ import android.support.v7.app.AppCompatActivity;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import cn.com.swain.baselib.app.Tlog;
+import cn.com.common.test.global.LooperManager;
 import cn.com.swain.support.protocolEngine.ProtocolProcessor;
 import cn.com.swain.support.protocolEngine.datagram.SocketDataArray;
 import cn.com.swain.support.protocolEngine.datagram.dataproducer.SocketDataQueueProducer;
 import cn.com.swain.support.protocolEngine.pack.ReceivesData;
 import cn.com.swain.support.protocolEngine.result.SimpleProtocolResult;
 import cn.com.swain.support.protocolEngine.task.FailTaskResult;
+import cn.com.swain169.log.Tlog;
 
 /**
  * author: Guoqiang_Sun

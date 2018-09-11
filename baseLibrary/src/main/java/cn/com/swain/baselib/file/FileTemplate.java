@@ -2,6 +2,7 @@ package cn.com.swain.baselib.file;
 
 import android.app.Application;
 import android.os.Environment;
+import android.util.Log;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
@@ -10,7 +11,6 @@ import java.util.Date;
 import java.util.Locale;
 
 import cn.com.swain.baselib.app.IApp.IApp;
-import cn.com.swain.baselib.app.Tlog;
 
 /**
  * author: Guoqiang_Sun
@@ -25,6 +25,7 @@ public abstract class FileTemplate implements IApp {
     protected boolean exit = false;
 
     private WeakReference<Application> wr;
+    private String TAG = "FileTemplate";
 
     @Override
     public void init(Application app) {
@@ -38,49 +39,49 @@ public abstract class FileTemplate implements IApp {
         exit = mkdirs(getAppRootPath());
 
         if (!exit) {
-            Tlog.e(" appRootPath mkdirs false ");
+            Log.e(TAG, " appRootPath mkdirs false ");
             return;
         }
 
         exit = mkdirs(getProjectPath());
 
         if (!exit) {
-            Tlog.e(" projectPath mkdirs false ");
+            Log.e(TAG, " projectPath mkdirs false ");
             return;
         }
 
         exit = mkdirs(getDBPath());
 
         if (!exit) {
-            Tlog.e(" dbPath mkdirs false ");
+            Log.e(TAG, " dbPath mkdirs false ");
             return;
         }
 
         exit = mkdirs(getDebugPath());
 
         if (!exit) {
-            Tlog.e(" debugPath mkdirs false ");
+            Log.e(TAG, " debugPath mkdirs false ");
             return;
         }
 
-        exit = mkdirs(getTlogPath());
+        exit = mkdirs(getLogPath());
 
         if (!exit) {
-            Tlog.e(" TlogPath mkdirs false ");
+            Log.e(TAG, " LogPath mkdirs false ");
             return;
         }
 
         exit = mkdirs(getResourcePath());
 
         if (!exit) {
-            Tlog.e(" resourcePath mkdirs false ");
+            Log.e(TAG, " resourcePath mkdirs false ");
             return;
         }
 
         exit = mkdirs(getFilePath());
 
         if (!exit) {
-            Tlog.e(" filePath mkdirs false ");
+            Log.e(TAG, " filePath mkdirs false ");
         }
 
     }
@@ -105,8 +106,6 @@ public abstract class FileTemplate implements IApp {
 
     /**
      * 保存H5错误日志
-     *
-     * @param msg
      */
     public void saveH5Exception(String msg) {
         File debugPath = getDebugPath();
@@ -125,8 +124,6 @@ public abstract class FileTemplate implements IApp {
 
     /**
      * 保存错误日志
-     *
-     * @param ex
      */
     public void saveAppException(Thread t, Throwable ex) {
         File debugPath = getDebugPath();
@@ -159,8 +156,6 @@ public abstract class FileTemplate implements IApp {
 
     /**
      * 本地资源
-     *
-     * @return
      */
     public File getFilePath() {
         return new File(getProjectPath(), APP_FILE_PATH_NAME);
@@ -170,8 +165,6 @@ public abstract class FileTemplate implements IApp {
 
     /**
      * 本地资源
-     *
-     * @return
      */
     public File getResourcePath() {
         return new File(getProjectPath(), APP_RES_PATH_NAME);
@@ -181,30 +174,24 @@ public abstract class FileTemplate implements IApp {
 
     /**
      * debug 目录
-     *
-     * @return
      */
     public File getDebugPath() {
         return new File(getProjectPath(), APP_DEBUG_PATH_NAME);
     }
 
-    protected static final String APP_TLOG_PATH_NAME = "Tlog";
+    protected static final String APP_Log_PATH_NAME = "Log";
 
     /**
-     * Tlog 目录
-     *
-     * @return
+     * Log 目录
      */
-    public File getTlogPath() {
-        return new File(getDebugPath(), APP_TLOG_PATH_NAME);
+    public File getLogPath() {
+        return new File(getDebugPath(), APP_Log_PATH_NAME);
     }
 
     protected static final String APP_DB_PATH_NAME = "db";
 
     /**
      * DB 目录
-     *
-     * @return
      */
     public File getDBPath() {
         return new File(getProjectPath(), APP_DB_PATH_NAME);
@@ -214,8 +201,6 @@ public abstract class FileTemplate implements IApp {
 
     /**
      * 获取app缓存数据的目录
-     *
-     * @return
      */
     public File getProjectPath() {
         File file = initMyProjectPath();
@@ -231,8 +216,6 @@ public abstract class FileTemplate implements IApp {
 
     /**
      * 获取公司域名缓存数据的目录
-     *
-     * @return
      */
     public File getAppRootPath() {
 
@@ -243,8 +226,6 @@ public abstract class FileTemplate implements IApp {
 
     /**
      * 获取系统存储目录
-     *
-     * @return
      */
     public File getStoragePath() {
         File directory = null;

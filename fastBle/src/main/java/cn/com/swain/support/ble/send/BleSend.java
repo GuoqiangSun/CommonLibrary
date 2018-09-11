@@ -3,8 +3,8 @@ package cn.com.swain.support.ble.send;
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCharacteristic;
 
-import cn.com.swain.baselib.app.Tlog;
 import cn.com.swain.support.ble.connect.BleConnectEngine;
+import cn.com.swain169.log.Tlog;
 
 /**
  * author: Guoqiang_Sun
@@ -39,6 +39,7 @@ public class BleSend extends AbsBleSend {
     }
 
 
+
     @Override
     public String getMac() {
         return this.mac;
@@ -46,9 +47,14 @@ public class BleSend extends AbsBleSend {
 
 
     @Override
-    public void release() {
+    public void removeMsg() {
+
+    }
+
+    @Override
+    public void closeGatt() {
         if (mConGatt != null) {
-            Tlog.e(BleConnectEngine.TAG, " BleSend.release() mConGatt.close()");
+            Tlog.e(BleConnectEngine.TAG, " BleSend.closeGatt() mConGatt.close()");
             mConGatt.disconnect();
             mConGatt.close();
         }

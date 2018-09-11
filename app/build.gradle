@@ -28,5 +28,7 @@ dependencies {
     implementation project(':baseLibrary')
     implementation project(':fastBle')
     implementation project(':protocolEngine')
-    implementation project(path: ':scrollTxt')
+    implementation 'pub.devrel:easypermissions:1.1.0'
+    implementation project(':Tlog')
+    implementation project(':scrollTxt')
 }
