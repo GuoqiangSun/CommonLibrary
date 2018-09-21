@@ -7,13 +7,6 @@ package cn.com.swain169.log.logRecord;
  */
 public interface ILogRecord {
 
-    void recordMsgA(String TAG, String msg);
-
-    void recordMsgA(String TAG, Throwable e);
-
-    void recordMsgA(String TAG, String msg, Throwable e);
-
-
     void recordMsgV(String TAG, String msg);
 
     void recordMsgV(String TAG, Throwable e);
@@ -47,5 +40,12 @@ public interface ILogRecord {
     void recordMsgE(String TAG, Throwable e);
 
     void recordMsgE(String TAG, String msg, Throwable e);
+
+
+    void recordMsgA(String TAG, String msg);
+
+    void recordMsgA(String TAG, Throwable e);
+
+    void recordMsgA(String TAG, String msg, Throwable e);
 
 }

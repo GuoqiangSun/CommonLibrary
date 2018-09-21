@@ -44,7 +44,7 @@ public class ProtocolDataCache implements IService {
 
     }
 
-    private ProtocolDataCache() {
+    protected ProtocolDataCache() {
 
     }
 
@@ -72,19 +72,16 @@ public class ProtocolDataCache implements IService {
     public static final String TAG = "ProtocolDataCache";
 
     public void init(BuildParams mParams) {
-        this.mParams = mParams;
-    }
-
-    private BuildParams mParams;
-
-    @Override
-    public void onSCreate() {
-
         if (mParams != null) {
             custom = mParams.mCustom;
             product = mParams.mProduct;
             protocolVersion = mParams.mProtocolVersion;
         }
+    }
+
+
+    @Override
+    public void onSCreate() {
 
         Tlog.v(TAG, " custom:" + custom + " product:" + product + " protocolVersion:" + protocolVersion);
 
@@ -113,9 +110,7 @@ public class ProtocolDataCache implements IService {
             mSocketDataProducer.clear();
             mSocketDataProducer = null;
         }
-        if (mParams != null) {
-            mParams.release();
-        }
+
     }
 
     @Override
@@ -127,7 +122,7 @@ public class ProtocolDataCache implements IService {
 
     private static final Object synObj = new byte[1];
 
-    private static SEQ getDevice(String mac) {
+    protected static SEQ getDevice(String mac) {
         SEQ device = mDeviceMap.get(mac);
         if (device == null) {
             synchronized (synObj) {
@@ -143,7 +138,7 @@ public class ProtocolDataCache implements IService {
 
     private ISocketDataProducer mSocketDataProducer;
 
-    private void checkISocketDataProducer() {
+    protected void checkISocketDataProducer() {
         if (mSocketDataProducer == null) {
             synchronized (synObj) {
                 if (mSocketDataProducer == null) {
@@ -153,18 +148,18 @@ public class ProtocolDataCache implements IService {
         }
     }
 
-    private ISocketDataProducer getSocketDataProducer() {
+    protected ISocketDataProducer getSocketDataProducer() {
         checkISocketDataProducer();
         return mSocketDataProducer;
     }
 
-    private synchronized SocketDataArray produceSocketDataArray(String mac) {
+    protected synchronized SocketDataArray produceSocketDataArray(String mac) {
         final SocketDataArray mSecureDataPack = produceSocketDataArrayNoSeq();
         mSecureDataPack.setSeq((byte) (getDevice(mac).getSelfAddSeq() & 0xFF));
         return mSecureDataPack;
     }
 
-    private synchronized SocketDataArray produceSocketDataArrayNoSeq() {
+    protected synchronized SocketDataArray produceSocketDataArrayNoSeq() {
         final SocketDataArray mSecureDataPack = getSocketDataProducer().produceSocketDataArray();
         mSecureDataPack.setISUsed();
         mSecureDataPack.setParams(null);
@@ -175,15 +170,15 @@ public class ProtocolDataCache implements IService {
         return mSecureDataPack;
     }
 
-    private static ResponseData newResponseDataNoRecord(String mac, SocketDataArray mPack) {
+    protected static ResponseData newResponseDataNoRecord(String mac, SocketDataArray mPack) {
         return newResponseData(mac, mPack, false);
     }
 
-    private static ResponseData newResponseDataRecord(String mac, SocketDataArray mPack) {
+    protected static ResponseData newResponseDataRecord(String mac, SocketDataArray mPack) {
         return newResponseData(mac, mPack, true);
     }
 
-    private static ResponseData newResponseData(String mac, SocketDataArray mPack, boolean record) {
+    protected static ResponseData newResponseData(String mac, SocketDataArray mPack, boolean record) {
         final ResponseData responseData = new ResponseData(mac, mPack.organizeProtocolData());
         RepeatMsgModel repeatMsgModel = responseData.getRepeatMsgModel();
         repeatMsgModel.setMsgSeq(mPack.getSeq() & 0xFF);
@@ -195,7 +190,7 @@ public class ProtocolDataCache implements IService {
     }
 
 
-    private static ResponseData newResponseDataReport(String mac, SocketDataArray mPack) {
+    protected static ResponseData newResponseDataReport(String mac, SocketDataArray mPack) {
         final byte[] bytes = mPack.organizeProtocolData();
         final ResponseData responseData = new ResponseData(mac, bytes);
         mPack.setISUnUsed();
@@ -211,10 +206,8 @@ public class ProtocolDataCache implements IService {
      *
      * @return ResponseData ResponseData
      */
-    public static ResponseData getQuickSetRelaySwitch(String mac, boolean status) {
-        ResponseData responseData = status
-                ? ProtocolDataCache.getSetRelaySwitchOn(mac, false)
-                : ProtocolDataCache.getSetRelaySwitchOff(mac, false);
+    public static ResponseData getQuickSetRelaySwitch(String mac, boolean on) {
+        ResponseData responseData = getSetRelaySwitch(mac, on, false);
         responseData.getSendModel().setSendModelIsWan();
         return responseData;
     }
@@ -225,50 +218,21 @@ public class ProtocolDataCache implements IService {
      *
      * @return ResponseData ResponseData
      */
-    public static ResponseData getSetRelaySwitch(String mac, boolean status) {
-        return status
-                ? ProtocolDataCache.getSetRelaySwitchOn(mac, true)
-                : ProtocolDataCache.getSetRelaySwitchOff(mac, true);
+    public static ResponseData getSetRelaySwitch(String mac, boolean on) {
+
+        return getSetRelaySwitch(mac, on, true);
     }
 
-    /**
-     * 继电器开的数据包
-     *
-     * @return ResponseData
-     */
-    public static ResponseData getSetRelaySwitchOn(String mac, boolean record) {
-        SocketDataArray mSecureDataPack = getInstance().produceSocketDataArray(mac);
-        mSecureDataPack.setType(SocketSecureKey.Type.TYPE_CONTROLLER);
-        mSecureDataPack.setCmd(SocketSecureKey.Cmd.CMD_RELAY_SWITCH_REQUEST);
-        final byte[] params = new byte[2];
-        params[0] = SocketSecureKey.Model.MODEL_RELAY;
-        params[1] = SocketSecureKey.Model.MODEL_SWITCH_ON;
-        mSecureDataPack.setParams(params);
-        if (record) {
-            return newResponseDataRecord(mac, mSecureDataPack);
-        } else {
-            return newResponseDataNoRecord(mac, mSecureDataPack);
-        }
-    }
 
-    /**
-     * 继电器关的数据包
-     *
-     * @return ResponseData
-     */
-    public static ResponseData getSetRelaySwitchOff(String mac, boolean record) {
+    public static ResponseData getSetRelaySwitch(String mac, boolean on, boolean record) {
         SocketDataArray mSecureDataPack = getInstance().produceSocketDataArray(mac);
         mSecureDataPack.setType(SocketSecureKey.Type.TYPE_CONTROLLER);
-        mSecureDataPack.setCmd(SocketSecureKey.Cmd.CMD_RELAY_SWITCH_REQUEST);
+        mSecureDataPack.setCmd(SocketSecureKey.Cmd.CMD_SET_RELAY_SWITCH);
         final byte[] params = new byte[2];
         params[0] = SocketSecureKey.Model.MODEL_RELAY;
-        params[1] = SocketSecureKey.Model.MODEL_SWITCH_OFF;
+        params[1] = SocketSecureKey.Util.on(on);
         mSecureDataPack.setParams(params);
-        if (record) {
-            return newResponseDataRecord(mac, mSecureDataPack);
-        } else {
-            return newResponseDataNoRecord(mac, mSecureDataPack);
-        }
+        return newResponseData(mac, mSecureDataPack, record);
     }
 
     /**
@@ -384,6 +348,7 @@ public class ProtocolDataCache implements IService {
         SocketDataArray mSecureDataPack = getInstance().produceSocketDataArray(mac);
         mSecureDataPack.setType(SocketSecureKey.Type.TYPE_CONTROLLER);
         mSecureDataPack.setCmd(SocketSecureKey.Cmd.CMD_QUERY_RELAY_STATUS);
+        mSecureDataPack.setParams(new byte[]{SocketSecureKey.Model.MODEL_RELAY});
         ResponseData responseData = newResponseDataNoRecord(mac, mSecureDataPack);
         responseData.getSendModel().setSendModelIsWan();
         return responseData;
@@ -398,6 +363,7 @@ public class ProtocolDataCache implements IService {
         SocketDataArray mSecureDataPack = getInstance().produceSocketDataArray(mac);
         mSecureDataPack.setType(SocketSecureKey.Type.TYPE_CONTROLLER);
         mSecureDataPack.setCmd(SocketSecureKey.Cmd.CMD_QUERY_RELAY_STATUS);
+        mSecureDataPack.setParams(new byte[]{SocketSecureKey.Model.MODEL_RELAY});
         return newResponseDataRecord(mac, mSecureDataPack);
     }
 

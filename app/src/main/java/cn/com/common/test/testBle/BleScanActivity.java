@@ -1,18 +1,20 @@
 package cn.com.common.test.testBle;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -20,14 +22,16 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import cn.com.common.test.R;
+import cn.com.common.test.global.LooperManager;
+import cn.com.swain.baselib.util.PermissionRequest;
 import cn.com.swain.support.ble.enable.AbsBleEnable;
 import cn.com.swain.support.ble.enable.BleEnabler;
 import cn.com.swain.support.ble.scan.AbsBleScan;
 import cn.com.swain.support.ble.scan.BleScanAuto;
 import cn.com.swain.support.ble.scan.IBleScanObserver;
 import cn.com.swain.support.ble.scan.ScanBle;
-import cn.com.common.test.global.LooperManager;
-import cn.com.common.test.R;
+import cn.com.swain169.log.Tlog;
 
 /**
  * author: Guoqiang_Sun
@@ -64,19 +68,19 @@ public class BleScanActivity extends AppCompatActivity {
     private void regBleState(int bleState) {
         switch (bleState) {
             case BluetoothAdapter.STATE_OFF:
-                Log.d(TAG, "STATE_OFF 手机蓝牙关闭");
+                Tlog.d(TAG, "STATE_OFF 手机蓝牙关闭");
                 mTxtBleState.setText("蓝牙关闭");
                 break;
             case BluetoothAdapter.STATE_TURNING_OFF:
-                Log.d(TAG, "STATE_TURNING_OFF 手机蓝牙正在关闭");
+                Tlog.d(TAG, "STATE_TURNING_OFF 手机蓝牙正在关闭");
                 mTxtBleState.setText("蓝牙正在关闭");
                 break;
             case BluetoothAdapter.STATE_ON:
-                Log.d(TAG, "STATE_ON 手机蓝牙开启");
+                Tlog.d(TAG, "STATE_ON 手机蓝牙开启");
                 mTxtBleState.setText("蓝牙开启");
                 break;
             case BluetoothAdapter.STATE_TURNING_ON:
-                Log.d(TAG, "STATE_TURNING_ON 手机蓝牙正在开启");
+                Tlog.d(TAG, "STATE_TURNING_ON 手机蓝牙正在开启");
                 mTxtBleState.setText("蓝牙正在开启");
                 break;
         }
@@ -85,11 +89,37 @@ public class BleScanActivity extends AppCompatActivity {
     private AbsBleScan mBleScan;
     private AbsBleEnable mBleEnabler;
 
+    private PermissionRequest mPermissionRequest;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ble_scan);
+
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//            BleScanPermissionUtil.initPermission(this);
+//            FilePermissionUtil.initPermission(this);
+
+            String[] permissionArray = new String[]{
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                    Manifest.permission.ACCESS_COARSE_LOCATION,
+            };
+
+            int[] res = new int[]{
+                    R.string.file_allow_permission,
+                    R.string.scan_ble_allow_permission,
+            };
+
+            Tlog.v(TAG, "HomeActivity  requestPermission() ");
+            mPermissionRequest = new PermissionRequest(this, new PermissionRequest.OnPermissionFinish() {
+                @Override
+                public void onPermissionRequestFinish() {
+
+                }
+            }, permissionArray, res);
+            mPermissionRequest.requestPermission();
+        }
 
         progress = (ProgressBar) findViewById(R.id.progressBar1);
         mTxtBleState = (TextView) findViewById(R.id.bt_state);
@@ -165,6 +195,17 @@ public class BleScanActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         mBleScan.bsStopScan();
+        if (mPermissionRequest != null) {
+            mPermissionRequest.release();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (mPermissionRequest != null) {
+            mPermissionRequest.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
     }
 
     private class BleItemClick implements AdapterView.OnItemClickListener {

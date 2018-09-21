@@ -11,8 +11,8 @@ public class LogRecordManager extends LogRecordWrapper {
 
     private final LogRecordClient mLogRecordClient;
 
-    public LogRecordManager(File logPath, String prefix) {
-        mLogRecordClient = new LogRecordClient(logPath, prefix);
+    public LogRecordManager(File logPath, String prefix, long size) {
+        mLogRecordClient = new LogRecordClient(logPath, prefix, size);
     }
 
     private boolean init = false;
@@ -23,7 +23,9 @@ public class LogRecordManager extends LogRecordWrapper {
         }
         init = true;
         mLogRecordClient.initWriteThread();
+        mLogRecordClient.checkBufferWriter();
         attachIRecordMsgFile(mLogRecordClient);
+        recordMsgV("LogRecordClient", " LogRecordClient init success...");
     }
 
     public void release() {
@@ -41,9 +43,10 @@ public class LogRecordManager extends LogRecordWrapper {
     }
 
     /**
-     * 检测文件记录客户端是否正在运行
+     * 检测是否在录制
+     * 如果没有录制则开启录制
      */
-    public void checkBufferWriter() {
+    public void checkIsRecord() {
         checkInit();
         mLogRecordClient.checkBufferWriter();
     }
@@ -51,15 +54,15 @@ public class LogRecordManager extends LogRecordWrapper {
     /**
      * 数据同步到磁盘
      */
-    public void syncBufferWriter() {
+    public void syncRecordData() {
         checkInit();
         mLogRecordClient.syncBufferWriter();
     }
 
     /**
-     * 释放资源
+     * 停止录制
      */
-    public void releaseBufferWriter() {
+    public void stopRecord() {
         checkInit();
         mLogRecordClient.releaseBufferWriter();
     }

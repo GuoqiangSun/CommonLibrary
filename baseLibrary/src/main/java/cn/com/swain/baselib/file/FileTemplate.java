@@ -11,6 +11,7 @@ import java.util.Date;
 import java.util.Locale;
 
 import cn.com.swain.baselib.app.IApp.IApp;
+import cn.com.swain169.log.Tlog;
 
 /**
  * author: Guoqiang_Sun
@@ -39,54 +40,62 @@ public abstract class FileTemplate implements IApp {
         exit = mkdirs(getAppRootPath());
 
         if (!exit) {
-            Log.e(TAG, " appRootPath mkdirs false ");
+            Tlog.e(TAG, " appRootPath mkdirs false ");
             return;
         }
 
         exit = mkdirs(getProjectPath());
 
         if (!exit) {
-            Log.e(TAG, " projectPath mkdirs false ");
+            Tlog.e(TAG, " projectPath mkdirs false ");
             return;
         }
 
         exit = mkdirs(getDBPath());
 
         if (!exit) {
-            Log.e(TAG, " dbPath mkdirs false ");
+            Tlog.e(TAG, " dbPath mkdirs false ");
+            return;
+        }
+
+
+        exit = mkdirs(getCachePath());
+
+        if (!exit) {
+            Tlog.e(TAG, " cachePath mkdirs false ");
             return;
         }
 
         exit = mkdirs(getDebugPath());
 
         if (!exit) {
-            Log.e(TAG, " debugPath mkdirs false ");
+            Tlog.e(TAG, " debugPath mkdirs false ");
             return;
         }
 
         exit = mkdirs(getLogPath());
 
         if (!exit) {
-            Log.e(TAG, " LogPath mkdirs false ");
+            Tlog.e(TAG, " LogPath mkdirs false ");
             return;
         }
 
         exit = mkdirs(getResourcePath());
 
         if (!exit) {
-            Log.e(TAG, " resourcePath mkdirs false ");
+            Tlog.e(TAG, " resourcePath mkdirs false ");
             return;
         }
 
         exit = mkdirs(getFilePath());
 
         if (!exit) {
-            Log.e(TAG, " filePath mkdirs false ");
+            Tlog.e(TAG, " filePath mkdirs false ");
         }
 
     }
 
-    private boolean mkdirs(File resourcePath) {
+    public boolean mkdirs(File resourcePath) {
 
         return resourcePath != null && (resourcePath.exists() || resourcePath.mkdirs());
 
@@ -179,13 +188,22 @@ public abstract class FileTemplate implements IApp {
         return new File(getProjectPath(), APP_DEBUG_PATH_NAME);
     }
 
-    protected static final String APP_Log_PATH_NAME = "Log";
+    protected static final String APP_CACHE_PATH_NAME = "cache";
+
+    /**
+     * cache 目录
+     */
+    public File getCachePath() {
+        return new File(getProjectPath(), APP_CACHE_PATH_NAME);
+    }
+
+    protected static final String APP_LOG_PATH_NAME = "Log";
 
     /**
      * Log 目录
      */
     public File getLogPath() {
-        return new File(getDebugPath(), APP_Log_PATH_NAME);
+        return new File(getProjectPath(), APP_LOG_PATH_NAME);
     }
 
     protected static final String APP_DB_PATH_NAME = "db";

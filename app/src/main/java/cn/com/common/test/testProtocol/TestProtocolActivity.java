@@ -1,15 +1,18 @@
-package cn.com.common.test.main;
+package cn.com.common.test.testProtocol;
 
+import android.Manifest;
+import android.app.Application;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.Toast;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 
 import cn.com.common.test.global.LooperManager;
+import cn.com.common.test.main.CommonApplication;
 import cn.com.swain.support.protocolEngine.ProtocolProcessor;
 import cn.com.swain.support.protocolEngine.datagram.SocketDataArray;
 import cn.com.swain.support.protocolEngine.datagram.dataproducer.SocketDataQueueProducer;
@@ -24,45 +27,22 @@ import cn.com.swain169.log.Tlog;
  * desc :
  */
 
-public class TestActivity extends AppCompatActivity {
+public class TestProtocolActivity extends AppCompatActivity {
 
-    private static String TAG = SocketApplication.TAG;
+    private static String TAG = CommonApplication.TAG;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Tlog.v(TAG, " testActivity onCreate ");
+        Tlog.v(TAG, " TestProtocolActivity onCreate ");
+        run = true;
 
-//        testSocketDataArray();
-//        testProtocolManager();
-
-//        IO io = new IO();
-//        io.testException();
-
-//        testBle();
-
-//        testHandler();
-
-
-//        WebView w;
-
-//        testHandler1();
-
-
-//        testDB();
-
-//        byte[] buf = new byte[1024*1024*12];
-//        StringBuffer sb = new StringBuffer(1024*1024*12);
-//        sb.append("hello");
-
-//        localDa
-
-//        com.android.internal.R.array.networkAttributes;
-
-//        ConnectivityService c;
-//        WifiCommand d;
-
+        Application application = this.getApplication();
+        boolean i = ContextCompat.checkSelfPermission(application.getApplicationContext(),
+                Manifest.permission.ACCESS_COARSE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED;
+        Toast.makeText(getApplicationContext(), " has:" + i, Toast.LENGTH_SHORT).show();
 
     }
 
@@ -74,10 +54,11 @@ public class TestActivity extends AppCompatActivity {
         if (pm != null) {
             pm.release();
         }
-
+        run = false;
     }
 
     private ProtocolProcessor pm;
+    private boolean run;
 
     private void testProtocolManager() {
 
@@ -100,7 +81,7 @@ public class TestActivity extends AppCompatActivity {
 
                 int times = 0;
 
-                while (true) {
+                while (run) {
 //                    if (++times >= 20) {
 //                        break;
 //                    }
@@ -158,49 +139,6 @@ public class TestActivity extends AppCompatActivity {
 
         ByteArrayOutputStream bos;
 
-
-    }
-
-    Handler h;
-
-    private void testHandler() {
-
-        h = new Handler() {
-            @Override
-            public void handleMessage(Message msg) {
-                super.handleMessage(msg);
-
-                switch (msg.what) {
-                    case 0:
-                        Tlog.v(TAG, "case 0 ; has 0 " + h.hasMessages(0) + " has 1 " + h.hasMessages(1));
-                        break;
-                    case 1:
-                        Tlog.v(TAG, "case 1 ; has 0 " + h.hasMessages(0) + " has 1 " + h.hasMessages(1));
-                        break;
-                }
-
-            }
-        };
-
-        h.sendEmptyMessage(0);
-        h.sendEmptyMessageDelayed(1, 2000);
-        h.sendEmptyMessageDelayed(1, 3000);
-        h.removeMessages(1);
-    }
-
-    private void testHandler1() {
-
-
-    }
-
-    public class IO {
-
-        private void testException() throws INDEX {
-            Tlog.v(TAG, "testException");
-        }
-    }
-
-    private class INDEX extends IOException {
 
     }
 

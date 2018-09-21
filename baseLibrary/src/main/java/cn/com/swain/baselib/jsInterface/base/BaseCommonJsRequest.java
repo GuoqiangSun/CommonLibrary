@@ -2,9 +2,9 @@ package cn.com.swain.baselib.jsInterface.base;
 
 import android.os.Looper;
 import android.os.Message;
-import android.util.Log;
 
 import cn.com.swain.baselib.jsInterface.AbsHandlerJsInterface;
+import cn.com.swain169.log.Tlog;
 
 /**
  * author: Guoqiang_Sun
@@ -28,7 +28,7 @@ public class BaseCommonJsRequest extends AbsHandlerJsInterface {
         if (mCallBack != null) {
             mCallBack.handleJsRequest((String) msg.obj);
         } else {
-            Log.e(TAG, " CommonJsRequest handleMessage IJSRequest is null ");
+            Tlog.e(TAG, " CommonJsRequest handleMessage IJSRequest is null ");
         }
 
     }

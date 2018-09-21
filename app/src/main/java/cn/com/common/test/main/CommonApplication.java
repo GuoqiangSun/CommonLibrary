@@ -14,34 +14,35 @@ import cn.com.swain169.log.Tlog;
  * desc :
  */
 
-public class SocketApplication extends BaseApplication {
+public class CommonApplication extends BaseApplication {
 
-    public static final String TAG = "socketApp";
+    public static final String TAG = "commonApp";
 
     @Override
     public void onCreate() {
         super.onCreate();
 
+        Tlog.setPrintStackDebug(true);
         LooperManager.getInstance().init(this);
 
-        Tlog.i("SocketApplication onCreate(); pid:" + android.os.Process.myPid() + "; Build.VERSION.SDK_INT :" + Build.VERSION.SDK_INT);
+        Tlog.i("CommonApplication onCreate(); pid:" + android.os.Process.myPid() + "; Build.VERSION.SDK_INT :" + Build.VERSION.SDK_INT);
     }
 
     @Override
     public void uncaughtException(Thread t, Throwable e) {
         super.uncaughtException(t, e);
-        Tlog.e(TAG, " SocketApplication caughtException ", e);
+        Tlog.e(TAG, " CommonApplication caughtException ", e);
         android.os.Process.killProcess(android.os.Process.myPid());
     }
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        Tlog.v(TAG, "SocketApplication onConfigurationChanged() " + newConfig.toString());
+        Tlog.v(TAG, "CommonApplication onConfigurationChanged() " + newConfig.toString());
     }
 
     public static void uncaughtH5Exception(String msg) {
-        Tlog.e(TAG, " SocketApplication uncaughtH5Exception :\n" + msg);
+        Tlog.e(TAG, " CommonApplication uncaughtH5Exception :\n" + msg);
         android.os.Process.killProcess(android.os.Process.myPid());
     }
 }

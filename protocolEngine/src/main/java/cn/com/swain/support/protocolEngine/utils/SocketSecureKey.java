@@ -6,17 +6,69 @@ package cn.com.swain.support.protocolEngine.utils;
  * desc :
  */
 
-public class SocketSecureKey extends SecureKey {
+public class SocketSecureKey  {
 
-    public static final class Type extends SType {
-        //
+    public static class Custom {
+
+        public static final byte CUSTOM_WAN = 0x00;
+
+        public static final byte PRODUCT_BLE_SOCKET = 0x00;
+        public static final byte PRODUCT_WIFI_SOCKET = 0x02;
+    }
+
+
+    public static class Type {
+
+        /**
+         * error
+         */
+        public static final byte TYPE_ERROR = 0x00;
+
+        /**
+         * 系统
+         */
+        public static final byte TYPE_SYSTEM = 0x01;
+
+        /**
+         * 控制
+         */
+        public static final byte TYPE_CONTROLLER = 0x02;
+
+        /**
+         * 上报
+         */
+        public static final byte TYPE_REPORT = 0x03;
+
 
     }
 
-    public static final class Cmd extends SCmd {
+    public static class Cmd {
 
 
-        /**********0x01**************/
+
+        /**********0x01system**************/
+        /**
+         * 错误
+         */
+        public static final byte CMD_ERROR = 0x00;
+
+        /**
+         * 心跳
+         */
+        public static final byte CMD_HEARTBEAT = 0x01;
+        public static final byte CMD_HEARTBEAT_RESPONSE = 0x02;
+
+        /**
+         * 发现设备
+         */
+        public static final byte CMD_DISCOVERY_DEVICE = 0x03;
+        public static final byte CMD_DISCOVERY_DEVICE_RESPONSE = 0x04;
+
+        /**
+         * 绑定设备
+         */
+        public static final byte CMD_BIND_DEVICE = 0x05;
+        public static final byte CMD_BIND_DEVICE_RESPONSE = 0x06;
 
         /**
          * rename
@@ -73,7 +125,14 @@ public class SocketSecureKey extends SecureKey {
         public static final byte CMD_DISCONTROL_TOKEN = 0x33;
         public static final byte CMD_DISCONTROL_TOKEN_RESPONSE = 0x34;
 
-        /**********0x02**************/
+        /**********0x02control**************/
+
+
+        /**
+         * 设置继电器
+         */
+        public static final byte CMD_SET_RELAY_SWITCH = 0x01;
+        public static final byte CMD_SET_RELAY_SWITCH_RESPONSE = 0x02;
 
         /**
          * 设置时间
@@ -87,17 +146,6 @@ public class SocketSecureKey extends SecureKey {
         public static final byte CMD_SET_TIMING = 0x05;
         public static final byte CMD_SET_TIMING_RESPONSE = 0x06;
 
-        /**
-         * 继电器
-         */
-        public static final byte CMD_RELAY_SWITCH_REQUEST = 0x01;
-        public static final byte CMD_RELAY_SWITCH_RESPONSE = 0x02;
-
-        /**
-         * 继电器
-         */
-        public static final byte CMD_QUERY_RELAY_STATUS = 0x0B;
-        public static final byte CMD_QUERY_RELAY_STATUS_RESPONSE = 0x0C;
 
         /**
          * 插座倒计时
@@ -110,6 +158,13 @@ public class SocketSecureKey extends SecureKey {
          */
         public static final byte CMD_SET_ALARM = 0x09;
         public static final byte CMD_SET_ALARM_RESPONSE = 0x0A;
+
+
+        /**
+         * 查询继电器
+         */
+        public static final byte CMD_QUERY_RELAY_STATUS = 0x0B;
+        public static final byte CMD_QUERY_RELAY_STATUS_RESPONSE = 0x0C;
 
 
         /**
@@ -137,14 +192,19 @@ public class SocketSecureKey extends SecureKey {
         public static final byte CMD_QUERY_TIMING_LIST_DATA = 0x13;
         public static final byte CMD_QUERY_TIMING_LIST_DATA_RESPONSE = 0x14;
 
+        /**
+         * 设置定时花费
+         */
         public static final byte CMD_SET_SPENDING_ELECTRICITY_DATA = 0x15;
         public static final byte CMD_SET_SPENDING_ELECTRICITY_DATA_RESPONSE = 0x16;
-
+        /**
+         * 查询定时花费
+         */
         public static final byte CMD_QUERY_SPENDING_ELECTRICITY_DATA = 0x17;
         public static final byte CMD_QUERY_SPENDING_ELECTRICITY_DATA_RESPONSE = 0x18;
 
 
-       /**********report**************/
+        /**********report0x03**************/
 
         /**
          * 温度湿度上报
@@ -181,7 +241,54 @@ public class SocketSecureKey extends SecureKey {
 
     }
 
-    public static final class Model extends SModel {
+    public static class Model  {
+
+
+        /**
+         * 成功
+         */
+        public static final byte MODEL_RESULT_SUCCESS = 0x00;
+
+        /**
+         * 失败
+         */
+        public static final byte MODEL_RESULT_FAIL = 0x01;
+
+        /**
+         * token失效
+         */
+        public static final byte MODEL_RESULT_TOKEN_INVALID = 0x03;
+
+        /**
+         * 开
+         */
+        public static final byte MODEL_SWITCH_ON = 0x01;
+        /**
+         * 关
+         */
+        public static final byte MODEL_SWITCH_OFF = 0x00;
+
+
+        /**
+         * 启动
+         */
+        public static final byte MODEL_START_UP = 0x01;
+        /**
+         * 结束
+         */
+        public static final byte MODEL_FINISH = 0x02;
+
+
+        /**
+         * true
+         */
+        public static final byte MODEL_TRUE = 0x01;
+
+
+        /**
+         * false
+         */
+        public static final byte MODEL_FALSE = 0x00;
 
 
         /**
@@ -230,7 +337,51 @@ public class SocketSecureKey extends SecureKey {
 
     }
 
-    public static final class Util extends SUtil {
+    public static class Util  {
+
+
+        public static boolean isTrue(byte flag) {
+            return (flag == Model.MODEL_TRUE);
+        }
+
+        public static boolean resultIsOk(byte result) {
+
+            return (result == Model.MODEL_RESULT_SUCCESS);
+        }
+
+        public static boolean resultTokenInvalid(byte result) {
+
+            return (result == Model.MODEL_RESULT_TOKEN_INVALID);
+        }
+
+
+        public static byte resultSuccess(boolean success) {
+            return (success ? Model.MODEL_RESULT_SUCCESS : Model.MODEL_RESULT_FAIL);
+        }
+
+        public static boolean startup(byte param) {
+
+            return (param == Model.MODEL_START_UP);
+        }
+
+        public static byte startup(boolean startup) {
+            return (startup ? Model.MODEL_START_UP : Model.MODEL_FINISH);
+        }
+
+        public static boolean on(byte param) {
+
+            return (param == Model.MODEL_SWITCH_ON);
+        }
+
+        public static byte on(boolean on) {
+            return (on ? Model.MODEL_SWITCH_ON : Model.MODEL_SWITCH_OFF);
+        }
+
+
+        public static boolean isBleProduct(byte product) {
+            return (product == Custom.PRODUCT_BLE_SOCKET);
+        }
+
 
         public static boolean isCommonTiming(byte model) {
             return (model == Model.TIMING_COMMON);
@@ -257,7 +408,7 @@ public class SocketSecureKey extends SecureKey {
         }
 
         public static byte limitUp(boolean limitUp) {
-            return (byte) (limitUp ? Model.ALARM_LIMIT_UP : Model.ALARM_LIMIT_DOWN);
+            return (limitUp ? Model.ALARM_LIMIT_UP : Model.ALARM_LIMIT_DOWN);
         }
 
         public static boolean isBleModel(byte model) {

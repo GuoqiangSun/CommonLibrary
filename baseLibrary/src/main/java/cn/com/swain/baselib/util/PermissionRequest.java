@@ -9,9 +9,10 @@ import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
 
 import java.lang.ref.WeakReference;
+
+import cn.com.swain169.log.Tlog;
 
 
 /**
@@ -65,20 +66,20 @@ public class PermissionRequest {
     private void handleMessage(Message msg) {
         Activity activity = getActivity();
         if (activity == null) {
-            Log.e(TAG, " request permission activity == null ");
+            Tlog.e(TAG, " request permission activity == null ");
             return;
         }
         Application application = activity.getApplication();
 
         if (application == null) {
-            Log.e(TAG, "request permission  application == null ");
+            Tlog.e(TAG, "request permission  application == null ");
             return;
         }
 
         if (msg.what == REQUEST_PERMISSION) {
             if (mCur >= permissionArray.length) {
                 //finish
-                Log.v(TAG, " permission request finish");
+                Tlog.d(TAG, " permission request finish");
                 if (mOnPermissionFinish != null) {
                     mOnPermissionFinish.onPermissionRequestFinish();
                 }
@@ -94,11 +95,11 @@ public class PermissionRequest {
 
             if (has) {
 
-                Log.v(TAG, " Has permission " + permissionStr);
+                Tlog.v(TAG, " Has permission " + permissionStr);
                 mHandler.sendEmptyMessage(REQUEST_PERMISSION);
 
             } else {
-                Log.v(TAG, " request permission " + permissionStr);
+                Tlog.v(TAG, " request permission " + permissionStr);
                 ActivityCompat.requestPermissions(activity,
                         new String[]{permissionStr},
                         MY_PERMISSIONS_REQUEST_FILE);
@@ -120,7 +121,7 @@ public class PermissionRequest {
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     //用户允许改权限，0表示允许，-1表示拒绝 PERMISSION_GRANTED = 0， PERMISSION_DENIED = -1
                     //授权被允许
-                    Log.v(TAG, " PERMISSION_GRANTED " + permissions[0]);
+                    Tlog.v(TAG, " PERMISSION_GRANTED " + permissions[0]);
                     mHandler.sendEmptyMessage(REQUEST_PERMISSION);
 
                 } else {
@@ -136,18 +137,18 @@ public class PermissionRequest {
                         j = mCur - 1;
                     }
 
-                    Log.e(TAG, " != PERMISSION_GRANTED res j" + j + " " + permissions[0]);
+                    Tlog.e(TAG, " != PERMISSION_GRANTED res j" + j + " " + permissions[0]);
 //                    showMessageOKCancel(permissions[0], res[j]);
 
                     Activity activity = getActivity();
                     if (activity == null) {
-                        Log.e(TAG, " activity==null ");
+                        Tlog.e(TAG, " activity==null ");
                         return;
                     }
 
                     if (!ActivityCompat.shouldShowRequestPermissionRationale(activity, permissions[0])) {
                         // 权限被禁止
-                        Log.v(TAG, " shouldShowRequestPermissionRationale ");
+                        Tlog.v(TAG, " shouldShowRequestPermissionRationale ");
                         mHandler.sendEmptyMessage(REQUEST_PERMISSION);
                     } else {
                         mHandler.sendEmptyMessage(REQUEST_PERMISSION);

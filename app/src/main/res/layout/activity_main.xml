@@ -26,8 +26,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:onClick="skipP2p"
-            android:text="btnP2p" />
+            android:onClick="skipProtocol"
+            android:text="skipProtocol" />
     </LinearLayout>
 
     <LinearLayout

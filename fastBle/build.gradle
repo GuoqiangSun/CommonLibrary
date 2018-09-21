@@ -47,9 +47,9 @@ dependencies {
 //    //项目名称
 //    artifactId = 'fastble'
 //    //版本号
-//    publishVersion = '3.0.1'
+//    publishVersion = '3.0.09'
 //    //描述，不重要
-//    desc = 'fastble sdk 3.0.1'
+//    desc = 'fastble sdk 3.0.09'
 //
 ////    property()
 //

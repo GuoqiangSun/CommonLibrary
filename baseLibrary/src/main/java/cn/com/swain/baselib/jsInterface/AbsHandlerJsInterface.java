@@ -3,7 +3,6 @@ package cn.com.swain.baselib.jsInterface;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.util.Log;
 
 import java.lang.ref.WeakReference;
 

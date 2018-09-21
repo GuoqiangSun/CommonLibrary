@@ -4,7 +4,6 @@ package cn.com.swain.support.protocolEngine.utils;
  * author: Guoqiang_Sun
  * date : 2018/4/2 0002
  * desc :
- * * <p>
  */
 
 public class ProtocolCode {
