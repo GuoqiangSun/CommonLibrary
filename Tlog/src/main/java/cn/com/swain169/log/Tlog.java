@@ -125,7 +125,7 @@ public class Tlog {
         if (DEBUG) {
             Log.d(TAG, reMsg(msg, l));
             if (LOG_RECORD_DEBUG) {
-                TFlog.v(TAG, msg);
+                TFlog.d(TAG, msg);
             }
         }
     }
@@ -157,7 +157,7 @@ public class Tlog {
         if (DEBUG) {
             Log.i(TAG, reMsg(msg, l));
             if (LOG_RECORD_DEBUG) {
-                TFlog.v(TAG, msg);
+                TFlog.i(TAG, msg);
             }
         }
     }
@@ -189,7 +189,7 @@ public class Tlog {
         if (DEBUG) {
             Log.w(TAG, reMsg(msg, l));
             if (LOG_RECORD_DEBUG) {
-                TFlog.v(TAG, msg);
+                TFlog.w(TAG, msg);
             }
         }
     }
@@ -221,7 +221,7 @@ public class Tlog {
         if (DEBUG) {
             Log.e(TAG, reMsg(msg, l));
             if (LOG_RECORD_DEBUG) {
-                TFlog.v(TAG, msg);
+                TFlog.e(TAG, msg);
             }
         }
     }
@@ -253,7 +253,7 @@ public class Tlog {
         if (DEBUG) {
             Log.e(TAG, reMsg(msg, l));
             if (LOG_RECORD_DEBUG) {
-                TFlog.v(TAG, msg);
+                TFlog.a(TAG, msg);
             }
         }
     }

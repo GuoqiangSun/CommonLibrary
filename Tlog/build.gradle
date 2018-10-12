@@ -8,8 +8,8 @@ android {
     defaultConfig {
         minSdkVersion 19
         targetSdkVersion 27
-        versionCode 3016
-        versionName "3.0.16"
+        versionCode 3017
+        versionName "3.0.17"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
@@ -43,9 +43,9 @@ publish {
     //项目名称
     artifactId = 'Tlog'
     //版本号
-    publishVersion = '3.0.16'
+    publishVersion = '3.0.17'
     //描述，不重要
-    desc = 'Tlog sdk 3.0.16'
+    desc = 'Tlog sdk 3.0.17'
 
 //    property()
 
