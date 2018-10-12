@@ -37,13 +37,10 @@ public class Tlog {
     /**
      * 设置是否保存文件到日志
      * <p>
-     * if flag is true
-     * you need init TFlog
-     * {@link cn.com.swain169.log.TFlog}
-     * <p>
-     * also can {@link #regIRecordMsgFile(AbsLogRecord)}
      *
-     * @param flag
+     * @param flag if flag is true
+     *             need call this method {@link #regIRecordMsgFile(AbsLogRecord)}
+     *             or {@link cn.com.swain169.log.TFlog#set(AbsLogRecord)}
      */
     public static void setLogRecordDebug(boolean flag) {
         LOG_RECORD_DEBUG = flag;
@@ -69,12 +66,15 @@ public class Tlog {
     }
 
     /**
-     * you can user {@link cn.com.swain169.log.logRecord.impl.LogRecordManager }
+     * if regIRecordMsgFile
+     * <p>
+     * when main Activity onCreate() ,need call {@link cn.com.swain169.log.TFlog#startRecord()}
+     * when main Activity onDestroy() ,need call {@link cn.com.swain169.log.TFlog#startRecord()}
      *
-     * @param recordMsg
+     * @param recordMsg you can use {@link cn.com.swain169.log.logRecord.impl.LogRecordManager }
      */
     public static void regIRecordMsgFile(AbsLogRecord recordMsg) {
-        TFlog.init(recordMsg);
+        TFlog.set(recordMsg);
     }
 
     private static final int PrintStackLine = 4;

@@ -11,8 +11,6 @@ import cn.com.common.test.testProtocol.TestProtocolActivity;
 import cn.com.common.test.testScrollView.ScrollViewActivity;
 import cn.com.swain169.log.TFlog;
 import cn.com.swain169.log.Tlog;
-import cn.com.swain169.log.logRecord.AbsLogRecord;
-import cn.com.swain169.log.logRecord.impl.LogRecordManager;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -20,9 +18,18 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Tlog.v(" MainActivity onCreate ");
+        TFlog.startRecord();
 
+        Tlog.v(" MainActivity onCreate ");
         testLog();
+
+//        testTFLog();
+    }
+
+    @Override
+    protected void onDestroy() {
+        TFlog.stopRecord();
+        super.onDestroy();
     }
 
     public void skipBleScan(View v) {
@@ -37,7 +44,34 @@ public class MainActivity extends AppCompatActivity {
         startActivity(new Intent(this, TestProtocolActivity.class));
     }
 
-    private void testLog(){
+    private void testTFLog() {
+        TFlog.v("TFlog", " test Tlog v");
+        TFlog.v("TFlog", " test Tlog v", new Throwable());
+        TFlog.v("TFlog", new Throwable());
+
+        TFlog.d("TFlog", " test Tlog d");
+        TFlog.d("TFlog", new Throwable());
+        TFlog.d("TFlog", " test Tlog d", new Throwable());
+
+        TFlog.i("TFlog", " test Tlog i");
+        TFlog.i("TFlog", new Throwable());
+        TFlog.i("TFlog", " test Tlog i", new Throwable());
+
+        TFlog.w("TFlog", " test Tlog w");
+        TFlog.w("TFlog", new Throwable());
+        TFlog.w("TFlog", " test Tlog w", new Throwable());
+
+        TFlog.e("TFlog", " test Tlog e");
+        TFlog.e("TFlog", new Throwable());
+        TFlog.e("TFlog", " test Tlog e", new Throwable());
+
+        TFlog.a("TFlog", " test Tlog a");
+        TFlog.a("TFlog", new Throwable());
+        TFlog.a("TFlog", " test Tlog a", new Throwable());
+
+    }
+
+    private void testLog() {
         Tlog.v("swain", " test Tlog v");
         Tlog.v("swain", " test Tlog v", new Throwable());
         Tlog.v("swain", new Throwable());

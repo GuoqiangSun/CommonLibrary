@@ -2,7 +2,6 @@ package cn.com.swain.baselib.file;
 
 import android.app.Application;
 import android.os.Environment;
-import android.util.Log;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
@@ -197,7 +196,7 @@ public abstract class FileTemplate implements IApp {
         return new File(getProjectPath(), APP_CACHE_PATH_NAME);
     }
 
-    protected static final String APP_LOG_PATH_NAME = "Log";
+    protected static final String APP_LOG_PATH_NAME = "log";
 
     /**
      * Log 目录

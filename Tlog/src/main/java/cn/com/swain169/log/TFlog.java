@@ -15,31 +15,41 @@ public class TFlog {
     private static AbsLogRecord mRecordMsg;
 
     /**
-     * you can user {@link cn.com.swain169.log.logRecord.impl.LogRecordManager }
+     * when main Activity onCreate() ,need call {@link #startRecord()}
+     * when main Activity onDestroy() ,need call {@link #stopRecord()}
      *
-     * @param recordMsg
+     * @param recordMsg you can use {@link cn.com.swain169.log.logRecord.impl.LogRecordManager }
+     * @return true or false
      */
-    public static synchronized void init(AbsLogRecord recordMsg) {
-        if (recordMsg == null) { // release
-            AbsLogRecord mTmpRecordMsg = mRecordMsg;
-            mRecordMsg = null;
-            if (mTmpRecordMsg != null) {
-                mTmpRecordMsg.releaseLogFile();
-            }
-        } else { // init
-            mRecordMsg = recordMsg;
-            mRecordMsg.initLogFile();
+    public static synchronized boolean set(AbsLogRecord recordMsg) {
+
+        if (hasILogRecordImpl()) {
+            return false;
         }
+        if (recordMsg != null && !recordMsg.isInit()) {
+            recordMsg.initLogFile();
+        }
+        mRecordMsg = recordMsg;
+        return true;
+    }
+
+    public static synchronized boolean remove() {
+        AbsLogRecord mTmpRecordMsg = mRecordMsg;
+        mRecordMsg = null;
+        if (mTmpRecordMsg != null && mTmpRecordMsg.isInit()) {
+            mTmpRecordMsg.releaseLogFile();
+        }
+        return true;
     }
 
     public static boolean hasILogRecordImpl() {
-        return mRecordMsg == null;
+        return mRecordMsg != null;
     }
 
     // 是否正在录制log中
     public static boolean isRecording() {
         if (mRecordMsg != null) {
-            return mRecordMsg.checkIsRecord();
+            return mRecordMsg.isRecording();
         }
         return false;
     }
@@ -52,7 +62,7 @@ public class TFlog {
     }
 
     //同步数据到磁盘
-    public static void syncData() {
+    public static void syncRecordData() {
         if (mRecordMsg != null) {
             mRecordMsg.syncRecordData();
         }

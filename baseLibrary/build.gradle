@@ -46,9 +46,9 @@ dependencies {
 //    //项目名称
 //    artifactId = 'baselib'
 //    //版本号
-//    publishVersion = '3.0.16'
+//    publishVersion = '3.0.17'
 //    //描述，不重要
-//    desc = 'common sdk 3.0.16'
+//    desc = 'common sdk 3.0.17'
 //
 ////    property()
 //

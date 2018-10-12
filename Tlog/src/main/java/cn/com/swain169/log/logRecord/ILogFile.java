@@ -12,7 +12,7 @@ public interface ILogFile {
      *
      * @return true or false
      */
-    boolean checkIsRecord();
+    boolean isRecording();
 
     /**
      * 开启录制
@@ -28,6 +28,13 @@ public interface ILogFile {
      * 停止录制
      */
     void stopRecord();
+
+    /**
+     * 是否已经初始化了
+     *
+     * @return true or false
+     */
+    boolean isInit();
 
     /**
      * 初始化

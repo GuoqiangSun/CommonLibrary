@@ -26,38 +26,43 @@ public class LogRecordManager extends AbsLogRecord {
 
     private boolean init = false;
 
-    public void initLogFile() {
-        if (this.init) {
-            throw new RuntimeException(" on init(); LogRecordClient has already init. No repetition init ");
+    public synchronized void initLogFile() {
+        if (isInit()) {
+            return;
         }
         this.init = true;
         this.mLogRecordClient.initWriteThread();
-        this.mLogRecordClient.checkBufferWriter();
+        startRecord();
         this.mILogRecord = this.mLogRecordClient;
         recordMsgV("LogRecordClient", " LogRecordClient init success...");
     }
 
-    public void releaseLogFile() {
-        if (!this.init) {
-            throw new RuntimeException(" on release(); LogRecordClient is not init. can not release ");
+    public synchronized void releaseLogFile() {
+        if (!isInit()) {
+            return;
         }
         this.init = false;
-        this.mLogRecordClient.releaseWriteThread();
         this.mILogRecord = null;
+        stopRecord();
+        this.mLogRecordClient.releaseWriteThread();
     }
 
-    private void checkInit() {
-        if (!this.init) {
-            throw new RuntimeException(" LogRecordClient is not init ,you can not exe this method");
-        }
+    /**
+     * 是否已经初始化了
+     */
+    @Override
+    public synchronized boolean isInit() {
+        return this.init;
     }
 
     /**
      * 检测是否在录制
      * 如果没有录制则开启录制
      */
-    public boolean checkIsRecord() {
-        checkInit();
+    public boolean isRecording() {
+        if (!isInit()) {
+            return false;
+        }
         return mLogRecordClient.checkBufferWriter();
     }
 
@@ -65,26 +70,28 @@ public class LogRecordManager extends AbsLogRecord {
      * 开始录制
      */
     public void startRecord() {
-        checkInit();
-        mLogRecordClient.createBufferWriter();
+        if (isInit()) {
+            mLogRecordClient.createBufferWriter();
+        }
     }
 
     /**
      * 数据同步到磁盘
      */
     public void syncRecordData() {
-        checkInit();
-        mLogRecordClient.syncBufferWriter();
+        if (isInit()) {
+            mLogRecordClient.syncBufferWriter();
+        }
     }
 
     /**
      * 停止录制
      */
     public void stopRecord() {
-        checkInit();
-        mLogRecordClient.releaseBufferWriter();
+        if (isInit()) {
+            mLogRecordClient.releaseBufferWriter();
+        }
     }
-
 
     @Override
     public void recordMsgA(String TAG, String msg) {

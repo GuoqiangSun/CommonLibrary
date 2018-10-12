@@ -3,8 +3,13 @@ package cn.com.common.test.main;
 import android.content.res.Configuration;
 import android.os.Build;
 
+import java.io.File;
+
 import cn.com.common.test.global.LooperManager;
+import cn.com.swain.baselib.file.FileTemplate;
+import cn.com.swain169.log.TFlog;
 import cn.com.swain169.log.Tlog;
+import cn.com.swain169.log.logRecord.impl.LogRecordManager;
 
 
 /**
@@ -21,6 +26,15 @@ public class CommonApplication extends BaseApplication {
     public void onCreate() {
         super.onCreate();
 
+        FileTemplate f = new FileTemplate() {
+            @Override
+            protected File initMyProjectPath() {
+                return null;
+            }
+        };
+        f.init(this);
+        TFlog.set(new LogRecordManager(f.getLogPath(), "00", 1024 * 1024 * 6));
+        Tlog.setLogRecordDebug(true);
         Tlog.setPrintStackDebug(true);
         LooperManager.getInstance().init(this);
 
