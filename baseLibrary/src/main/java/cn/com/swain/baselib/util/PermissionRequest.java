@@ -1,8 +1,8 @@
 package cn.com.swain.baselib.util;
 
 import android.app.Activity;
-import android.app.Application;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -11,7 +11,9 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 
 import java.lang.ref.WeakReference;
+import java.util.Queue;
 
+import cn.com.swain.baselib.Queue.SyncLimitQueue;
 import cn.com.swain169.log.Tlog;
 
 
@@ -25,20 +27,13 @@ public class PermissionRequest {
     private String TAG = "permissionRequest";
 
     private WeakReference<Activity> mWr;
-    private String[] permissionArray;
-    private int[] res;
     private PermissionHandler mHandler;
-    private static final int MY_PERMISSIONS_REQUEST_FILE = 0x09;
-    private OnPermissionFinish mOnPermissionFinish;
+    private OnPermissionResult mOnPermissionFinish;
 
-    public PermissionRequest(Activity mActivity, OnPermissionFinish mOnPermissionFinish, String[] permissionArray, int[] res) {
+    public PermissionRequest(Activity mActivity, OnPermissionResult mOnPermissionFinish) {
         this.mWr = new WeakReference<>(mActivity);
         this.mOnPermissionFinish = mOnPermissionFinish;
-        this.permissionArray = permissionArray;
-        this.res = res;
-
         this.mHandler = new PermissionHandler(this, Looper.getMainLooper());
-
     }
 
     public void release() {
@@ -54,111 +49,185 @@ public class PermissionRequest {
         return (mWr != null ? mWr.get() : null);
     }
 
-    public void requestPermission() {
-        mHandler.sendEmptyMessage(REQUEST_PERMISSION);
+
+    private Queue<String> mInternalPermissionQueue = new SyncLimitQueue<>(12);
+
+
+    /**
+     * 初始化用
+     */
+    public void requestAllPermission(String... permissionArray) {
+
+        if (permissionArray != null && permissionArray.length > 0) {
+            for (String s : permissionArray) {
+                mInternalPermissionQueue.offer(s);
+            }
+        }
+
+        mHandler.sendEmptyMessage(INTERNAL_PERMISSIONS_REQUEST_CODE);
     }
 
-    private int mCur = 0;
+    private Queue<String> mExternalPermissionQueue = new SyncLimitQueue<>(12);
 
-    private static final int REQUEST_PERMISSION = 0x00;
-    private static final int REQUEST_PERMISSION_AGAIN = 0x01;
+    /**
+     * 外部请求权限
+     */
+    public void requestPermissionOnce(String permissionStr) {
+        mExternalPermissionQueue.offer(permissionStr);
+        mHandler.sendEmptyMessage(EXTERNAL_PERMISSIONS_REQUEST_CODE);
+    }
+
+    private static final int INTERNAL_REQUEST_PERMISSION_FINISH_WHAT = 0x01;
+
+    private static final int INTERNAL_PERMISSIONS_REQUEST_CODE = 0x8362;
+
+    private static final int EXTERNAL_PERMISSIONS_REQUEST_CODE = 0x8363;
 
     private void handleMessage(Message msg) {
+
+        switch (msg.what) {
+
+            case INTERNAL_REQUEST_PERMISSION_FINISH_WHAT:
+                if (mOnPermissionFinish != null) {
+                    mOnPermissionFinish.onAllPermissionRequestFinish();
+                }
+                break;
+
+            case INTERNAL_PERMISSIONS_REQUEST_CODE:
+
+                String internalPermissionStr = mInternalPermissionQueue.poll();
+                if (internalPermissionStr == null) {
+                    mHandler.sendEmptyMessage(INTERNAL_REQUEST_PERMISSION_FINISH_WHAT);
+                    return;
+                }
+
+                if (checkSelfPermission(internalPermissionStr)) {
+
+                    if (mOnPermissionFinish != null) {
+                        mOnPermissionFinish.onPermissionRequestResult(internalPermissionStr, true);
+                    }
+
+                    mHandler.sendEmptyMessage(INTERNAL_PERMISSIONS_REQUEST_CODE);
+
+                } else {
+                    requestPermission(internalPermissionStr, INTERNAL_PERMISSIONS_REQUEST_CODE);
+                }
+
+                break;
+
+
+            case EXTERNAL_PERMISSIONS_REQUEST_CODE:
+
+                String externalPermissionStr = mExternalPermissionQueue.poll();
+                if (externalPermissionStr == null) {
+                    return;
+                }
+
+                if (checkSelfPermission(externalPermissionStr)) {
+                    if (mOnPermissionFinish != null) {
+                        mOnPermissionFinish.onPermissionRequestResult(externalPermissionStr, true);
+                    }
+
+                    mHandler.sendEmptyMessage(EXTERNAL_PERMISSIONS_REQUEST_CODE);
+
+                } else {
+                    requestPermission(externalPermissionStr, EXTERNAL_PERMISSIONS_REQUEST_CODE);
+                }
+
+                break;
+        }
+
+    }
+
+
+    /**
+     * 是否有权限
+     */
+    public boolean checkSelfPermission(String permissionStr) {
+        Activity activity = getActivity();
+        if (activity == null) {
+            Tlog.e(TAG, " checkSelfPermission activity == null ");
+            return false;
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+
+            if (ContextCompat.checkSelfPermission(activity,
+                    permissionStr) == PackageManager.PERMISSION_GRANTED) {
+                Tlog.v(TAG, " Has permission " + permissionStr);
+                return true;
+            }
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * 请求权限
+     */
+    private boolean requestPermission(String permissionStr, int requestCode) {
         Activity activity = getActivity();
         if (activity == null) {
             Tlog.e(TAG, " request permission activity == null ");
-            return;
+            return false;
         }
-        Application application = activity.getApplication();
+        Tlog.v(TAG, " request permission " + permissionStr);
 
-        if (application == null) {
-            Tlog.e(TAG, "request permission  application == null ");
-            return;
-        }
-
-        if (msg.what == REQUEST_PERMISSION) {
-            if (mCur >= permissionArray.length) {
-                //finish
-                Tlog.d(TAG, " permission request finish");
-                if (mOnPermissionFinish != null) {
-                    mOnPermissionFinish.onPermissionRequestFinish();
-                }
-
-                return;
-            }
-
-            String permissionStr = permissionArray[mCur];
-
-            boolean has = (ContextCompat.checkSelfPermission(activity,
-                    permissionStr) == PackageManager.PERMISSION_GRANTED);
-            ++mCur;
-
-            if (has) {
-
-                Tlog.v(TAG, " Has permission " + permissionStr);
-                mHandler.sendEmptyMessage(REQUEST_PERMISSION);
-
-            } else {
-                Tlog.v(TAG, " request permission " + permissionStr);
-                ActivityCompat.requestPermissions(activity,
-                        new String[]{permissionStr},
-                        MY_PERMISSIONS_REQUEST_FILE);
-
-            }
-
-        } else if (msg.what == REQUEST_PERMISSION_AGAIN) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             ActivityCompat.requestPermissions(activity,
-                    new String[]{(String) msg.obj},
-                    MY_PERMISSIONS_REQUEST_FILE);
+                    new String[]{permissionStr},
+                    requestCode);
         }
 
+        return true;
     }
 
+    /**
+     * 被拒绝了
+     * 需要请求权限的理由
+     */
+    public boolean needRationaleForPermission(String permissionsStr) {
+        Activity activity = getActivity();
+        if (activity == null) {
+            Tlog.e(TAG, " needPermissionRationale activity==null ");
+            return false;
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (!ActivityCompat.shouldShowRequestPermissionRationale(activity, permissionsStr)) {
+                // 权限被禁止
+                Tlog.v(TAG, " should Show Request " + permissionsStr + " Rationale ");
+                return true;
+            }
+        }
+        return false;
+    }
 
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode == MY_PERMISSIONS_REQUEST_FILE) {
-            if (grantResults.length > 0) {
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    //用户允许改权限，0表示允许，-1表示拒绝 PERMISSION_GRANTED = 0， PERMISSION_DENIED = -1
-                    //授权被允许
-                    Tlog.v(TAG, " PERMISSION_GRANTED " + permissions[0]);
-                    mHandler.sendEmptyMessage(REQUEST_PERMISSION);
 
-                } else {
+        if (requestCode == INTERNAL_PERMISSIONS_REQUEST_CODE
+                || requestCode == EXTERNAL_PERMISSIONS_REQUEST_CODE) {
 
-                    int j = -1;
-                    for (int i = 0; i < permissionArray.length; i++) {
-                        if (permissions[0].equalsIgnoreCase(permissionArray[i])) {
-                            j = i;
-                        }
-                    }
+            if (grantResults.length > 0 && permissions.length > 0) {
 
-                    if (j < 0) {
-                        j = mCur - 1;
-                    }
+                boolean granted = (grantResults[0] == PackageManager.PERMISSION_GRANTED);
+                Tlog.e(TAG, permissions[0] + "INTERNAL PERMISSION_GRANTED?" + granted);
 
-                    Tlog.e(TAG, " != PERMISSION_GRANTED res j" + j + " " + permissions[0]);
-//                    showMessageOKCancel(permissions[0], res[j]);
+                if (!granted) {
+                    needRationaleForPermission(permissions[0]);
+                }
 
-                    Activity activity = getActivity();
-                    if (activity == null) {
-                        Tlog.e(TAG, " activity==null ");
-                        return;
-                    }
-
-                    if (!ActivityCompat.shouldShowRequestPermissionRationale(activity, permissions[0])) {
-                        // 权限被禁止
-                        Tlog.v(TAG, " shouldShowRequestPermissionRationale ");
-                        mHandler.sendEmptyMessage(REQUEST_PERMISSION);
-                    } else {
-                        mHandler.sendEmptyMessage(REQUEST_PERMISSION);
-                    }
-
+                if (mOnPermissionFinish != null) {
+                    mOnPermissionFinish.onPermissionRequestResult(permissions[0], granted);
                 }
 
             }
+            // 不管有没有拒接，继续请求权限
+            mHandler.sendEmptyMessage(requestCode);
 
         }
+
     }
 
 
@@ -183,8 +252,21 @@ public class PermissionRequest {
         }
     }
 
-    public interface OnPermissionFinish {
-        void onPermissionRequestFinish();
+    public interface OnPermissionResult {
+
+        /**
+         * 权限请求完毕
+         */
+        void onAllPermissionRequestFinish();
+
+
+        /**
+         * 哪个权限请求的结果
+         *
+         * @param permission 权限名称
+         * @param granted    是否授予
+         */
+        void onPermissionRequestResult(String permission, boolean granted);
     }
 
 }

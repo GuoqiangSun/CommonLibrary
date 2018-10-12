@@ -4,6 +4,8 @@ import android.util.Log;
 
 import java.util.Formatter;
 
+import cn.com.swain169.log.logRecord.AbsLogRecord;
+
 /**
  * author: Guoqiang_Sun
  * date : 2018/3/20 0020
@@ -17,6 +19,11 @@ public class Tlog {
 
     private static boolean DEBUG = true;
 
+    /**
+     * 设置是否开启日志
+     *
+     * @param flag
+     */
     public static void setDebug(boolean flag) {
         DEBUG = flag;
     }
@@ -27,6 +34,17 @@ public class Tlog {
 
     private static boolean LOG_RECORD_DEBUG = false;
 
+    /**
+     * 设置是否保存文件到日志
+     * <p>
+     * if flag is true
+     * you need init TFlog
+     * {@link cn.com.swain169.log.TFlog}
+     * <p>
+     * also can {@link #regIRecordMsgFile(AbsLogRecord)}
+     *
+     * @param flag
+     */
     public static void setLogRecordDebug(boolean flag) {
         LOG_RECORD_DEBUG = flag;
     }
@@ -37,12 +55,26 @@ public class Tlog {
 
     private static boolean LOG_PRINT_STACK = false;
 
+    /**
+     * 设置是否打印堆栈消息
+     *
+     * @param flag
+     */
     public static void setPrintStackDebug(boolean flag) {
         LOG_PRINT_STACK = flag;
     }
 
     public static boolean isPrintStackDebug() {
         return LOG_PRINT_STACK;
+    }
+
+    /**
+     * you can user {@link cn.com.swain169.log.logRecord.impl.LogRecordManager }
+     *
+     * @param recordMsg
+     */
+    public static void regIRecordMsgFile(AbsLogRecord recordMsg) {
+        TFlog.init(recordMsg);
     }
 
     private static final int PrintStackLine = 4;

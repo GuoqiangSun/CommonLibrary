@@ -4,7 +4,6 @@ import android.content.res.Configuration;
 import android.os.Build;
 
 import cn.com.common.test.global.LooperManager;
-import cn.com.swain.baselib.app.BaseApplication;
 import cn.com.swain169.log.Tlog;
 
 

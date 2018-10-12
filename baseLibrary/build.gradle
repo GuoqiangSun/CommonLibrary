@@ -31,7 +31,6 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
-    api 'com.android.support:multidex:1.0.3'
     implementation project(':Tlog')
 }
 
@@ -47,9 +46,9 @@ dependencies {
 //    //项目名称
 //    artifactId = 'baselib'
 //    //版本号
-//    publishVersion = '3.0.12'
+//    publishVersion = '3.0.16'
 //    //描述，不重要
-//    desc = 'common sdk 3.0.12'
+//    desc = 'common sdk 3.0.16'
 //
 ////    property()
 //

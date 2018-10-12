@@ -1,4 +1,4 @@
-package cn.com.swain169.log.logRecord;
+package cn.com.swain169.log.logRecord.impl;
 
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -15,6 +15,8 @@ import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+
+import cn.com.swain169.log.logRecord.ILogRecord;
 
 /**
  * author: Guoqiang_Sun
@@ -82,7 +84,7 @@ public class LogRecordClient implements ILogRecord {
     /**
      * 初始化写线程
      */
-    public void initWriteThread() {
+    void initWriteThread() {
 
         if (mHT == null) {
             synchronized (synObj) {
@@ -99,7 +101,7 @@ public class LogRecordClient implements ILogRecord {
     /**
      * 释放写线程
      */
-    public void releaseWriteThread() {
+    void releaseWriteThread() {
         if (mHT != null) {
             synchronized (synObj) {
                 if (mHT != null) {
@@ -111,13 +113,21 @@ public class LogRecordClient implements ILogRecord {
         }
     }
 
+    /**
+     * 检测mBufferWriter是否已经创建
+     *
+     * @return
+     */
+    synchronized boolean checkBufferWriter() {
+        return mBufferWriter == null;
+    }
 
     /**
      * 检测FileWriter是否创建，没有创建则创建.
      * 此操作属于线程安全操作
      * {@link #MSG_WHAT_CHECK_BUFFER_WRITE }
      */
-    public void checkBufferWriter() {
+    void createBufferWriter() {
         if (mHandler != null) {
             mHandler.sendEmptyMessage(MSG_WHAT_CHECK_BUFFER_WRITE);
         }
@@ -128,7 +138,7 @@ public class LogRecordClient implements ILogRecord {
      * 此操作属于线程安全操作
      * {@link #MSG_WHAT_RELEASE_BUFFER_WRITE }
      */
-    public void releaseBufferWriter() {
+    void releaseBufferWriter() {
         if (mHandler != null) {
             mHandler.sendEmptyMessage(MSG_WHAT_RELEASE_BUFFER_WRITE);
         }
@@ -139,7 +149,7 @@ public class LogRecordClient implements ILogRecord {
      * 此操作属于线程安全操作
      * {@link #MSG_WHAT_RELEASE_BUFFER_WRITE }
      */
-    public void syncBufferWriter() {
+    void syncBufferWriter() {
         if (mHandler != null) {
             mHandler.sendEmptyMessage(MSG_WHAT_SYNC);
         }
@@ -320,16 +330,12 @@ public class LogRecordClient implements ILogRecord {
         msgFile = null;
     }
 
-    private int getTid() {
-        return Process.myTid();
-    }
-
     @Override
     public void recordMsgV(String TAG, String msg) {
 
         if (mHandler != null) {
-            String log = getTid() + " V/" + TAG + ":" + msg;
-            mHandler.obtainMessage(MSG_WHAT_RECORD, log).sendToTarget();
+            LogMsg mLogMsg = new LogMsg(TAG, msg, Log.VERBOSE);
+            mHandler.obtainMessage(MSG_WHAT_RECORD, mLogMsg).sendToTarget();
         }
 
     }
@@ -338,8 +344,8 @@ public class LogRecordClient implements ILogRecord {
     public void recordMsgV(String TAG, Throwable e) {
 
         if (mHandler != null) {
-            String log = getTid() + " V/" + TAG + ":" + Log.getStackTraceString(e);
-            mHandler.obtainMessage(MSG_WHAT_RECORD, log).sendToTarget();
+            LogMsg mLogMsg = new LogMsg(TAG, e, Log.VERBOSE);
+            mHandler.obtainMessage(MSG_WHAT_RECORD, mLogMsg).sendToTarget();
         }
 
     }
@@ -347,8 +353,8 @@ public class LogRecordClient implements ILogRecord {
     @Override
     public void recordMsgV(String TAG, String msg, Throwable e) {
         if (mHandler != null) {
-            String log = getTid() + " V/" + TAG + ":" + msg + Log.getStackTraceString(e);
-            mHandler.obtainMessage(MSG_WHAT_RECORD, log).sendToTarget();
+            LogMsg mLogMsg = new LogMsg(TAG, msg, e, Log.VERBOSE);
+            mHandler.obtainMessage(MSG_WHAT_RECORD, mLogMsg).sendToTarget();
         }
     }
 
@@ -356,8 +362,8 @@ public class LogRecordClient implements ILogRecord {
     public void recordMsgD(String TAG, String msg) {
 
         if (mHandler != null) {
-            String log = getTid() + " D/" + TAG + ":" + msg;
-            mHandler.obtainMessage(MSG_WHAT_RECORD, log).sendToTarget();
+            LogMsg mLogMsg = new LogMsg(TAG, msg, Log.DEBUG);
+            mHandler.obtainMessage(MSG_WHAT_RECORD, mLogMsg).sendToTarget();
         }
 
     }
@@ -366,8 +372,8 @@ public class LogRecordClient implements ILogRecord {
     public void recordMsgD(String TAG, Throwable e) {
 
         if (mHandler != null) {
-            String log = getTid() + " D/" + TAG + ":" + Log.getStackTraceString(e);
-            mHandler.obtainMessage(MSG_WHAT_RECORD, log).sendToTarget();
+            LogMsg mLogMsg = new LogMsg(TAG, e, Log.DEBUG);
+            mHandler.obtainMessage(MSG_WHAT_RECORD, mLogMsg).sendToTarget();
         }
 
     }
@@ -375,8 +381,8 @@ public class LogRecordClient implements ILogRecord {
     @Override
     public void recordMsgD(String TAG, String msg, Throwable e) {
         if (mHandler != null) {
-            String log = getTid() + " D/" + TAG + ":" + msg + Log.getStackTraceString(e);
-            mHandler.obtainMessage(MSG_WHAT_RECORD, log).sendToTarget();
+            LogMsg mLogMsg = new LogMsg(TAG, msg, e, Log.DEBUG);
+            mHandler.obtainMessage(MSG_WHAT_RECORD, mLogMsg).sendToTarget();
         }
     }
 
@@ -384,8 +390,8 @@ public class LogRecordClient implements ILogRecord {
     public void recordMsgI(String TAG, String msg) {
 
         if (mHandler != null) {
-            String log = getTid() + " I/" + TAG + ":" + msg;
-            mHandler.obtainMessage(MSG_WHAT_RECORD, log).sendToTarget();
+            LogMsg mLogMsg = new LogMsg(TAG, msg, Log.INFO);
+            mHandler.obtainMessage(MSG_WHAT_RECORD, mLogMsg).sendToTarget();
         }
 
     }
@@ -394,8 +400,8 @@ public class LogRecordClient implements ILogRecord {
     public void recordMsgI(String TAG, Throwable e) {
 
         if (mHandler != null) {
-            String log = getTid() + " I/" + TAG + ":" + Log.getStackTraceString(e);
-            mHandler.obtainMessage(MSG_WHAT_RECORD, log).sendToTarget();
+            LogMsg mLogMsg = new LogMsg(TAG, e, Log.INFO);
+            mHandler.obtainMessage(MSG_WHAT_RECORD, mLogMsg).sendToTarget();
         }
 
     }
@@ -403,8 +409,8 @@ public class LogRecordClient implements ILogRecord {
     @Override
     public void recordMsgI(String TAG, String msg, Throwable e) {
         if (mHandler != null) {
-            String log = getTid() + " I/" + TAG + ":" + msg + Log.getStackTraceString(e);
-            mHandler.obtainMessage(MSG_WHAT_RECORD, log).sendToTarget();
+            LogMsg mLogMsg = new LogMsg(TAG, msg, e, Log.INFO);
+            mHandler.obtainMessage(MSG_WHAT_RECORD, mLogMsg).sendToTarget();
         }
     }
 
@@ -412,8 +418,8 @@ public class LogRecordClient implements ILogRecord {
     public void recordMsgW(String TAG, String msg) {
 
         if (mHandler != null) {
-            String log = getTid() + " W/" + TAG + ":" + msg;
-            mHandler.obtainMessage(MSG_WHAT_RECORD, log).sendToTarget();
+            LogMsg mLogMsg = new LogMsg(TAG, msg, Log.WARN);
+            mHandler.obtainMessage(MSG_WHAT_RECORD, mLogMsg).sendToTarget();
         }
 
     }
@@ -422,8 +428,8 @@ public class LogRecordClient implements ILogRecord {
     public void recordMsgW(String TAG, Throwable e) {
 
         if (mHandler != null) {
-            String log = getTid() + " W/" + TAG + ":" + Log.getStackTraceString(e);
-            mHandler.obtainMessage(MSG_WHAT_RECORD, log).sendToTarget();
+            LogMsg mLogMsg = new LogMsg(TAG, e, Log.WARN);
+            mHandler.obtainMessage(MSG_WHAT_RECORD, mLogMsg).sendToTarget();
         }
 
     }
@@ -431,8 +437,8 @@ public class LogRecordClient implements ILogRecord {
     @Override
     public void recordMsgW(String TAG, String msg, Throwable e) {
         if (mHandler != null) {
-            String log = getTid() + " W/" + TAG + ":" + msg + Log.getStackTraceString(e);
-            mHandler.obtainMessage(MSG_WHAT_RECORD, log).sendToTarget();
+            LogMsg mLogMsg = new LogMsg(TAG, msg, e, Log.WARN);
+            mHandler.obtainMessage(MSG_WHAT_RECORD, mLogMsg).sendToTarget();
         }
     }
 
@@ -440,8 +446,8 @@ public class LogRecordClient implements ILogRecord {
     public void recordMsgE(String TAG, String msg) {
 
         if (mHandler != null) {
-            String log = getTid() + " E/" + TAG + ":" + msg;
-            mHandler.obtainMessage(MSG_WHAT_RECORD, log).sendToTarget();
+            LogMsg mLogMsg = new LogMsg(TAG, msg, Log.ERROR);
+            mHandler.obtainMessage(MSG_WHAT_RECORD, mLogMsg).sendToTarget();
         }
 
     }
@@ -450,8 +456,8 @@ public class LogRecordClient implements ILogRecord {
     public void recordMsgE(String TAG, Throwable e) {
 
         if (mHandler != null) {
-            String log = getTid() + " E/" + TAG + ":" + Log.getStackTraceString(e);
-            mHandler.obtainMessage(MSG_WHAT_RECORD, log).sendToTarget();
+            LogMsg mLogMsg = new LogMsg(TAG, e, Log.ERROR);
+            mHandler.obtainMessage(MSG_WHAT_RECORD, mLogMsg).sendToTarget();
         }
 
     }
@@ -459,8 +465,8 @@ public class LogRecordClient implements ILogRecord {
     @Override
     public void recordMsgE(String TAG, String msg, Throwable e) {
         if (mHandler != null) {
-            String log = getTid() + " E/" + TAG + ":" + msg + Log.getStackTraceString(e);
-            mHandler.obtainMessage(MSG_WHAT_RECORD, log).sendToTarget();
+            LogMsg mLogMsg = new LogMsg(TAG, msg, e, Log.ERROR);
+            mHandler.obtainMessage(MSG_WHAT_RECORD, mLogMsg).sendToTarget();
         }
     }
 
@@ -468,16 +474,18 @@ public class LogRecordClient implements ILogRecord {
     @Override
     public void recordMsgA(String TAG, String msg) {
         if (mHandler != null) {
-            String log = getTid() + " A/" + TAG + ":" + msg;
-            mHandler.obtainMessage(MSG_WHAT_RECORD, log).sendToTarget();
+//            String log = getTid() + " A/" + TAG + ":" + msg;
+            LogMsg mLogMsg = new LogMsg(TAG, msg, Log.ASSERT);
+            mHandler.obtainMessage(MSG_WHAT_RECORD, mLogMsg).sendToTarget();
         }
     }
 
     @Override
     public void recordMsgA(String TAG, Throwable e) {
         if (mHandler != null) {
-            String log = getTid() + " A/" + TAG + ":" + Log.getStackTraceString(e);
-            mHandler.obtainMessage(MSG_WHAT_RECORD, log).sendToTarget();
+//            String log = getTid() + " A/" + TAG + ":" + Log.getStackTraceString(e);
+            LogMsg mLogMsg = new LogMsg(TAG, e, Log.ASSERT);
+            mHandler.obtainMessage(MSG_WHAT_RECORD, mLogMsg).sendToTarget();
         }
 
     }
@@ -485,11 +493,78 @@ public class LogRecordClient implements ILogRecord {
     @Override
     public void recordMsgA(String TAG, String msg, Throwable e) {
         if (mHandler != null) {
-            String log = getTid() + " A/" + TAG + ":" + msg + Log.getStackTraceString(e);
-            mHandler.obtainMessage(MSG_WHAT_RECORD, log).sendToTarget();
+//            String log = getTid() + " A/" + TAG + ":" + msg + Log.getStackTraceString(e);
+            LogMsg mLogMsg = new LogMsg(TAG, msg, e, Log.ASSERT);
+            mHandler.obtainMessage(MSG_WHAT_RECORD, mLogMsg).sendToTarget();
         }
     }
 
+    private static final class LogMsg {
+
+        LogMsg() {
+            this(null, null, null, 0);
+        }
+
+        LogMsg(String TAG, String msg, int level) {
+            this(TAG, msg, null, level);
+        }
+
+        LogMsg(String TAG, Throwable e, int level) {
+            this(TAG, null, e, level);
+        }
+
+        LogMsg(String TAG, String msg, Throwable e, int level) {
+            this.tid = Process.myTid();
+            this.TAG = TAG;
+            this.msg = msg;
+            this.e = e;
+            this.level = level;
+        }
+
+        int tid;
+        String TAG;
+        int level;
+        String msg;
+        Throwable e;
+
+        @Override
+        public String toString() {
+            StringBuilder sb = new StringBuilder();
+            sb.append(tid);
+            switch (level) {
+                case Log.VERBOSE:
+                    sb.append(" V/");
+                    break;
+                case Log.DEBUG:
+                    sb.append(" D/");
+                    break;
+                case Log.INFO:
+                    sb.append(" I/");
+                    break;
+                case Log.WARN:
+                    sb.append(" W/");
+                    break;
+                case Log.ERROR:
+                    sb.append(" E/");
+                    break;
+                case Log.ASSERT:
+                    sb.append(" A/");
+                    break;
+                default:
+                    sb.append(" P/");
+                    break;
+            }
+
+            sb.append(TAG).append(":");
+            if (msg != null) {
+                sb.append(msg);
+            }
+            if (e != null) {
+                sb.append(Log.getStackTraceString(e));
+            }
+            return sb.toString();
+        }
+    }
 
     private static final class FileRecordHandler extends Handler {
 

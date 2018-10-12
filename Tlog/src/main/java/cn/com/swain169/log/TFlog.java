@@ -1,6 +1,6 @@
 package cn.com.swain169.log;
 
-import cn.com.swain169.log.logRecord.ILogRecord;
+import cn.com.swain169.log.logRecord.AbsLogRecord;
 
 /**
  * author: Guoqiang_Sun
@@ -12,14 +12,57 @@ public class TFlog {
     private TFlog() {
     }
 
-    private static ILogRecord mRecordMsg;
+    private static AbsLogRecord mRecordMsg;
 
-    public static void regIRecordMsgFile(ILogRecord recordMsg) {
-        mRecordMsg = recordMsg;
+    /**
+     * you can user {@link cn.com.swain169.log.logRecord.impl.LogRecordManager }
+     *
+     * @param recordMsg
+     */
+    public static synchronized void init(AbsLogRecord recordMsg) {
+        if (recordMsg == null) { // release
+            AbsLogRecord mTmpRecordMsg = mRecordMsg;
+            mRecordMsg = null;
+            if (mTmpRecordMsg != null) {
+                mTmpRecordMsg.releaseLogFile();
+            }
+        } else { // init
+            mRecordMsg = recordMsg;
+            mRecordMsg.initLogFile();
+        }
     }
 
-    public static boolean hasILogRecord() {
+    public static boolean hasILogRecordImpl() {
         return mRecordMsg == null;
+    }
+
+    // 是否正在录制log中
+    public static boolean isRecording() {
+        if (mRecordMsg != null) {
+            return mRecordMsg.checkIsRecord();
+        }
+        return false;
+    }
+
+    // 开始录制
+    public static void startRecord() {
+        if (mRecordMsg != null) {
+            mRecordMsg.startRecord();
+        }
+    }
+
+    //同步数据到磁盘
+    public static void syncData() {
+        if (mRecordMsg != null) {
+            mRecordMsg.syncRecordData();
+        }
+    }
+
+    // 停止录制
+    public static void stopRecord() {
+        if (mRecordMsg != null) {
+            mRecordMsg.stopRecord();
+        }
     }
 
     public static void v(String TAG, String msg) {

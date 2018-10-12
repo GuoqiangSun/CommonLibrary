@@ -1,4 +1,4 @@
-package cn.com.swain.baselib.app;
+package cn.com.common.test.main;
 
 import android.support.multidex.MultiDexApplication;
 

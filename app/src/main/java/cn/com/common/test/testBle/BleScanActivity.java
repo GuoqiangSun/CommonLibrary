@@ -7,7 +7,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -97,29 +96,24 @@ public class BleScanActivity extends AppCompatActivity {
         setContentView(R.layout.activity_ble_scan);
 
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//            BleScanPermissionUtil.initPermission(this);
-//            FilePermissionUtil.initPermission(this);
+        String[] permissionArray = new String[]{
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.ACCESS_COARSE_LOCATION,
+        };
 
-            String[] permissionArray = new String[]{
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                    Manifest.permission.ACCESS_COARSE_LOCATION,
-            };
 
-            int[] res = new int[]{
-                    R.string.file_allow_permission,
-                    R.string.scan_ble_allow_permission,
-            };
+        mPermissionRequest = new PermissionRequest(this, new PermissionRequest.OnPermissionResult() {
+            @Override
+            public void onAllPermissionRequestFinish() {
+                Tlog.v(TAG, "HomeActivity  onAllPermissionRequestFinish() ");
+            }
 
-            Tlog.v(TAG, "HomeActivity  requestPermission() ");
-            mPermissionRequest = new PermissionRequest(this, new PermissionRequest.OnPermissionFinish() {
-                @Override
-                public void onPermissionRequestFinish() {
-
-                }
-            }, permissionArray, res);
-            mPermissionRequest.requestPermission();
-        }
+            @Override
+            public void onPermissionRequestResult(String permission, boolean granted) {
+                Tlog.v(TAG, "HomeActivity  onPermissionRequestResult() " + permission + " " + granted);
+            }
+        });
+        mPermissionRequest.requestAllPermission(permissionArray);
 
         progress = (ProgressBar) findViewById(R.id.progressBar1);
         mTxtBleState = (TextView) findViewById(R.id.bt_state);

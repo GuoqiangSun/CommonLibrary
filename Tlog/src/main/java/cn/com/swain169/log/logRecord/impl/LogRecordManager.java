@@ -1,29 +1,90 @@
-package cn.com.swain169.log.logRecord;
+package cn.com.swain169.log.logRecord.impl;
+
+import java.io.File;
+
+import cn.com.swain169.log.logRecord.AbsLogRecord;
+import cn.com.swain169.log.logRecord.ILogRecord;
 
 /**
  * author: Guoqiang_Sun
- * date : 2018/8/16 0016
+ * date : 2018/8/15 0015
  * desc :
  */
-public class LogRecordWrapper implements ILogRecord {
+public class LogRecordManager extends AbsLogRecord {
 
-    public LogRecordWrapper() {
-
-    }
-
-    public LogRecordWrapper(ILogRecord mILogRecord) {
-        this.mILogRecord = mILogRecord;
-    }
-
-
+    private final LogRecordClient mLogRecordClient;
     private ILogRecord mILogRecord;
 
-    public void attachIRecordMsgFile(ILogRecord mILogRecord) {
-        if (this.mILogRecord != null) {
-            throw new IllegalArgumentException(" mILogRecord is not null ");
-        }
-        this.mILogRecord = mILogRecord;
+    /**
+     * @param logPath 日志保存路径
+     * @param prefix  日志名称前缀
+     * @param size    单个日志文件大小
+     */
+    public LogRecordManager(File logPath, String prefix, long size) {
+        this.mLogRecordClient = new LogRecordClient(logPath, prefix, size);
     }
+
+    private boolean init = false;
+
+    public void initLogFile() {
+        if (this.init) {
+            throw new RuntimeException(" on init(); LogRecordClient has already init. No repetition init ");
+        }
+        this.init = true;
+        this.mLogRecordClient.initWriteThread();
+        this.mLogRecordClient.checkBufferWriter();
+        this.mILogRecord = this.mLogRecordClient;
+        recordMsgV("LogRecordClient", " LogRecordClient init success...");
+    }
+
+    public void releaseLogFile() {
+        if (!this.init) {
+            throw new RuntimeException(" on release(); LogRecordClient is not init. can not release ");
+        }
+        this.init = false;
+        this.mLogRecordClient.releaseWriteThread();
+        this.mILogRecord = null;
+    }
+
+    private void checkInit() {
+        if (!this.init) {
+            throw new RuntimeException(" LogRecordClient is not init ,you can not exe this method");
+        }
+    }
+
+    /**
+     * 检测是否在录制
+     * 如果没有录制则开启录制
+     */
+    public boolean checkIsRecord() {
+        checkInit();
+        return mLogRecordClient.checkBufferWriter();
+    }
+
+    /**
+     * 开始录制
+     */
+    public void startRecord() {
+        checkInit();
+        mLogRecordClient.createBufferWriter();
+    }
+
+    /**
+     * 数据同步到磁盘
+     */
+    public void syncRecordData() {
+        checkInit();
+        mLogRecordClient.syncBufferWriter();
+    }
+
+    /**
+     * 停止录制
+     */
+    public void stopRecord() {
+        checkInit();
+        mLogRecordClient.releaseBufferWriter();
+    }
+
 
     @Override
     public void recordMsgA(String TAG, String msg) {
@@ -150,4 +211,6 @@ public class LogRecordWrapper implements ILogRecord {
             mILogRecord.recordMsgE(TAG, msg, e);
         }
     }
+
+
 }
