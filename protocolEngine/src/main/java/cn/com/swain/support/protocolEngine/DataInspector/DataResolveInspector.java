@@ -3,7 +3,7 @@ package cn.com.swain.support.protocolEngine.DataInspector;
 import cn.com.swain.support.protocolEngine.ProtocolProcessor;
 import cn.com.swain.support.protocolEngine.datagram.SocketDataArray;
 import cn.com.swain.support.protocolEngine.result.IProtocolAnalysisResult;
-import cn.com.swain.support.protocolEngine.utils.ProtocolCode;
+import cn.com.swain.support.protocolEngine.ProtocolCode;
 import cn.com.swain169.log.Tlog;
 
 /**

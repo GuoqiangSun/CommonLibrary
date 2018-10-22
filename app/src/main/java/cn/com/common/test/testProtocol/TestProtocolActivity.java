@@ -1,19 +1,14 @@
 package cn.com.common.test.testProtocol;
 
-import android.Manifest;
-import android.app.Application;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.Toast;
-
-import java.io.ByteArrayOutputStream;
 
 import cn.com.common.test.global.LooperManager;
 import cn.com.common.test.main.CommonApplication;
+import cn.com.swain.support.protocolEngine.DataInspector.DatagramInspector;
 import cn.com.swain.support.protocolEngine.ProtocolProcessor;
+import cn.com.swain.support.protocolEngine.datagram.ProtocolException.EscapeIOException;
 import cn.com.swain.support.protocolEngine.datagram.SocketDataArray;
 import cn.com.swain.support.protocolEngine.datagram.dataproducer.SocketDataQueueProducer;
 import cn.com.swain.support.protocolEngine.pack.ReceivesData;
@@ -38,12 +33,7 @@ public class TestProtocolActivity extends AppCompatActivity {
         Tlog.v(TAG, " TestProtocolActivity onCreate ");
         run = true;
 
-        Application application = this.getApplication();
-        boolean i = ContextCompat.checkSelfPermission(application.getApplicationContext(),
-                Manifest.permission.ACCESS_COARSE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED;
-        Toast.makeText(getApplicationContext(), " has:" + i, Toast.LENGTH_SHORT).show();
-
+        testSocketDataArray();
     }
 
 
@@ -116,10 +106,22 @@ public class TestProtocolActivity extends AppCompatActivity {
 
         byte[] buf = new byte[]{(byte) 0xff, 0x00, 0x05, 0x00, 0x00, 0x01, 0x01, 0x01, 0x31, (byte) 0xee};
 
-        buf = new byte[]{(byte) 0xff, 0, 6, 0, 0, 1, 1, 2, (byte) 0x55, (byte) 0xaa, (byte) 0xeb, (byte) 0xee};
+//        buf = new byte[]{(byte) 0xff, 0, 6, 0, 0, 1, 1, 2, (byte) 0x55, (byte) 0xaa, (byte) 0xeb, (byte) 0xee};
 
         mSocketDataArray.onAddPackageReverse(buf);
         Tlog.v(TAG, mSocketDataArray.toString());
+
+        DatagramInspector inspector = new DatagramInspector(mSocketDataArray);
+        Tlog.v(TAG, " crc " + inspector.checkCrc() + " h " + inspector.hasHead() + " t " + inspector.hasTail());
+
+        SocketDataArray socketDataArray = null;
+        try {
+            socketDataArray = SocketDataArray.parseSocketData(buf, 0);
+            Tlog.d(TAG, " socketDataArray " + socketDataArray.toString());
+        } catch (EscapeIOException e) {
+            e.printStackTrace();
+            Tlog.e(TAG, " ", e);
+        }
 
         mSocketDataArray.reset();
 
@@ -134,10 +136,17 @@ public class TestProtocolActivity extends AppCompatActivity {
 
 
         mSocketDataArray.onAddPackageEscape(buf);
+
+
         Tlog.v(TAG, mSocketDataArray.toString());
-
-
-        ByteArrayOutputStream bos;
+        SocketDataArray socketDataArray2 = null;
+        try {
+            socketDataArray2 = SocketDataArray.parseSocketData(buf, 0);
+            Tlog.d(TAG, " socketDataArray2 " + socketDataArray2.toString());
+        } catch (EscapeIOException e) {
+            e.printStackTrace();
+            Tlog.e(TAG, " ", e);
+        }
 
 
     }

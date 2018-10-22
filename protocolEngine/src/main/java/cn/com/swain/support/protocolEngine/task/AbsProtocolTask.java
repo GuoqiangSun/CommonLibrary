@@ -12,7 +12,7 @@ public abstract class AbsProtocolTask<param, result> {
     /**
      * 执行任务
      *
-     * @param mParam
+     * @param mParam param
      */
     public void execute(param mParam) {
 
@@ -23,7 +23,7 @@ public abstract class AbsProtocolTask<param, result> {
 
     /**
      * @param mParam
-     * @return
+     * @return result
      */
     protected abstract result onBackgroundTask(param mParam);
 

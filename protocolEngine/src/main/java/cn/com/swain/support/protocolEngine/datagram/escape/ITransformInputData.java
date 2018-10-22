@@ -11,12 +11,14 @@ public interface ITransformInputData {
 
     /**
      * 添加头字节
+     *
      * @param b
      */
     void onAddHead(byte b);
 
     /**
      * 添加尾字节
+     *
      * @param b
      */
     void onAddTail(byte b);
@@ -31,7 +33,7 @@ public interface ITransformInputData {
     /**
      * 添加一包并反转义
      *
-     * @param
+     * @param pack
      */
     void onAddPackageReverse(byte[] pack);
 
@@ -45,10 +47,9 @@ public interface ITransformInputData {
     /**
      * 添加一包并转义
      *
-     * @param
+     * @param pack
      */
     void onAddPackageEscape(byte[] pack);
-
 
 
 }

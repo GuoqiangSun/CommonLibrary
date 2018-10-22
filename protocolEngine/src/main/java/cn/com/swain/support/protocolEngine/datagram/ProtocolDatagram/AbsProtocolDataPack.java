@@ -1,6 +1,6 @@
 package cn.com.swain.support.protocolEngine.datagram.ProtocolDatagram;
 
-import cn.com.swain.support.protocolEngine.utils.ProtocolCode;
+import cn.com.swain.support.protocolEngine.ProtocolCode;
 
 /**
  * author: Guoqiang_Sun
@@ -32,46 +32,90 @@ public abstract class AbsProtocolDataPack implements IProtocolComData {
     byte crc;
 
     protected byte tail = ProtocolCode.ETX;
+    public byte getHead() {
+        return this.head;
+    }
 
-    public abstract byte getHead();
+    protected void setLength(int effectiveLength) {
+        this.length_h = (byte) ((effectiveLength >> 8) & 0xFF);
+        this.length_l = (byte) (effectiveLength & 0xFF);
+    }
 
-    public abstract byte getLengthH();
+    public byte getLengthH() {
+        return this.length_h;
+    }
 
-    public abstract byte getLengthL();
+    public byte getLengthL() {
+        return this.length_l;
+    }
 
-    public abstract int getLength();
+    public int getLength() {
+        return (length_h & 0xFF) << 8 | (length_l & 0xFF);
+    }
 
-    public abstract void setVersion(byte version);
+    public void setVersion(byte version) {
+        this.version = version;
+    }
 
-    public abstract int getVersion();
+    public int getVersion() {
+        return this.version & 0xFF;
+    }
 
-    public abstract void setSeq(byte seq);
+    public void setSeq(byte seq) {
+        this.seq = seq;
+    }
 
-    public abstract int getSeq();
+    public int getSeq() {
+        return this.seq & 0xFF;
+    }
 
-    public abstract void setCustom(byte custom);
+    public void setCustom(byte custom) {
+        this.custom = custom;
+    }
 
-    public abstract byte getCustom();
+    public byte getCustom() {
+        return this.custom;
+    }
 
-    public abstract void setProduct(byte product);
+    public void setProduct(byte product) {
+        this.product = product;
+    }
 
-    public abstract byte getProduct();
+    public byte getProduct() {
+        return this.product;
+    }
 
-    public abstract void setType(byte type);
+    public void setType(byte type) {
+        this.type = type;
+    }
 
-    public abstract byte getType();
+    public byte getType() {
+        return this.type;
+    }
 
-    public abstract void setCmd(byte cmd);
+    public void setCmd(byte cmd) {
+        this.cmd = cmd;
+    }
 
-    public abstract byte getCmd();
+    public byte getCmd() {
+        return this.cmd;
+    }
 
-    public abstract void setParams(byte[] params);
+    public void setParams(byte[] params) {
+        this.params = params;
+    }
 
-    public abstract byte[] getParams();
+    public byte[] getParams() {
+        return this.params;
+    }
 
-    public abstract byte getCrc();
+    public byte getCrc() {
+        return crc;
+    }
 
-    public abstract byte getTail();
+    public byte getTail() {
+        return this.tail;
+    }
 
     /**
      * 组包

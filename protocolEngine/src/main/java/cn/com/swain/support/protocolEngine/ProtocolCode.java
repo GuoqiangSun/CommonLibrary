@@ -1,4 +1,4 @@
-package cn.com.swain.support.protocolEngine.utils;
+package cn.com.swain.support.protocolEngine;
 
 /**
  * author: Guoqiang_Sun

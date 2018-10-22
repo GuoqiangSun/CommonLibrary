@@ -1,4 +1,4 @@
-package cn.com.swain.support.protocolEngine.utils;
+package cn.com.common.test.testProtocol;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -11,6 +11,7 @@ import cn.com.swain.support.protocolEngine.datagram.SocketDataArray;
 import cn.com.swain.support.protocolEngine.datagram.dataproducer.ISocketDataProducer;
 import cn.com.swain.support.protocolEngine.datagram.dataproducer.SyncSocketDataQueueProducer;
 import cn.com.swain.support.protocolEngine.pack.ResponseData;
+import cn.com.swain.support.protocolEngine.utils.SEQ;
 import cn.com.swain169.log.Tlog;
 
 /**

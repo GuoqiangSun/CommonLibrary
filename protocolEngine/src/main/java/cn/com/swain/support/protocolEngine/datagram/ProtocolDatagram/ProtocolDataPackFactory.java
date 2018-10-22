@@ -38,7 +38,7 @@ public class ProtocolDataPackFactory {
     /**
      * 默认包
      *
-     * @return
+     * @return {@link AbsProtocolDataPack}
      */
     public static AbsProtocolDataPack generalNormalPack() {
         return generalNormalPack(null);
@@ -47,7 +47,7 @@ public class ProtocolDataPackFactory {
     /**
      * 增加了序列号，版本号，保留了四个字节
      *
-     * @return
+     * @return {@link AbsProtocolDataPack}
      */
     public static AbsProtocolDataPack generalSeqPack() {
         return generalSeqPack(null);
@@ -56,7 +56,7 @@ public class ProtocolDataPackFactory {
     /**
      * 默认包
      *
-     * @return
+     * @return {@link AbsProtocolDataPack}
      */
     public static AbsProtocolDataPack generalNormalPack(IEscapeDataArray mComDataArray) {
         return new ProtocolComData(mComDataArray);
@@ -65,7 +65,7 @@ public class ProtocolDataPackFactory {
     /**
      * 增加了序列号，版本号，保留了四个字节
      *
-     * @return
+     * @return {@link AbsProtocolDataPack}
      */
     public static AbsProtocolDataPack generalSeqPack(IEscapeDataArray mComDataArray) {
         return new ProtocolComData2(mComDataArray);

@@ -35,7 +35,7 @@ import cn.com.swain.support.protocolEngine.utils.CrcUtil;
  * ESC - 0x55（转义符）	ESC 转成 ESC 和 0x00
  */
 
-public class ProtocolComData extends ProtocolDataPackImpl {
+public class ProtocolComData extends AbsProtocolDataPack {
 
     private final IEscapeDataArray mComDataArray;
 
@@ -97,6 +97,26 @@ public class ProtocolComData extends ProtocolDataPackImpl {
     @Override
     public int getProtocolSequence() {
         return Integer.MAX_VALUE;
+    }
+
+    @Override
+    public int getReserve(int point) {
+        return 0;
+    }
+
+    @Override
+    public int getAllReserve() {
+        return 0;
+    }
+
+    @Override
+    public int getProtocolCustom() {
+        return mComDataArray.getByte(POINT_CUSTOM);
+    }
+
+    @Override
+    public int getProtocolProduct() {
+        return mComDataArray.getByte(POINT_PRODUCT);
     }
 
     @Override
@@ -196,25 +216,25 @@ public class ProtocolComData extends ProtocolDataPackImpl {
 
         StringBuilder sb = new StringBuilder();
         sb.append(" ProtocolComData:");
-        sb.append(" DATA_STATE : " + mComDataArray.getStateStr() + " , ");
-        sb.append(" HEAD : " + Integer.toHexString(getProtocolHead() & 0xFF) + " , ");
-        sb.append(" VALID_LENGTH : " + getProtocolValidLength() + " , ");
-        sb.append(" TYPE : " + Integer.toHexString(getProtocolType() & 0xFF) + " , ");
-        sb.append(" CMD : " + Integer.toHexString(getProtocolCmd() & 0xFF) + " , ");
-        sb.append(" CRC8 : " + Integer.toHexString(getProtocolCrc8() & 0xFF) + " , ");
+        sb.append(" DATA_STATE : ").append(mComDataArray.getStateStr()).append(" , ");
+        sb.append(" HEAD : ").append(Integer.toHexString(getProtocolHead() & 0xFF)).append(" , ");
+        sb.append(" VALID_LENGTH : ").append(getProtocolValidLength()).append(" , ");
+        sb.append(" TYPE : ").append(Integer.toHexString(getProtocolType() & 0xFF)).append(" , ");
+        sb.append(" CMD : ").append(Integer.toHexString(getProtocolCmd() & 0xFF)).append(" , ");
+        sb.append(" CRC8 : ").append(Integer.toHexString(getProtocolCrc8() & 0xFF)).append(" , ");
 
         byte[] protocolParams = getProtocolParams();
 
         if (protocolParams != null && protocolParams.length > 0) {
             sb.append(" PARAMS : ");
             for (byte b : protocolParams) {
-                sb.append(Integer.toHexString(b & 0xFF) + " , ");
+                sb.append(Integer.toHexString(b & 0xFF)).append(" , ");
             }
         } else {
             sb.append(" PARAMS IS NULL ");
         }
 
-        sb.append(" TAIL : " + Integer.toHexString(getProtocolTail() & 0xFF));
+        sb.append(" TAIL : ").append(Integer.toHexString(getProtocolTail() & 0xFF));
         sb.append(" : END. ");
 
         return sb.toString();

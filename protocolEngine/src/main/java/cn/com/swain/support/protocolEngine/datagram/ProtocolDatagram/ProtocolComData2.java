@@ -11,7 +11,7 @@ import cn.com.swain.support.protocolEngine.utils.CrcUtil;
  * <p>
  * <p>
  * *  startAI通信包协议格式
- * 0xff（帧头）(1) + 有效数据长度(2) + 保留(6)+ 保留(2) + 命令（类型 + 命令）(2) + 参数（变长）+ 校验(CRC8)(1) + 0xee（帧尾）(1)
+ * 0xff（帧头）(1) + 有效数据长度(2) + 保留(6)+ custom+product(2) + 命令（类型 + 命令）(2) + 参数（变长）+ 校验(CRC8)(1) + 0xee（帧尾）(1)
  * <p>
  * header(uint_8)
  * len_h（uint8_t）  	len_l（uint_8）
@@ -35,7 +35,7 @@ import cn.com.swain.support.protocolEngine.utils.CrcUtil;
  * ESC - 0x55（转义符）	ESC 转成 ESC 和 0x00
  */
 
-public class ProtocolComData2 extends ProtocolDataPackImpl {
+public class ProtocolComData2 extends AbsProtocolDataPack {
 
     private final IEscapeDataArray mComDataArray;
 
@@ -154,6 +154,41 @@ public class ProtocolComData2 extends ProtocolDataPackImpl {
     }
 
     @Override
+    public int getReserve(int point) {
+        switch (point) {
+            case 0:
+                return mComDataArray.getByte(POINT_RESERVE_0);
+            case 1:
+                return mComDataArray.getByte(POINT_RESERVE_1);
+            case 2:
+                return mComDataArray.getByte(POINT_RESERVE_2);
+            case 3:
+                return mComDataArray.getByte(POINT_RESERVE_3);
+            default:
+                return getAllReserve();
+        }
+
+    }
+
+    @Override
+    public int getAllReserve() {
+        return (mComDataArray.getByte(POINT_RESERVE_0) & 0xFF) << 24
+                | (mComDataArray.getByte(POINT_RESERVE_1) & 0xFF) << 16
+                | (mComDataArray.getByte(POINT_RESERVE_2) & 0xFF) << 8
+                | (mComDataArray.getByte(POINT_RESERVE_3) & 0xFF);
+    }
+
+    @Override
+    public int getProtocolCustom() {
+        return mComDataArray.getByte(POINT_CUSTOM);
+    }
+
+    @Override
+    public int getProtocolProduct() {
+        return mComDataArray.getByte(POINT_PRODUCT);
+    }
+
+    @Override
     public int getProtocolValidLength() {
         return (mComDataArray.getByte(POINT_LENGTH_START) & 0xFF) << 8 | (mComDataArray.getByte(POINT_LENGTH_END) & 0xFF);
     }
@@ -205,19 +240,19 @@ public class ProtocolComData2 extends ProtocolDataPackImpl {
 
         StringBuilder sb = new StringBuilder();
         sb.append(" ProtocolComData:");
-        sb.append(" DATA_STATE : " + mComDataArray.getStateStr() + " , ");
-        sb.append(" HEAD : " + Integer.toHexString(getProtocolHead() & 0xFF) + " , ");
-        sb.append(" VALID_LENGTH : " + getProtocolValidLength() + " , ");
-        sb.append(" TYPE : " + Integer.toHexString(getProtocolType() & 0xFF) + " , ");
-        sb.append(" CMD : " + Integer.toHexString(getProtocolCmd() & 0xFF) + " , ");
-        sb.append(" CRC8 : " + Integer.toHexString(getProtocolCrc8() & 0xFF) + " , ");
+        sb.append(" DATA_STATE : ").append(mComDataArray.getStateStr()).append(" , ");
+        sb.append(" HEAD : ").append(Integer.toHexString(getProtocolHead() & 0xFF)).append(" , ");
+        sb.append(" VALID_LENGTH : ").append(getProtocolValidLength()).append(" , ");
+        sb.append(" TYPE : ").append(Integer.toHexString(getProtocolType() & 0xFF)).append(" , ");
+        sb.append(" CMD : ").append(Integer.toHexString(getProtocolCmd() & 0xFF)).append(" , ");
+        sb.append(" CRC8 : ").append(Integer.toHexString(getProtocolCrc8() & 0xFF)).append(" , ");
 
         byte[] protocolParams = getProtocolParams();
 
         if (protocolParams != null && protocolParams.length > 0) {
             sb.append(" PARAMS : ");
             for (byte b : protocolParams) {
-                sb.append(Integer.toHexString(b & 0xFF) + " , ");
+                sb.append(Integer.toHexString(b & 0xFF)).append(" , ");
             }
         } else {
             sb.append(" PARAMS IS NULL ");

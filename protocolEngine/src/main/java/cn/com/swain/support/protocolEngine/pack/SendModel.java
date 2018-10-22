@@ -9,7 +9,12 @@ import cn.com.swain.baselib.util.Bit;
  */
 public class SendModel {
 
-    private final Bit mBit = new Bit();
+    private final Bit mBit;
+
+    public SendModel() {
+        mBit = new Bit(SEND_MODEL_CASUAL);
+    }
+
 
     /**
      * 11111111
@@ -18,7 +23,6 @@ public class SendModel {
      * 00000010 onlyWan
      * 00000011 lanWan
      */
-    private int sendModel = SEND_MODEL_CASUAL;
 
     private static final int SEND_MODEL_CASUAL = 0x00;
     private static final int SEND_MODEL_LAN = 0x01;
@@ -28,13 +32,12 @@ public class SendModel {
      * 设置随意通信
      */
     public void setSendModelCasual() {
-        this.sendModel = mBit.fillEmpty().getDevice();
-
+        mBit.fillEmpty();
     }
 
     // 发送模式随意
     public boolean isSendModelCasual() {
-        return this.sendModel == SEND_MODEL_CASUAL;
+        return this.mBit.getDevice() == SEND_MODEL_CASUAL;
     }
 
 
@@ -43,21 +46,19 @@ public class SendModel {
      */
     public void setSendModelIsLan() {
 
-        this.sendModel = mBit.add(0).getDevice();
+        mBit.add(0);
 
     }
 
     /**
      * 只用局域网通信
-     *
-     * @return
      */
     public boolean isSendModelOnlyLan() {
-        return this.sendModel == SEND_MODEL_LAN;
+        return this.mBit.getDevice() == SEND_MODEL_LAN;
     }
 
     public boolean isSendModelIsLan() {
-        return ((this.sendModel & SEND_MODEL_LAN) == SEND_MODEL_LAN);
+        return ((this.mBit.getDevice() & SEND_MODEL_LAN) == SEND_MODEL_LAN);
     }
 
     /**
@@ -65,31 +66,34 @@ public class SendModel {
      */
     public void setSendModelIsWan() {
 
-        this.sendModel = mBit.add(1).getDevice();
+        mBit.add(1);
 
     }
 
     /**
      * 只用广域网通信
-     *
-     * @return
      */
     public boolean isSendModelOnlyWan() {
-        return this.sendModel == SEND_MODEL_WAN;
+        return this.mBit.getDevice() == SEND_MODEL_WAN;
     }
 
     public boolean isSendModelIsWan() {
-        return ((this.sendModel & SEND_MODEL_WAN) == SEND_MODEL_WAN);
+        return ((this.mBit.getDevice() & SEND_MODEL_WAN) == SEND_MODEL_WAN);
     }
 
     ///
 
     public void setSendModel(int bitPoint) {
-        this.sendModel = mBit.add(bitPoint).getDevice();
+        mBit.add(bitPoint);
     }
+
+    public int getSendModel() {
+        return mBit.getDevice();
+    }
+
 
     @Override
     public String toString() {
-        return Integer.toBinaryString(sendModel);
+        return Integer.toBinaryString(this.mBit.getDevice());
     }
 }

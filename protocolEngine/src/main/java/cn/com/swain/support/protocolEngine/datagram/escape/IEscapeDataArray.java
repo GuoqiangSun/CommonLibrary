@@ -11,35 +11,29 @@ public interface IEscapeDataArray extends ITransformInputData, ITransformOutputD
 
     /**
      * 获取下标
-     * @return
      */
     int getPoint();
 
     /**
      * 容量
      *
-     * @return
      */
     int getCapacity();
 
     /**
      * 是转义状态
      *
-     * @return
      */
     boolean isEscapeState();
 
     /**
      * 是反转义状态
      *
-     * @return
      */
     boolean isReverseState();
 
     /**
      * 得到当前数据转义状态的字符串
-     *
-     * @return
      */
     String getStateStr();
 

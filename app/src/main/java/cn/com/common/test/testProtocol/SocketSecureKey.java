@@ -1,4 +1,4 @@
-package cn.com.swain.support.protocolEngine.utils;
+package cn.com.common.test.testProtocol;
 
 /**
  * author: Guoqiang_Sun
@@ -14,6 +14,15 @@ public class SocketSecureKey  {
 
         public static final byte PRODUCT_BLE_SOCKET = 0x00;
         public static final byte PRODUCT_WIFI_SOCKET = 0x02;
+        public static final byte PRODUCT_SOCKET_PM90 = 0x04;
+        public static final byte PRODUCT_SMART_SOCKET = 0x06;
+        public static final byte PRODUCT_SOCKET_RPX = 0x08;
+
+        public static final byte CUSTOM_LI = 0x02;
+        public static final byte PRODUCT_PASS_THROUGH = 0x00;
+
+        public static final byte CUSTOM_STARTAI = 0x08;
+        public static final byte PRODUCT_STARTAI_SUPER_SOCKET = 0x08;
     }
 
 

@@ -2,7 +2,7 @@ package cn.com.swain.support.protocolEngine.datagram.escape;
 
 import cn.com.swain.baselib.util.StrUtil;
 import cn.com.swain.support.protocolEngine.ProtocolProcessor;
-import cn.com.swain.support.protocolEngine.utils.ProtocolCode;
+import cn.com.swain.support.protocolEngine.ProtocolCode;
 import cn.com.swain169.log.Tlog;
 
 /**

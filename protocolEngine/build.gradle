@@ -8,8 +8,8 @@ android {
     defaultConfig {
         minSdkVersion 17
         targetSdkVersion 27
-        versionCode 1
-        versionName "1.0"
+        versionCode 3018
+        versionName "3.0.18"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
@@ -45,9 +45,9 @@ dependencies {
 //    //项目名称
 //    artifactId = 'protocolEngine'
 //    //版本号
-//    publishVersion = '3.0.13'
+//    publishVersion = '3.0.18'
 //    //描述，不重要
-//    desc = 'protocolEngine sdk 3.0.13'
+//    desc = 'protocolEngine sdk 3.0.18'
 //
 ////    property()
 //
