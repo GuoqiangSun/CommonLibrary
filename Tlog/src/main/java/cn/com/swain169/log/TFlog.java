@@ -5,7 +5,7 @@ import cn.com.swain169.log.logRecord.AbsLogRecord;
 /**
  * author: Guoqiang_Sun
  * date : 2018/9/12 0012
- * desc :
+ * desc : 文件录制
  */
 public class TFlog {
 
@@ -16,7 +16,8 @@ public class TFlog {
 
     /**
      * when main Activity onCreate() ,need call {@link #startRecord()}
-     * when main Activity onDestroy() ,need call {@link #stopRecord()}
+     * <p>
+     * when main Activity onDestroy() ,if you need not record ,need call {@link #stopRecord()}.
      *
      * @param recordMsg you can use {@link cn.com.swain169.log.logRecord.impl.LogRecordManager }
      * @return true or false
@@ -33,13 +34,21 @@ public class TFlog {
         return true;
     }
 
-    public static synchronized boolean remove() {
+
+    public static synchronized boolean remove(AbsLogRecord recordMsg) {
         AbsLogRecord mTmpRecordMsg = mRecordMsg;
+        if (mTmpRecordMsg == null || mTmpRecordMsg != recordMsg) {
+            return true;
+        }
         mRecordMsg = null;
-        if (mTmpRecordMsg != null && mTmpRecordMsg.isInit()) {
+        if (mTmpRecordMsg.isInit()) {
             mTmpRecordMsg.releaseLogFile();
         }
         return true;
+    }
+
+    public static synchronized boolean remove() {
+        return remove(mRecordMsg);
     }
 
     public static boolean hasILogRecordImpl() {
@@ -56,9 +65,23 @@ public class TFlog {
 
     // 开始录制
     public static void startRecord() {
-        if (mRecordMsg != null) {
-            mRecordMsg.startRecord();
+        synchronized (TFlog.class) {
+            record++;
         }
+        if (record == 1) {
+            if (mRecordMsg != null) {
+                mRecordMsg.startRecord();
+            }
+        }
+    }
+
+    /**
+     * when call {@link #startRecord()} , itself++
+     */
+    private static volatile int record = 0;
+
+    public static int getStartTimes() {
+        return record;
     }
 
     //同步数据到磁盘
@@ -66,12 +89,21 @@ public class TFlog {
         if (mRecordMsg != null) {
             mRecordMsg.syncRecordData();
         }
+
     }
 
     // 停止录制
     public static void stopRecord() {
-        if (mRecordMsg != null) {
-            mRecordMsg.stopRecord();
+
+        synchronized (TFlog.class) {
+            record--;
+        }
+
+        if (record <= 0) {
+            record = 0;
+            if (mRecordMsg != null) {
+                mRecordMsg.stopRecord();
+            }
         }
     }
 

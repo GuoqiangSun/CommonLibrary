@@ -102,18 +102,20 @@ public class BleScanActivity extends AppCompatActivity {
         };
 
 
-        mPermissionRequest = new PermissionRequest(this, new PermissionRequest.OnPermissionResult() {
-            @Override
-            public void onAllPermissionRequestFinish() {
-                Tlog.v(TAG, "HomeActivity  onAllPermissionRequestFinish() ");
-            }
-
+        mPermissionRequest = new PermissionRequest(this);
+        mPermissionRequest.requestPermission(new PermissionRequest.OnPermissionResult() {
             @Override
             public void onPermissionRequestResult(String permission, boolean granted) {
                 Tlog.v(TAG, "HomeActivity  onPermissionRequestResult() " + permission + " " + granted);
             }
-        });
-        mPermissionRequest.requestAllPermission(permissionArray);
+        }, permissionArray[0]);
+
+        mPermissionRequest.requestPermission(new PermissionRequest.OnPermissionResult() {
+            @Override
+            public void onPermissionRequestResult(String permission, boolean granted) {
+                Tlog.v(TAG, "HomeActivity  onPermissionRequestResult() " + permission + " " + granted);
+            }
+        }, permissionArray[1]);
 
         progress = (ProgressBar) findViewById(R.id.progressBar1);
         mTxtBleState = (TextView) findViewById(R.id.bt_state);

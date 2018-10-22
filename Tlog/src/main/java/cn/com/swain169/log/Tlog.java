@@ -50,6 +50,40 @@ public class Tlog {
         return LOG_RECORD_DEBUG;
     }
 
+
+    /**
+     * if regIRecordMsgFile
+     * <p>
+     * when main Activity onCreate() ,need call {@link #startRecord()}
+     * when main Activity onDestroy() ,need call {@link #startRecord()}
+     *
+     * @param recordMsg you can use {@link cn.com.swain169.log.logRecord.impl.LogRecordManager }
+     */
+    public static void regIRecordMsgFile(AbsLogRecord recordMsg) {
+        TFlog.set(recordMsg);
+    }
+
+    public static void unregTREcordMsgFile(AbsLogRecord recordMsg) {
+        TFlog.remove(recordMsg);
+    }
+
+    public static void unregTREcordMsgFile() {
+        TFlog.remove();
+    }
+
+    public static void startRecord() {
+        TFlog.startRecord();
+    }
+
+    public static void stopRecord() {
+        TFlog.stopRecord();
+    }
+
+    public static void syncRecordData() {
+        TFlog.syncRecordData();
+    }
+
+
     private static boolean LOG_PRINT_STACK = false;
 
     /**
@@ -63,18 +97,6 @@ public class Tlog {
 
     public static boolean isPrintStackDebug() {
         return LOG_PRINT_STACK;
-    }
-
-    /**
-     * if regIRecordMsgFile
-     * <p>
-     * when main Activity onCreate() ,need call {@link cn.com.swain169.log.TFlog#startRecord()}
-     * when main Activity onDestroy() ,need call {@link cn.com.swain169.log.TFlog#startRecord()}
-     *
-     * @param recordMsg you can use {@link cn.com.swain169.log.logRecord.impl.LogRecordManager }
-     */
-    public static void regIRecordMsgFile(AbsLogRecord recordMsg) {
-        TFlog.set(recordMsg);
     }
 
     private static final int PrintStackLine = 4;

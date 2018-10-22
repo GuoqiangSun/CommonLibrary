@@ -33,7 +33,7 @@ public class CommonApplication extends BaseApplication {
             }
         };
         f.init(this);
-        TFlog.set(new LogRecordManager(f.getLogPath(), "00", 1024 * 1024 * 6));
+//        TFlog.set(new LogRecordManager(f.getLogPath(), "00", 1024 * 1024 * 6));
         Tlog.setLogRecordDebug(true);
         Tlog.setPrintStackDebug(true);
         LooperManager.getInstance().init(this);
