@@ -17,7 +17,6 @@ public class Tlog {
     private Tlog() {
     }
 
-    private static boolean DEBUG = true;
 
     /**
      * 设置是否开启日志
@@ -32,7 +31,7 @@ public class Tlog {
         return DEBUG;
     }
 
-    private static boolean LOG_RECORD_DEBUG = false;
+    private static boolean DEBUG = true;
 
     /**
      * 设置是否保存文件到日志
@@ -50,12 +49,13 @@ public class Tlog {
         return LOG_RECORD_DEBUG;
     }
 
+    private static boolean LOG_RECORD_DEBUG = false;
 
     /**
      * if regIRecordMsgFile
      * <p>
      * when main Activity onCreate() ,need call {@link #startRecord()}
-     * when main Activity onDestroy() ,need call {@link #startRecord()}
+     * when main Activity onDestroy() ,if you need not record,need call {@link #startRecord()}
      *
      * @param recordMsg you can use {@link cn.com.swain169.log.logRecord.impl.LogRecordManager }
      */
@@ -83,13 +83,18 @@ public class Tlog {
         TFlog.syncRecordData();
     }
 
+    public static boolean hasILogRecordImpl() {
+        return TFlog.hasILogRecordImpl();
+    }
 
-    private static boolean LOG_PRINT_STACK = false;
+    public static boolean isRecording() {
+        return TFlog.isRecording();
+    }
 
     /**
      * 设置是否打印堆栈消息
      *
-     * @param flag
+     * @param flag true print
      */
     public static void setPrintStackDebug(boolean flag) {
         LOG_PRINT_STACK = flag;
@@ -98,6 +103,8 @@ public class Tlog {
     public static boolean isPrintStackDebug() {
         return LOG_PRINT_STACK;
     }
+
+    private static boolean LOG_PRINT_STACK = false;
 
     private static final int PrintStackLine = 4;
 

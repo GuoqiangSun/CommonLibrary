@@ -8,8 +8,8 @@ android {
     defaultConfig {
         minSdkVersion 19
         targetSdkVersion 27
-        versionCode 1
-        versionName "1.0"
+        versionCode 3101
+        versionName "3.1.01"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
@@ -47,12 +47,9 @@ dependencies {
 //    //项目名称
 //    artifactId = 'fastble'
 //    //版本号
-//    publishVersion = '3.0.09'
+//    publishVersion = '3.1.01'
 //    //描述，不重要
-//    desc = 'fastble sdk 3.0.09'
-//
-////    property()
-//
+//    desc = 'fastble sdk 3.1.01'
 //    //网站，不重要
 //    website = 'https://www.startai.com.cn'
 //

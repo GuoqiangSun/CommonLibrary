@@ -15,7 +15,6 @@ public class SendModel {
         mBit = new Bit(SEND_MODEL_CASUAL);
     }
 
-
     /**
      * 11111111
      * 00000000 casual
@@ -24,9 +23,15 @@ public class SendModel {
      * 00000011 lanWan
      */
 
-    private static final int SEND_MODEL_CASUAL = 0x00;
-    private static final int SEND_MODEL_LAN = 0x01;
-    private static final int SEND_MODEL_WAN = 0x02;
+    public static final int SEND_MODEL_CASUAL = 0x00;
+
+
+    public static final int SEND_MODEL_LAN = 0x01;
+    public static final int BIT_POINT_LAN = 0;
+
+    public static final int SEND_MODEL_WAN = 0x02;
+    public static final int BIT_POINT_WAN = 1;
+
 
     /**
      * 设置随意通信
@@ -37,7 +42,7 @@ public class SendModel {
 
     // 发送模式随意
     public boolean isSendModelCasual() {
-        return this.mBit.getDevice() == SEND_MODEL_CASUAL;
+        return getSendModel() == SEND_MODEL_CASUAL;
     }
 
 
@@ -45,48 +50,62 @@ public class SendModel {
      * 设置局域网通信
      */
     public void setSendModelIsLan() {
-
-        mBit.add(0);
-
+        setSendModel(BIT_POINT_LAN);
     }
 
     /**
      * 只用局域网通信
      */
     public boolean isSendModelOnlyLan() {
-        return this.mBit.getDevice() == SEND_MODEL_LAN;
+        return getSendModel() == SEND_MODEL_LAN;
     }
 
     public boolean isSendModelIsLan() {
-        return ((this.mBit.getDevice() & SEND_MODEL_LAN) == SEND_MODEL_LAN);
+        return ((getSendModel() & SEND_MODEL_LAN) == SEND_MODEL_LAN);
     }
 
     /**
      * 设置广域网通信
      */
     public void setSendModelIsWan() {
-
-        mBit.add(1);
-
+        setSendModel(BIT_POINT_WAN);
     }
 
     /**
      * 只用广域网通信
      */
     public boolean isSendModelOnlyWan() {
-        return this.mBit.getDevice() == SEND_MODEL_WAN;
+        return getSendModel() == SEND_MODEL_WAN;
     }
 
     public boolean isSendModelIsWan() {
-        return ((this.mBit.getDevice() & SEND_MODEL_WAN) == SEND_MODEL_WAN);
+        return ((getSendModel() & SEND_MODEL_WAN) == SEND_MODEL_WAN);
     }
 
-    ///
 
+    /**
+     * 设置发送模式
+     *
+     * @param bitPoint bit位
+     */
     public void setSendModel(int bitPoint) {
         mBit.add(bitPoint);
     }
 
+    /**
+     * 移除发送模式
+     *
+     * @param bitPoint bit位
+     */
+    public void removeSendModel(int bitPoint) {
+        mBit.remove(bitPoint);
+    }
+
+    /**
+     * 获取发送模式
+     *
+     * @return 模式
+     */
     public int getSendModel() {
         return mBit.getDevice();
     }

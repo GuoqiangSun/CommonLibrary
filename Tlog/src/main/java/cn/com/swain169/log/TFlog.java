@@ -37,8 +37,11 @@ public class TFlog {
 
     public static synchronized boolean remove(AbsLogRecord recordMsg) {
         AbsLogRecord mTmpRecordMsg = mRecordMsg;
-        if (mTmpRecordMsg == null || mTmpRecordMsg != recordMsg) {
+        if (mTmpRecordMsg == null) {
             return true;
+        }
+        if (mTmpRecordMsg != recordMsg) {
+            return false;
         }
         mRecordMsg = null;
         if (mTmpRecordMsg.isInit()) {

@@ -24,13 +24,11 @@ public class ScanBle implements Parcelable {
     public static final int STATE_DISCONNECTED = 0x00;
     public static final int STATE_CONNECTED = 0x01;
 
-
     public int state;
     public String name;
     public String address;
     public int rssi;
-    private List<ParcelUuid> serviceUuids;
-
+    public List<ParcelUuid> serviceUuids;
 
     protected ScanBle(Parcel in) {
         state = in.readInt();
@@ -69,7 +67,7 @@ public class ScanBle implements Parcelable {
     /**
      * 地址 名称是否可用
      *
-     * @return
+     * @return true valid false invalid
      */
     public boolean isValid() {
         return this.address != null && !this.address.equalsIgnoreCase(DEFAULT_ADDRESS)

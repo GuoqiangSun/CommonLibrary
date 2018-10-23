@@ -32,7 +32,7 @@ public class RepeatMsg extends Handler {
     }
 
     /**
-     * @param responseData
+     * @param responseData {@link ResponseData}
      * @param timeOut      超时重发时间
      */
     public void recordSendMsg(ResponseData responseData, long timeOut) {

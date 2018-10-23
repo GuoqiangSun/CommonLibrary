@@ -16,14 +16,12 @@ public abstract class AbsBleEnable {
     /**
      * 获取ble的状态
      *
-     * @return
      */
     public abstract  int beGetBleState();
 
     /**
      * 蓝牙是否激活
      *
-     * @return
      */
     public abstract boolean beIsBleEnable();
 

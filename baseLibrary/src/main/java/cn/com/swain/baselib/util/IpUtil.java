@@ -96,20 +96,15 @@ public class IpUtil {
                     InetAddress address = networkCardAddress.getAddress();
                     if (!address.isLoopbackAddress()) {
                         String hostAddress = address.getHostAddress();
-                        System.out.println("address        =   " + hostAddress);
 
                         if (hostAddress.indexOf(":") > 0) {
                             // case : ipv6
                             continue;
                         } else {
                             // case : ipv4
-                            String maskAddress = calcMaskByPrefixLength(networkCardAddress.getNetworkPrefixLength());
-                            String subnetAddress = calcSubnetAddress(hostAddress, maskAddress);
+//                            String maskAddress = calcMaskByPrefixLength(networkCardAddress.getNetworkPrefixLength());
+//                            String subnetAddress = calcSubnetAddress(hostAddress, maskAddress);
                             String broadcastAddress = networkCardAddress.getBroadcast().getHostAddress();
-
-                            System.out.println("subnetmask     =   " + maskAddress);
-                            System.out.println("subnet         =   " + subnetAddress);
-                            System.out.println("broadcast      =   " + broadcastAddress + "\n");
 
                             try {
                                 return InetAddress.getByName(broadcastAddress);
@@ -119,11 +114,9 @@ public class IpUtil {
                             return null;
                         }
                     } else {
-                        String loopback = networkCardAddress.getAddress().getHostAddress();
-                        System.out.println("loopback addr  =   " + loopback + "\n");
+//                        String loopback = networkCardAddress.getAddress().getHostAddress();
                     }
                 }
-                System.out.println("----- NetworkInterface  Separator ----\n\n");
 
             }
         } catch (Exception e) {
@@ -197,6 +190,18 @@ public class IpUtil {
             return null;
         }
         return null;
+    }
+
+
+    public static InetAddress getBroadcastAddress(Context app) {
+        InetAddress address = IpUtil.getWiFiBroadcastAddress(app);
+        if (address == null || address.getHostAddress().equalsIgnoreCase(IpUtil.BROAD_IP_BOUND)) {
+            address = IpUtil.getLocalBroadcastAddress();
+            if (address == null) {
+                address = IpUtil.getBoundBroadcast();
+            }
+        }
+        return address;
     }
 
 }
