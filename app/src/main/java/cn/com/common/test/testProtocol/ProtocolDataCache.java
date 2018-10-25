@@ -183,7 +183,8 @@ public class ProtocolDataCache implements IService {
         final ResponseData responseData = new ResponseData(mac, mPack.organizeProtocolData());
         RepeatMsgModel repeatMsgModel = responseData.getRepeatMsgModel();
         repeatMsgModel.setMsgSeq(mPack.getSeq() & 0xFF);
-        repeatMsgModel.setProductType(mPack.getProduct());
+        repeatMsgModel.setCustom(mPack.getCustom());
+        repeatMsgModel.setProduct(mPack.getProduct());
         repeatMsgModel.setMsgWhat((mPack.getType() & 0xFF) << 8 | (mPack.getCmd() & 0xFF));
         repeatMsgModel.setNeedRepeatSend(record);
         mPack.setISUnUsed();

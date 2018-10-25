@@ -10,7 +10,6 @@ public class RepeatMsgModel {
     /**
      * 需要重复发送
      */
-
     private boolean needRepeatSend;
 
     public boolean isNeedRepeatSend() {
@@ -21,27 +20,69 @@ public class RepeatMsgModel {
         this.needRepeatSend = needRepeatSend;
     }
 
-    private static final int MAX_REPEAT_TIMES = 1;
+    /**
+     * 默认重发次数
+     */
+    public static final int DEFAULT_REPEAT_TIMES = 1;
+
+    /**
+     * 最大重发次数
+     */
+    private int maxRepeatTimes = DEFAULT_REPEAT_TIMES;
+
+    public void setMaxRepeatTimes(int maxRepeatTimes) {
+        if (maxRepeatTimes < 0) {
+            return;
+        }
+        this.maxRepeatTimes = maxRepeatTimes;
+    }
+
+    public int getMaxRepeatTimes() {
+        return maxRepeatTimes;
+    }
 
 
+    /**
+     * 重发次数
+     */
     private int repeatSendTimes = 0;
 
     public void setRepeatOnce() {
 
-        if (++repeatSendTimes >= MAX_REPEAT_TIMES) {
+        if (++repeatSendTimes >= maxRepeatTimes) {
             needRepeatSend = false;
         }
 
     }
 
-    private int productType;
-
-    public int getProductType() {
-        return productType;
+    public int getCurRepeastTimes(){
+        return repeatSendTimes;
     }
 
-    public void setProductType(int productType) {
-        this.productType = productType;
+    /**
+     * 客户
+     */
+    private int custom;
+
+    public int getCustom() {
+        return custom;
+    }
+
+    public void setCustom(int custom) {
+        this.custom = custom;
+    }
+
+    /**
+     * 产品
+     */
+    private int product;
+
+    public int getProduct() {
+        return product;
+    }
+
+    public void setProduct(int product) {
+        this.product = product;
     }
 
     /**
@@ -57,9 +98,8 @@ public class RepeatMsgModel {
         this.msgWhat = msgWhat;
     }
 
-
     /**
-     * 序列号
+     * 序号
      */
     private int msgSeq;
 
@@ -73,6 +113,15 @@ public class RepeatMsgModel {
 
     @Override
     public String toString() {
-        return " needRepeatSend:" + needRepeatSend + "; msgWhat:" + Integer.toHexString(msgWhat) + "; msgSeq:" + msgSeq + " product:" + productType;
+        return "RepeatMsgModel{" +
+                "needRepeatSend=" + needRepeatSend +
+                ", maxRepeatTimes=" + maxRepeatTimes +
+                ", repeatSendTimes=" + repeatSendTimes +
+                ", custom=" + custom +
+                ", product=" + product +
+                ", msgWhat=" + msgWhat +
+                ", msgSeq=" + msgSeq +
+                '}';
     }
+
 }

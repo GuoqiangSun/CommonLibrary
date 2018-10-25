@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 
 import cn.com.common.test.global.LooperManager;
 import cn.com.common.test.main.CommonApplication;
+import cn.com.swain.baselib.util.StatusBarUtil;
 import cn.com.swain.support.protocolEngine.DataInspector.DatagramInspector;
 import cn.com.swain.support.protocolEngine.ProtocolProcessor;
 import cn.com.swain.support.protocolEngine.datagram.ProtocolException.EscapeIOException;

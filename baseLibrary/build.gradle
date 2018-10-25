@@ -44,9 +44,9 @@ dependencies {
 //    //项目名称
 //    artifactId = 'baselib'
 //    //版本号
-//    publishVersion = '3.1.01'
+//    publishVersion = '3.1.02'
 //    //描述，不重要
-//    desc = 'baselibrary sdk 3.1.01'
+//    desc = 'baselibrary sdk 3.1.02'
 //    //网站，不重要
 //    website = 'https://www.startai.com.cn'
 //

@@ -43,12 +43,9 @@ dependencies {
 //    //项目名称
 //    artifactId = 'Tlog'
 //    //版本号
-//    publishVersion = '3.0.19'
+//    publishVersion = '3.1.01'
 //    //描述，不重要
-//    desc = 'Tlog sdk 3.0.19'
-//
-////    property()
-//
+//    desc = 'Tlog sdk 3.1.01'
 //    //网站，不重要
 //    website = 'https://www.startai.com.cn'
 //

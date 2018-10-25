@@ -12,6 +12,15 @@ import cn.com.swain.baselib.util.StrUtil;
  */
 public class UdpResponseMsg implements Parcelable {
 
+    public UdpResponseMsg() {
+    }
+
+    public UdpResponseMsg(String ip, int port, byte[] data) {
+        this.ip = ip;
+        this.port = port;
+        this.data = data;
+    }
+
     public String ip;
     public int port;
     public byte[] data;

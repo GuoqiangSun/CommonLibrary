@@ -8,26 +8,22 @@ package cn.com.swain.support.protocolEngine.datagram.escape;
 
 public interface ITransformOutputData {
 
-
     /**
      * 获取指定下标的数据
      *
      * @param index
-     * @return
      */
     byte getByte(int index);
 
     /**
      * copy一份添加进来后经过转义的数据
      *
-     * @return
      */
     byte[] toArray();
 
     /**
      * copy一份添加进来后经过转义的数据
      *
-     * @return
      */
     byte[] toArray(int srcPoint, int length) ;
 
