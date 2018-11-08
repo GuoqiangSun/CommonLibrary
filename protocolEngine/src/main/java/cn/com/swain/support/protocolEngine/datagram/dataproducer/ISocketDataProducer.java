@@ -10,6 +10,8 @@ import cn.com.swain.support.protocolEngine.datagram.SocketDataArray;
 
 public interface ISocketDataProducer {
 
+    void create();
+
     SocketDataArray produceSocketDataArray();
 
     void clear();

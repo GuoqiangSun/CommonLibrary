@@ -22,6 +22,11 @@ public class SocketDataArrayProducer implements ISocketDataProducer {
         this.version = version;
     }
 
+    @Override
+    public void create(){
+
+    }
+    @Override
     public void clear() {
         mCache.clear();
     }

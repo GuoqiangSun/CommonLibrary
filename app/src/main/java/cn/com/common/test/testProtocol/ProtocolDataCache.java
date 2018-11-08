@@ -630,7 +630,7 @@ public class ProtocolDataCache implements IService {
         mSecureDataPack.setType(SocketSecureKey.Type.TYPE_SYSTEM);
         mSecureDataPack.setCmd(SocketSecureKey.Cmd.CMD_SET_PRICES_ELECTRICITY);
 
-        final byte[] params = new byte[2];
+        final byte[] params = new byte[1024*2];
         params[0] = (byte) ((prices >> 8) & 0xFF);
         params[1] = (byte) (prices & 0xFF);
         mSecureDataPack.setParams(params);

@@ -6,13 +6,16 @@ import android.support.v7.app.AppCompatActivity;
 
 import cn.com.common.test.global.LooperManager;
 import cn.com.common.test.main.CommonApplication;
-import cn.com.swain.baselib.util.StatusBarUtil;
 import cn.com.swain.support.protocolEngine.DataInspector.DatagramInspector;
+import cn.com.swain.support.protocolEngine.ProtocolBuild;
 import cn.com.swain.support.protocolEngine.ProtocolProcessor;
+import cn.com.swain.support.protocolEngine.ProtocolProcessorFactory;
 import cn.com.swain.support.protocolEngine.datagram.ProtocolException.EscapeIOException;
 import cn.com.swain.support.protocolEngine.datagram.SocketDataArray;
 import cn.com.swain.support.protocolEngine.datagram.dataproducer.SocketDataQueueProducer;
 import cn.com.swain.support.protocolEngine.pack.ReceivesData;
+import cn.com.swain.support.protocolEngine.pack.ResponseData;
+import cn.com.swain.support.protocolEngine.resolve.AbsProtocolProcessor;
 import cn.com.swain.support.protocolEngine.result.SimpleProtocolResult;
 import cn.com.swain.support.protocolEngine.task.FailTaskResult;
 import cn.com.swain169.log.Tlog;
@@ -34,7 +37,39 @@ public class TestProtocolActivity extends AppCompatActivity {
         Tlog.v(TAG, " TestProtocolActivity onCreate ");
         run = true;
 
-        testSocketDataArray();
+//        testSocketDataArray();
+
+
+        AbsProtocolProcessor absProtocolProcessor = ProtocolProcessorFactory.newSingleTaskMaxPkg(LooperManager.getInstance().getProtocolLooper(),
+                new SimpleProtocolResult() {
+                    @Override
+                    public void onFail(FailTaskResult failTaskResult) {
+                        Tlog.v(TAG, " onFail:" + String.valueOf(failTaskResult));
+                    }
+
+                    @Override
+                    public void onSuccess(SocketDataArray mSocketDataArray) {
+                        Tlog.v(TAG, " onSuccess " + String.valueOf(mSocketDataArray));
+
+                        Tlog.v(TAG, " getProtocolParamsLength:" + mSocketDataArray.getProtocolParamsLength());
+
+                        byte[] protocolParams = mSocketDataArray.getProtocolParams();
+                        Tlog.v(TAG, " getProtocolParams:" + protocolParams.length);
+
+                    }
+                }, ProtocolBuild.VERSION.VERSION_0);
+
+        ProtocolDataCache.BuildParams mParams = new ProtocolDataCache.BuildParams();
+        mParams.mCustom = 0;
+        mParams.mProduct = 0;
+        mParams.mProtocolVersion = ProtocolBuild.VERSION.VERSION_0;
+        ProtocolDataCache.getInstance().init(mParams);
+        ProtocolDataCache.getInstance().onSCreate();
+
+        ResponseData electricityPrice = ProtocolDataCache.getElectricityPrice("00:00:00:00:00:00", 2);
+        ReceivesData mReceiveData = new ReceivesData(electricityPrice.toID, electricityPrice.data);
+        absProtocolProcessor.onInputServerData(mReceiveData);
+
     }
 
 

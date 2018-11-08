@@ -16,6 +16,11 @@ public class SyncSocketDataQueueProducer implements ISocketDataProducer {
     }
 
     @Override
+    public synchronized void create() {
+        mSocketDataQueueProducer.create();
+    }
+
+    @Override
     public synchronized SocketDataArray produceSocketDataArray() {
         return mSocketDataQueueProducer.produceSocketDataArray();
     }

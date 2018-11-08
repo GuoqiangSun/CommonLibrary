@@ -21,10 +21,16 @@ public class SocketDataQueueProducer implements ISocketDataProducer {
 
     private final int version;
 
+    private final int normalSize;
+
     public SocketDataQueueProducer(int version) {
         this(version, 1);
     }
 
+    /**
+     * @param version    协议版本号
+     * @param normalSize 一组数据默认大小
+     */
     public SocketDataQueueProducer(int version, int normalSize) {
         this.version = version;
         this.name = String.valueOf((int) ((Math.random() * 9 + 1) * 100000));
@@ -33,6 +39,13 @@ public class SocketDataQueueProducer implements ISocketDataProducer {
         } else if (normalSize <= 0) {
             normalSize = 1;
         }
+        this.normalSize = normalSize;
+        create();
+    }
+
+    @Override
+    public void create() {
+
         for (int i = 0; i < normalSize; i++) {
             extend();
         }

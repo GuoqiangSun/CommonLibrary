@@ -29,7 +29,7 @@ public class ReceivesData {
     @Override
     public String toString() {
 
-        return String.valueOf(obj) + " fromID: " + fromID + "; " + StrUtil.toString(data);
+        return " obj:" + String.valueOf(obj) + " arg:" + arg + " fromID: " + fromID + "; " + StrUtil.toString(data);
 
     }
 

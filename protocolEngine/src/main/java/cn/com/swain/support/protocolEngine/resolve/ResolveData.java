@@ -29,4 +29,9 @@ class ResolveData {
      */
     SocketDataArray mLastSocketDataArray;
 
+    /**
+     * 是否是超级大的包
+     */
+    boolean isLargerPkg;
+
 }

@@ -8,11 +8,11 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import cn.com.swain.support.protocolEngine.ProtocolCode;
 import cn.com.swain.support.protocolEngine.ProtocolProcessor;
 import cn.com.swain.support.protocolEngine.datagram.SocketDataArray;
 import cn.com.swain.support.protocolEngine.datagram.dataproducer.ISocketDataProducer;
 import cn.com.swain.support.protocolEngine.pack.ReceivesData;
-import cn.com.swain.support.protocolEngine.ProtocolCode;
 import cn.com.swain169.log.Tlog;
 
 /**
@@ -26,9 +26,19 @@ public class DataResolveQueue extends Handler {
     private String TAG = ProtocolProcessor.TAG;
     private final IDataResolveCallBack mCallBack;
     private final ISocketDataProducer mSocketDataProducer;
+    private final ISocketDataProducer mLargerSocketDataProducer;
     private final Map<String, ResolveData> mSocketArrayMap;
 
-    public DataResolveQueue(Looper mLooper, IDataResolveCallBack mCallBack, ISocketDataProducer mSocketDataProducer) {
+    public DataResolveQueue(Looper mLooper,
+                            IDataResolveCallBack mCallBack,
+                            ISocketDataProducer mSocketDataProducer) {
+        this(mLooper, mCallBack, mSocketDataProducer, null);
+    }
+
+    public DataResolveQueue(Looper mLooper,
+                            IDataResolveCallBack mCallBack,
+                            ISocketDataProducer mSocketDataProducer,
+                            ISocketDataProducer mLargerSocketDataProducer) {
         super(mLooper);
         if (mCallBack == null) {
             throw new NullPointerException(" <DataResolveQueue> ; IDataResolveCallBack==null . ");
@@ -36,9 +46,10 @@ public class DataResolveQueue extends Handler {
         if (mSocketDataProducer == null) {
             throw new NullPointerException(" <DataResolveQueue> ; mSocketDataFactory==null . ");
         }
+        this.mSocketArrayMap = Collections.synchronizedMap(new HashMap<String, ResolveData>());
         this.mCallBack = mCallBack;
         this.mSocketDataProducer = mSocketDataProducer;
-        this.mSocketArrayMap = Collections.synchronizedMap(new HashMap<String, ResolveData>());
+        this.mLargerSocketDataProducer = mLargerSocketDataProducer;
     }
 
     public void release() {
@@ -46,6 +57,10 @@ public class DataResolveQueue extends Handler {
 
         if (mSocketDataProducer != null) {
             mSocketDataProducer.clear();
+        }
+
+        if (mLargerSocketDataProducer != null) {
+            mLargerSocketDataProducer.clear();
         }
 
         if (mCallBack != null) {
@@ -100,23 +115,28 @@ public class DataResolveQueue extends Handler {
         message.sendToTarget();
     }
 
-
     /**
-     * 一包数据最大多少，超过这个字节认为是错误的包
+     * 一包数据最大多少，
+     * 如果{@link #mLargerSocketDataProducer} ==null ,
+     * 超过这个字节认为是错误的包
      */
     private static final int MAX_COUNT = 1024;
 
-//    /**
-//     * 是否解析到头字节
-//     */
-//    private volatile boolean hasHead = false;
-//
-//    /**
-//     * 解析到的数据包大小
-//     */
-//    private int count = 0;
+    /**
+     * 一包数据最大多少，
+     * 如果{@link #mLargerSocketDataProducer} !=null ,
+     * 超过这个字节认为是错误的包
+     */
+    private static final int LARGER_COUNT = MAX_COUNT * 16;
 
-//    private volatile SocketDataArray mTmpSocketDataArray = null;
+
+    private boolean checkPkgIsLargerSize(final byte[] buf, final int length) {
+        if (length >= 3) {
+            int size = (buf[1] & 0xFF) << 8 | (buf[2] & 0xFF);
+            return size > MAX_COUNT;
+        }
+        return false;
+    }
 
 
     private void resolveData(ReceivesData receiverData) {
@@ -169,7 +189,15 @@ public class DataResolveQueue extends Handler {
 
                     }
 
-                    mTmpSocketDataArray = mSocketDataProducer.produceSocketDataArray();
+
+                    if (checkPkgIsLargerSize(buf, length) && mLargerSocketDataProducer != null) {
+                        mResolveData.isLargerPkg = true;
+                        mTmpSocketDataArray = mLargerSocketDataProducer.produceSocketDataArray();
+                    } else {
+                        mResolveData.isLargerPkg = false;
+                        mTmpSocketDataArray = mSocketDataProducer.produceSocketDataArray();
+                    }
+
                     mTmpSocketDataArray.resetIsCompletePkg();
                     mTmpSocketDataArray.reset();
                     mTmpSocketDataArray.setISUsed();
@@ -233,7 +261,11 @@ public class DataResolveQueue extends Handler {
                             receiveDataIsNull();
 
                         } else {
-                            if (++mResolveData.count < MAX_COUNT) {
+
+                            ++mResolveData.count;
+
+                            if (mResolveData.count < MAX_COUNT
+                                    || (mResolveData.isLargerPkg && mResolveData.count < LARGER_COUNT)) {
 
                                 mTmpSocketDataArray.onAddDataReverse(buf[i]);
 

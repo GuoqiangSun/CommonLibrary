@@ -3,13 +3,11 @@ apply plugin: 'com.android.library'
 android {
     compileSdkVersion 27
 
-
-
     defaultConfig {
         minSdkVersion 17
         targetSdkVersion 27
-        versionCode 3101
-        versionName "3.1.01"
+        versionCode 3105
+        versionName "3.1.05"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
@@ -27,7 +25,7 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    implementation 'com.android.support:appcompat-v7:27.1.1'
+//    implementation 'com.android.support:appcompat-v7:27.1.1'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
@@ -45,9 +43,9 @@ dependencies {
 //    //项目名称
 //    artifactId = 'protocolEngine'
 //    //版本号
-//    publishVersion = '3.1.02'
+//    publishVersion = '3.1.05'
 //    //描述，不重要
-//    desc = 'protocolEngine sdk 3.1.02'
+//    desc = 'protocolEngine sdk 3.1.05'
 //    //网站，不重要
 //    website = 'https://www.startai.com.cn'
 //
