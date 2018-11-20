@@ -17,6 +17,8 @@ public class SocketDataQueueProducer implements ISocketDataProducer {
     private String TAG = ProtocolProcessor.TAG;
     private static final int EXTEND_SIZE = 10;
 
+    private final int MAX_SIZE;
+
     private final String name;
 
     private final int version;
@@ -40,6 +42,7 @@ public class SocketDataQueueProducer implements ISocketDataProducer {
             normalSize = 1;
         }
         this.normalSize = normalSize;
+        this.MAX_SIZE = this.normalSize * EXTEND_SIZE * 12 + 2;
         create();
     }
 
@@ -66,10 +69,18 @@ public class SocketDataQueueProducer implements ISocketDataProducer {
     /*****************/
 
     private void bufClear() {
+        Tlog.e(TAG, name + " bufClear ");
         this.size = 0;
         this.point = 0;
         Arrays.fill(mSocketDataArrays, null);
         this.mSocketDataArrays = null;
+    }
+
+    private void gc() {
+        if (size >= MAX_SIZE) {
+            Tlog.e(TAG, name + " gc() clear buff  point:" + point + " size:" + size + " maxSize:" + MAX_SIZE);
+            bufClear();
+        }
     }
 
     private SocketDataArray[] mSocketDataArrays;
@@ -112,6 +123,7 @@ public class SocketDataQueueProducer implements ISocketDataProducer {
 
             mProduceSocketDataArray = getSocketDataArray();
             if (mProduceSocketDataArray == null) {
+                gc();
                 Tlog.e(TAG, name + " extend() CacheSocketData");
                 extend();
                 mProduceSocketDataArray = getSocketDataArray();

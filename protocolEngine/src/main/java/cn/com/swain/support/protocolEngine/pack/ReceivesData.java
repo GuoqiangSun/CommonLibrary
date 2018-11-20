@@ -26,11 +26,25 @@ public class ReceivesData {
 
     public Object obj;
 
+    /**
+     * 接收模式
+     */
+    private final SecondModel mReceiveModel = new SecondModel();
+
+    public SecondModel getReceiveModel() {
+        return mReceiveModel;
+    }
+
+
     @Override
     public String toString() {
 
-        return " obj:" + String.valueOf(obj) + " arg:" + arg + " fromID: " + fromID + "; " + StrUtil.toString(data);
+        return baseDataToString()
+                + " SecondModel:" + mReceiveModel.toString();
+    }
 
+    private String baseDataToString() {
+        return " obj:" + String.valueOf(obj) + " arg:" + arg + " fromID: " + fromID + "; " + StrUtil.toString(data);
     }
 
 }

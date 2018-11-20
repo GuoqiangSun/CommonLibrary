@@ -100,12 +100,12 @@ public class ProtocolComData extends AbsProtocolDataPack {
     }
 
     @Override
-    public int getReserve(int point) {
+    public int getProtocolToken(int point) {
         return 0;
     }
 
     @Override
-    public int getAllReserve() {
+    public int getProtocolToken() {
         return 0;
     }
 

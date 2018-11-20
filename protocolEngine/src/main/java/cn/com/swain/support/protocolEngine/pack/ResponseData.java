@@ -22,7 +22,6 @@ public class ResponseData {
     /**
      * 基础数据结构
      */
-
     public byte[] data;
 
     public String toID;
@@ -34,10 +33,9 @@ public class ResponseData {
     /**
      * 发送模式
      */
+    private final SecondModel mSendModel = new SecondModel();
 
-    private final SendModel mSendModel = new SendModel();
-
-    public SendModel getSendModel() {
+    public SecondModel getSendModel() {
         return mSendModel;
     }
 
@@ -45,7 +43,6 @@ public class ResponseData {
     /**
      * 重发的数据结构
      */
-
     private final RepeatMsgModel mRepeatMsgModel = new RepeatMsgModel();
 
     public RepeatMsgModel getRepeatMsgModel() {
@@ -56,8 +53,8 @@ public class ResponseData {
     public String toString() {
 
         return baseDataToString()
-                + " sendModel:" + mSendModel.toString()
-                + "; RepeatMsgModel:" + mRepeatMsgModel.toString();
+                + " SendModel:" + mSendModel.toString()
+                + " RepeatMsgModel:" + mRepeatMsgModel.toString();
 
     }
 

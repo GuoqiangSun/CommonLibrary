@@ -23,6 +23,7 @@ import android.widget.Toast;
 
 import cn.com.common.test.R;
 import cn.com.common.test.global.LooperManager;
+import cn.com.swain.baselib.util.PermissionHelper;
 import cn.com.swain.baselib.util.PermissionRequest;
 import cn.com.swain.support.ble.enable.AbsBleEnable;
 import cn.com.swain.support.ble.enable.BleEnabler;
@@ -98,24 +99,56 @@ public class BleScanActivity extends AppCompatActivity {
 
         String[] permissionArray = new String[]{
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
+
                 Manifest.permission.ACCESS_COARSE_LOCATION,
+//                Manifest.permission_group.LOCATION
         };
 
 
         mPermissionRequest = new PermissionRequest(this);
-        mPermissionRequest.requestPermission(new PermissionRequest.OnPermissionResult() {
-            @Override
-            public void onPermissionRequestResult(String permission, boolean granted) {
-                Tlog.v(TAG, "HomeActivity  onPermissionRequestResult() " + permission + " " + granted);
-            }
-        }, permissionArray[0]);
+//        mPermissionRequest.requestPermission(new PermissionRequest.OnPermissionResult() {
+//            @Override
+//            public void onPermissionRequestResult(String permission, boolean granted) {
+//                Tlog.v(TAG, "HomeActivity  onPermissionRequestResult() " + permission + " " + granted);
+//            }
+//        }, permissionArray[0]);
+//
+//        mPermissionRequest.requestPermission(new PermissionRequest.OnPermissionResult() {
+//            @Override
+//            public void onPermissionRequestResult(String permission, boolean granted) {
+//                Tlog.v(TAG, "HomeActivity  onPermissionRequestResult() " + permission + " " + granted);
+//            }
+//        }, permissionArray[1]);
 
-        mPermissionRequest.requestPermission(new PermissionRequest.OnPermissionResult() {
-            @Override
-            public void onPermissionRequestResult(String permission, boolean granted) {
-                Tlog.v(TAG, "HomeActivity  onPermissionRequestResult() " + permission + " " + granted);
-            }
-        }, permissionArray[1]);
+
+//        mPermissionRequest.requestAllPermission(new PermissionRequest.OnAllPermissionFinish() {
+//            @Override
+//            public void onAllPermissionRequestFinish() {
+//                Tlog.d(TAG, "HomeActivity  onAllPermissionRequestFinish() ");
+//            }
+//        }, new PermissionRequest.OnPermissionResult() {
+//            @Override
+//            public void onPermissionRequestResult(String permission, boolean granted) {
+//                Tlog.v(TAG, "HomeActivity  onPermissionRequestResult() " + permission + " " + granted);
+//            }
+//        }, permissionArray);
+
+
+        PermissionHelper.requestPermission(this,
+                new PermissionRequest.OnPermissionResult() {
+                    @Override
+                    public void onPermissionRequestResult(String permission, boolean granted) {
+                        Tlog.v(TAG, "HomeActivity  onPermissionRequestResult() " + permission + " " + granted);
+                    }
+                },
+                new PermissionRequest.OnAllPermissionFinish() {
+                    @Override
+                    public void onAllPermissionRequestFinish() {
+                        Tlog.d(TAG, "HomeActivity  onAllPermissionRequestFinish() ");
+                    }
+                },
+                permissionArray
+        );
 
         progress = (ProgressBar) findViewById(R.id.progressBar1);
         mTxtBleState = (TextView) findViewById(R.id.bt_state);

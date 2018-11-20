@@ -11,6 +11,8 @@ import cn.com.swain.support.protocolEngine.datagram.ProtocolException.DatagramSt
 import cn.com.swain.support.protocolEngine.datagram.ProtocolException.EscapeIOException;
 import cn.com.swain.support.protocolEngine.datagram.escape.EscapeDataArray;
 import cn.com.swain.support.protocolEngine.datagram.escape.IEscapeDataArray;
+import cn.com.swain.support.protocolEngine.pack.BaseModel;
+import cn.com.swain.support.protocolEngine.pack.ComModel;
 import cn.com.swain169.log.Tlog;
 
 /**
@@ -87,6 +89,23 @@ public class SocketDataArray extends AbsProtocolDataPack implements Cloneable, I
         return this.ID;
     }
 
+
+    /**
+     * cache
+     */
+    private Object obj;
+
+    public void setObj(Object obj) {
+        this.obj = obj;
+    }
+
+    public Object getObj() {
+        return this.obj;
+    }
+
+    /**
+     * arg
+     */
     private int arg;
 
     public void setArg(int arg) {
@@ -97,14 +116,22 @@ public class SocketDataArray extends AbsProtocolDataPack implements Cloneable, I
         return this.arg;
     }
 
-    private Object obj;
+    /**
+     *
+     */
+    private ComModel mModel;
 
-    public void setObj(Object obj) {
-        this.obj = obj;
+    public void clearModel() {
+        if (mModel != null) {
+            mModel.fillEmpty();
+        }
     }
 
-    public Object getObj() {
-        return this.obj;
+    public void setModel(BaseModel mModelNew) {
+        if (mModel == null) {
+            mModel = new ComModel(mModelNew);
+        }
+        this.mModel.addDevice(mModelNew);
     }
 
     /****************/
@@ -141,15 +168,15 @@ public class SocketDataArray extends AbsProtocolDataPack implements Cloneable, I
     }
 
     @Override
-    public int getReserve(int point) {
+    public int getProtocolToken(int point) {
         checkStateIsReverse();
-        return mProtocolComData.getReserve(point);
+        return mProtocolComData.getProtocolToken(point);
     }
 
     @Override
-    public int getAllReserve() {
+    public int getProtocolToken() {
         checkStateIsReverse();
-        return mProtocolComData.getAllReserve();
+        return mProtocolComData.getProtocolToken();
     }
 
     @Override
@@ -233,6 +260,16 @@ public class SocketDataArray extends AbsProtocolDataPack implements Cloneable, I
     @Override
     public int getLength() {
         return mAbsProtocolDataPack.getLength();
+    }
+
+    @Override
+    public void setToken(int token) {
+        mAbsProtocolDataPack.setToken(token);
+    }
+
+    @Override
+    public int getToken() {
+        return mAbsProtocolDataPack.getToken();
     }
 
     @Override
@@ -457,7 +494,9 @@ public class SocketDataArray extends AbsProtocolDataPack implements Cloneable, I
 
     @Override
     public void reset() {
-        mEscapeDataArray.reset();
+        this.mEscapeDataArray.reset();
+        this.mAbsProtocolDataPack.setParams(null);
+        clearModel();
     }
 
     @Override
@@ -469,13 +508,19 @@ public class SocketDataArray extends AbsProtocolDataPack implements Cloneable, I
     public void release() {
         this.mEscapeDataArray.release();
         this.obj = null;
+        this.mModel = null;
     }
 
     /****************/
 
     @Override
     public String toString() {
-        return ("SocketDataArray hashCode:" + hashCode() + "-" + mProtocolComData.toString() + " \n " + mEscapeDataArray.toString());
+        return ("SocketDataArray :" + hashCode()
+                + "-"
+                + String.valueOf(mProtocolComData)
+                + " \n "
+                + String.valueOf(mEscapeDataArray)
+                + String.valueOf(mModel));
     }
 
     @Override
@@ -515,7 +560,7 @@ public class SocketDataArray extends AbsProtocolDataPack implements Cloneable, I
 
         if (!mCheckDatagram.hasHead()) {
             mCheckDatagram.clearCache();
-            throw new EscapeIOException(" has not head [" + Integer.toHexString(ProtocolCode.STX) + "]");
+            throw new EscapeIOException(" not has head [" + Integer.toHexString(ProtocolCode.STX) + "]");
         }
         if (!mCheckDatagram.checkCrc()) {
             mCheckDatagram.clearCache();
@@ -523,7 +568,7 @@ public class SocketDataArray extends AbsProtocolDataPack implements Cloneable, I
         }
         if (!mCheckDatagram.hasTail()) {
             mCheckDatagram.clearCache();
-            throw new EscapeIOException(" has not tail [" + Integer.toHexString(ProtocolCode.ETX) + "]");
+            throw new EscapeIOException(" not has tail [" + Integer.toHexString(ProtocolCode.ETX) + "]");
         }
         mCheckDatagram.clearCache();
         return mSocketDataArray;

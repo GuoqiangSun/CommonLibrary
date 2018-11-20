@@ -6,8 +6,8 @@ android {
     defaultConfig {
         minSdkVersion 17
         targetSdkVersion 27
-        versionCode 3105
-        versionName "3.1.05"
+        versionCode 3108
+        versionName "3.1.08"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
@@ -33,20 +33,20 @@ dependencies {
     implementation project(path: ':Tlog')
 }
 
-//apply plugin: 'com.novoda.bintray-release'
-//publish {
-//
-//    //bintray.com用户名
-//    userOrg = 'swain169'
-//    //自定义，别人引用时  groupId:artifactId:publishVersion
-//    groupId = 'cn.com.swain169'
-//    //项目名称
-//    artifactId = 'protocolEngine'
-//    //版本号
-//    publishVersion = '3.1.05'
-//    //描述，不重要
-//    desc = 'protocolEngine sdk 3.1.05'
-//    //网站，不重要
-//    website = 'https://www.startai.com.cn'
-//
-//}
+apply plugin: 'com.novoda.bintray-release'
+publish {
+
+    //bintray.com用户名
+    userOrg = 'swain169'
+    //自定义，别人引用时  groupId:artifactId:publishVersion
+    groupId = 'cn.com.swain169'
+    //项目名称
+    artifactId = 'protocolEngine'
+    //版本号
+    publishVersion = '3.1.08'
+    //描述，不重要
+    desc = 'restructe send receive Pack model'
+    //网站，不重要
+    website = 'https://www.startai.com.cn'
+
+}

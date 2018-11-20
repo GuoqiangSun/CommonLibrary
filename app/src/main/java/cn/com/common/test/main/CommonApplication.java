@@ -35,7 +35,7 @@ public class CommonApplication extends BaseApplication {
         f.init(this);
 //        TFlog.set(new LogRecordManager(f.getLogPath(), "00", 1024 * 1024 * 6));
         Tlog.setLogRecordDebug(true);
-        Tlog.setPrintStackDebug(true);
+//        Tlog.setPrintStackDebug(true);
         LooperManager.getInstance().init(this);
 
         Tlog.i("CommonApplication onCreate(); pid:" + android.os.Process.myPid() + "; Build.VERSION.SDK_INT :" + Build.VERSION.SDK_INT);

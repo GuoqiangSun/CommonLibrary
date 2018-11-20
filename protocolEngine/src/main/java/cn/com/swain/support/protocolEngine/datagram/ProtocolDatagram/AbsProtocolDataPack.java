@@ -14,10 +14,7 @@ public abstract class AbsProtocolDataPack implements IProtocolComData {
     byte length_h;
     byte length_l;
 
-    protected byte reserve_0;
-    protected byte reserve_1;
-    protected byte reserve_2;
-    protected byte reserve_3;
+    protected int token;
 
     protected byte version;
     protected byte seq;
@@ -32,6 +29,7 @@ public abstract class AbsProtocolDataPack implements IProtocolComData {
     byte crc;
 
     protected byte tail = ProtocolCode.ETX;
+
     public byte getHead() {
         return this.head;
     }
@@ -51,6 +49,14 @@ public abstract class AbsProtocolDataPack implements IProtocolComData {
 
     public int getLength() {
         return (length_h & 0xFF) << 8 | (length_l & 0xFF);
+    }
+
+    public void setToken(int token) {
+        this.token = token;
+    }
+
+    public int getToken() {
+        return token;
     }
 
     public void setVersion(byte version) {

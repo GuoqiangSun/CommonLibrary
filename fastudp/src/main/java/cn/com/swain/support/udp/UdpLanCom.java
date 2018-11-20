@@ -23,13 +23,15 @@ import cn.com.swain169.log.Tlog;
  * date : 2018/6/6 0006
  * desc :
  */
-public class UdpLanCom {
+public class UdpLanCom extends AbsFastUdp {
 
     public static final String TAG = "UdpLanCom";
 
     private WriteHandler mHandler;
     private final ISocketResult mResult;
 
+    private static final long MAX_DELAY = 1000 * 3L;
+    private static final long DELAY = 500L;
 
     public UdpLanCom(Looper mLooper, ISocketResult mResult) {
 
@@ -37,7 +39,6 @@ public class UdpLanCom {
         this.mResult = mResult;
 
     }
-
 
     private ExecutorService executorService;
 
@@ -114,11 +115,13 @@ public class UdpLanCom {
                 String hostAddress = mReceivePacket.getAddress().getHostAddress();
                 int port1 = mReceivePacket.getPort();
 
-//                StringBuffer sb = new StringBuffer();
-//                for (byte b : data) {
-//                    sb.append(Integer.toHexString(b & 0xFF) + " , ");
-//                }
-//                Tlog.i(TAG, " receive : " + sb.toString() + " hostAddress  " + hostAddress);
+                if (Tlog.isDebug()) {
+                    StringBuilder sb = new StringBuilder();
+                    for (byte b : data) {
+                        sb.append(Integer.toHexString(b & 0xFF)).append(" , ");
+                    }
+                    Tlog.d(TAG, " receive-" + hostAddress + ":" + port1 + " " + sb.toString());
+                }
 
                 if (mResult != null) {
                     mResult.onSocketReceiveData(hostAddress, port1, data);
@@ -152,6 +155,7 @@ public class UdpLanCom {
 
     }
 
+    @Override
     public void broadcast(UdpResponseMsg mResponseData) {
         if (run) {
             mHandler.obtainMessage(MSG_WHAT_BROAD_OBJ, mResponseData).sendToTarget();
@@ -160,6 +164,43 @@ public class UdpLanCom {
         }
     }
 
+    private long mLastBroadMillis = System.currentTimeMillis();
+
+    private int mBroadTimes = 0;
+
+    @Override
+    public void broadcastDelay(UdpResponseMsg mResponseData) {
+        broadcastDelay(mResponseData, DELAY, MAX_DELAY);
+    }
+
+    @Override
+    public void broadcastDelay(UdpResponseMsg mResponseData, long DELAY, long maxDelay) {
+
+        if (!run) {
+            Tlog.e(TAG, " udp broadcastDelay ; but not run ");
+        }
+
+        long currentTimeMillis = System.currentTimeMillis();
+
+        long delay = 10L;
+
+        if (currentTimeMillis - mLastBroadMillis <= DELAY) {
+            delay = mBroadTimes * DELAY;
+
+            if (delay > maxDelay) {
+                delay = maxDelay;
+            } else if (delay <= 0) {
+                delay = DELAY;
+            }
+
+        }
+        mLastBroadMillis = currentTimeMillis;
+        mBroadTimes++;
+        Message message = mHandler.obtainMessage(MSG_WHAT_BROAD_OBJ_DELAY, mResponseData);
+        mHandler.sendMessageDelayed(message, delay);
+    }
+
+    @Override
     public void write(UdpResponseMsg mResponseData) {
         if (run) {
             mHandler.obtainMessage(MSG_WHAT_WRITE_OBJ, mResponseData).sendToTarget();
@@ -168,9 +209,48 @@ public class UdpLanCom {
         }
     }
 
+    private long mLastSendMillis = System.currentTimeMillis();
+
+    private int mSendTimes = 0;
+
+    @Override
+    public void writeDelay(UdpResponseMsg mResponseData) {
+        writeDelay(mResponseData, DELAY, MAX_DELAY);
+    }
+
+    @Override
+    public void writeDelay(UdpResponseMsg mResponseData, long DELAY, long maxDelay) {
+
+        if (!run) {
+            Tlog.e(TAG, " udp writeDelay ; but not run ");
+        }
+
+        long currentTimeMillis = System.currentTimeMillis();
+
+        long delay = 10L;
+
+        if (currentTimeMillis - mLastSendMillis <= DELAY) {
+            delay = mSendTimes * DELAY;
+
+            if (delay > MAX_DELAY) {
+                delay = MAX_DELAY;
+            } else if (delay <= 0) {
+                delay = DELAY;
+            }
+
+        }
+        mLastSendMillis = currentTimeMillis;
+        mSendTimes++;
+        Message message = mHandler.obtainMessage(MSG_WHAT_WRITE_OBJ_DELAY, mResponseData);
+        mHandler.sendMessageDelayed(message, delay);
+
+    }
+
 
     private static final int MSG_WHAT_BROAD_OBJ = 0x02;
-    private static final int MSG_WHAT_WRITE_OBJ = 0x03;
+    private static final int MSG_WHAT_BROAD_OBJ_DELAY = 0x03;
+    private static final int MSG_WHAT_WRITE_OBJ = 0x04;
+    private static final int MSG_WHAT_WRITE_OBJ_DELAY = 0x05;
 
     private void handleMessage(Message msg) {
 
@@ -180,8 +260,17 @@ public class UdpLanCom {
                 broadObj(msg);
                 break;
 
+            case MSG_WHAT_BROAD_OBJ_DELAY:
+                broadObj(msg);
+                mBroadTimes--;
+                break;
+
             case MSG_WHAT_WRITE_OBJ:
                 writeObj(msg);
+                break;
+            case MSG_WHAT_WRITE_OBJ_DELAY:
+                writeObj(msg);
+                mSendTimes--;
                 break;
             default:
 
@@ -223,7 +312,7 @@ public class UdpLanCom {
             int length = buf.length;
 
             if (Tlog.isDebug()) {
-                Tlog.i(TAG, " writeObj  " + ip + ":" + port + " " + StrUtil.toString(buf));
+                Tlog.i(TAG, " writeObj-" + ip + ":" + port + " " + StrUtil.toString(buf));
             }
 
             DatagramPacket datagramPacket = new DatagramPacket(buf, length, byName, port);
@@ -270,7 +359,7 @@ public class UdpLanCom {
             int length = buf.length;
 
             if (Tlog.isDebug()) {
-                Tlog.i(TAG, " broadObj  " + byName.getHostAddress() + ":" + port + " " + StrUtil.toString(buf));
+                Tlog.i(TAG, " broadObj-" + byName.getHostAddress() + ":" + port + " " + StrUtil.toString(buf));
             }
 
             DatagramPacket datagramPacket = new DatagramPacket(buf, length, byName, port);

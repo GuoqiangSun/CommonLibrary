@@ -7,8 +7,6 @@ import cn.com.swain.support.protocolEngine.DataInspector.DataResolveInspector;
 import cn.com.swain.support.protocolEngine.datagram.dataproducer.ISocketDataProducer;
 import cn.com.swain.support.protocolEngine.datagram.dataproducer.SocketDataQueueProducer;
 import cn.com.swain.support.protocolEngine.pack.ReceivesData;
-import cn.com.swain.support.protocolEngine.resolve.AbsProtocolProcessor;
-import cn.com.swain.support.protocolEngine.resolve.DataResolveQueue;
 import cn.com.swain.support.protocolEngine.result.IProtocolAnalysisResult;
 
 /**
@@ -24,20 +22,22 @@ public class ProtocolLargerProcessor extends AbsProtocolProcessor {
 
     public ProtocolLargerProcessor(Looper protocolLooper,
                                    IProtocolAnalysisResult mProtocolCallBack,
-                                   int protocolVersion) {
-        this(protocolLooper, mProtocolCallBack, protocolVersion, 1);
-    }
-
-    public ProtocolLargerProcessor(Looper protocolLooper,
-                                   IProtocolAnalysisResult mProtocolCallBack,
                                    int protocolVersion,
-                                   int poolSize) {
+                                   int poolSize,
+                                   boolean supportLargerPkg) {
         this(protocolLooper, mProtocolCallBack,
                 new SocketDataQueueProducer(protocolVersion),
-                new SocketDataQueueProducer(protocolVersion),
+                supportLargerPkg ? new SocketDataQueueProducer(protocolVersion) : null,
                 poolSize);
     }
 
+    /**
+     * @param protocolLooper            解析线程
+     * @param mProtocolCallBack         回调
+     * @param mSocketDataProducer       一般包的生产者
+     * @param mLargerSocketDataProducer 超大包的生产者
+     * @param poolSize                  回调线程池的大小
+     */
     public ProtocolLargerProcessor(Looper protocolLooper,
                                    IProtocolAnalysisResult mProtocolCallBack,
                                    ISocketDataProducer mSocketDataProducer,
@@ -58,7 +58,8 @@ public class ProtocolLargerProcessor extends AbsProtocolProcessor {
 
         this.mDataResolveQueue = new DataResolveQueue(protocolLooper,
                 new DataInspectorPool(new DataResolveInspector(mProtocolCallBack), poolSize),
-                mSocketDataProducer,mLargerSocketDataProducer);
+                mSocketDataProducer,
+                mLargerSocketDataProducer);
     }
 
     @Override

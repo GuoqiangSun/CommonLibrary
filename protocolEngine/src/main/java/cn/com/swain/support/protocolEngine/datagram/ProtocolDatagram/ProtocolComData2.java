@@ -60,10 +60,10 @@ public class ProtocolComData2 extends AbsProtocolDataPack {
     public static final int POINT_VERSION = 3;
     public static final int POINT_SEQUENCE = 4;
 
-    public static final int POINT_RESERVE_0 = 5;
-    public static final int POINT_RESERVE_1 = 6;
-    public static final int POINT_RESERVE_2 = 7;
-    public static final int POINT_RESERVE_3 = 8;
+    public static final int TOKEN_0 = 5;
+    public static final int TOKEN_1 = 6;
+    public static final int TOKEN_2 = 7;
+    public static final int TOKEN_3 = 8;
 
 
     public static final int POINT_CUSTOM = 9;
@@ -116,10 +116,10 @@ public class ProtocolComData2 extends AbsProtocolDataPack {
         buf[POINT_VERSION] = version;
         buf[POINT_SEQUENCE] = seq;
 
-        buf[POINT_RESERVE_0] = reserve_0;
-        buf[POINT_RESERVE_1] = reserve_1;
-        buf[POINT_RESERVE_2] = reserve_2;
-        buf[POINT_RESERVE_3] = reserve_3;
+        buf[TOKEN_0] = (byte) ((token >> 24) & 0xFF);
+        buf[TOKEN_1] = (byte) ((token >> 16) & 0xFF);
+        buf[TOKEN_2] = (byte) ((token >> 8) & 0xFF);
+        buf[TOKEN_3] = (byte) (token & 0xFF);
 
         buf[POINT_CUSTOM] = custom;
         buf[POINT_PRODUCT] = product;
@@ -154,28 +154,28 @@ public class ProtocolComData2 extends AbsProtocolDataPack {
     }
 
     @Override
-    public int getReserve(int point) {
+    public int getProtocolToken(int point) {
         switch (point) {
             case 0:
-                return mComDataArray.getByte(POINT_RESERVE_0);
+                return mComDataArray.getByte(TOKEN_0);
             case 1:
-                return mComDataArray.getByte(POINT_RESERVE_1);
+                return mComDataArray.getByte(TOKEN_1);
             case 2:
-                return mComDataArray.getByte(POINT_RESERVE_2);
+                return mComDataArray.getByte(TOKEN_2);
             case 3:
-                return mComDataArray.getByte(POINT_RESERVE_3);
+                return mComDataArray.getByte(TOKEN_3);
             default:
-                return getAllReserve();
+                return getProtocolToken();
         }
 
     }
 
     @Override
-    public int getAllReserve() {
-        return (mComDataArray.getByte(POINT_RESERVE_0) & 0xFF) << 24
-                | (mComDataArray.getByte(POINT_RESERVE_1) & 0xFF) << 16
-                | (mComDataArray.getByte(POINT_RESERVE_2) & 0xFF) << 8
-                | (mComDataArray.getByte(POINT_RESERVE_3) & 0xFF);
+    public int getProtocolToken() {
+        return (mComDataArray.getByte(TOKEN_0) & 0xFF) << 24
+                | (mComDataArray.getByte(TOKEN_1) & 0xFF) << 16
+                | (mComDataArray.getByte(TOKEN_2) & 0xFF) << 8
+                | (mComDataArray.getByte(TOKEN_3) & 0xFF);
     }
 
     @Override
@@ -258,7 +258,7 @@ public class ProtocolComData2 extends AbsProtocolDataPack {
             sb.append(" PARAMS IS NULL ");
         }
 
-        sb.append(" TAIL : " + Integer.toHexString(getProtocolTail() & 0xFF));
+        sb.append(" TAIL : ").append(Integer.toHexString(getProtocolTail() & 0xFF));
         sb.append(" : END. ");
 
         return sb.toString();

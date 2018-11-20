@@ -30,19 +30,27 @@ public class Bit {
         }
     }
 
-    public Bit add(int bitPoint) {
+
+
+    public final Bit add(int bitPoint) {
         checkPoint(bitPoint);
 
-        final int tmp = (ONE << bitPoint);
+        final int tmp = ONE << bitPoint;
 
-        device = device & ~tmp;
+//        device = device & ~tmp;
 
         device = device | tmp;
 
         return this;
     }
 
-    public Bit remove(int bitPoint) {
+    public final void addDevice(int tmpDevice) {
+
+        this.device |= tmpDevice;
+
+    }
+
+    public final Bit remove(int bitPoint) {
         checkPoint(bitPoint);
 
         final int tmp = ONE << bitPoint;
@@ -52,7 +60,13 @@ public class Bit {
         return this;
     }
 
-    public Bit reserve(int bitPoint, boolean flag) {
+    public final void removeDevice(int tmpDevice) {
+
+        this.device = this.device & ~tmpDevice;
+
+    }
+
+    public final Bit reserve(int bitPoint, boolean flag) {
 
         checkPoint(bitPoint);
 
@@ -66,7 +80,7 @@ public class Bit {
         return this;
     }
 
-    public Bit fillEmpty() {
+    public final Bit fillEmpty() {
         this.device = EMPTY;
         return this;
     }

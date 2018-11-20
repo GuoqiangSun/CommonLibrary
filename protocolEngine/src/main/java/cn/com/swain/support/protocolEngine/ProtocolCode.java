@@ -12,7 +12,7 @@ public class ProtocolCode {
      * 转义前	           转义后
      * STX （帧头）	    STX 转成 ESC 和 STX_ESC
      * ETX （帧尾）	    ETX 转成 ESC 和 ETX_ESC
-     * ESC （转义符）	ESC 转成 ESC 和 ESC_ESC
+     * ESC （转义符）	    ESC 转成 ESC 和 ESC_ESC
      */
 
     public static final byte STX = (byte) 0xff;

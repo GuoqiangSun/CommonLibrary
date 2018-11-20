@@ -6,8 +6,8 @@ android {
     defaultConfig {
         minSdkVersion 19
         targetSdkVersion 27
-        versionCode 3103
-        versionName "3.1.03"
+        versionCode 3106
+        versionName "3.1.06"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
@@ -43,7 +43,7 @@ dependencies {
 //    //项目名称
 //    artifactId = 'fastudp'
 //    //版本号
-//    publishVersion = '3.1.03'
+//    publishVersion = '3.1.06'
 //    //描述，不重要
 //    desc = 'remove appcompat library'
 //    //网站，不重要

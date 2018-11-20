@@ -66,18 +66,18 @@ public interface IProtocolComData {
     int getProtocolSequence();
 
     /**
-     * 获取保留字节
+     * 获取token
      *
      * @return int8 reserve
      */
-    int getReserve(int point);
+    int getProtocolToken(int point);
 
     /**
-     * 获取保留字节
+     * 获取token
      *
      * @return int32 reserve
      */
-    int getAllReserve();
+    int getProtocolToken();
 
 
     /**

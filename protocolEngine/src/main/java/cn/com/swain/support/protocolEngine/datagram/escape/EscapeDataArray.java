@@ -1,8 +1,8 @@
 package cn.com.swain.support.protocolEngine.datagram.escape;
 
 import cn.com.swain.baselib.util.StrUtil;
-import cn.com.swain.support.protocolEngine.ProtocolProcessor;
 import cn.com.swain.support.protocolEngine.ProtocolCode;
+import cn.com.swain.support.protocolEngine.ProtocolProcessor;
 import cn.com.swain169.log.Tlog;
 
 /**
@@ -13,7 +13,8 @@ import cn.com.swain169.log.Tlog;
  * * 转义前	           转义后
  * STX （帧头）	    STX 转成 ESC 和 STX_ESC
  * ETX （帧尾）	    ETX 转成 ESC 和 ETX_ESC
- * ESC （转义符）	ESC 转成 ESC 和 ESC_ESC
+ * ESC （转义符）    	ESC 转成 ESC 和 ESC_ESC
+ * {@link ProtocolCode}
  */
 
 public class EscapeDataArray implements IEscapeDataArray {
@@ -422,13 +423,13 @@ public class EscapeDataArray implements IEscapeDataArray {
     /************************************************/
     @Override
     public String toString() {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         sb.append(" EscapeDataArray:");
-        sb.append(" curState : " + getStateStr() + ", point : " + point + ",");
-        sb.append(" capacity : " + capacity + " == data.length : " + DATA.length + ",");
+        sb.append(" curState : ").append(getStateStr()).append(", point : ").append(point).append(",");
+        sb.append(" capacity : ").append(capacity).append(" == data.length : ").append(DATA.length).append(",");
         sb.append(" content : ");
         for (byte b : DATA) {
-            sb.append(Integer.toHexString(b & 0xFF) + ",");
+            sb.append(Integer.toHexString(b & 0xFF)).append(",");
         }
         sb.append(" : END. ");
         return sb.toString();

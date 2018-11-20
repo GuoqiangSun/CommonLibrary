@@ -35,6 +35,12 @@ public class DataResolveQueue extends Handler {
         this(mLooper, mCallBack, mSocketDataProducer, null);
     }
 
+    /**
+     * @param mLooper                   解析线程
+     * @param mCallBack                 回调
+     * @param mSocketDataProducer       一般包
+     * @param mLargerSocketDataProducer 如果要支持超大包,就传这个参数进来
+     */
     public DataResolveQueue(Looper mLooper,
                             IDataResolveCallBack mCallBack,
                             ISocketDataProducer mSocketDataProducer,
@@ -202,8 +208,9 @@ public class DataResolveQueue extends Handler {
                     mTmpSocketDataArray.reset();
                     mTmpSocketDataArray.setISUsed();
                     mTmpSocketDataArray.setID(receiverData.fromID);
-                    mTmpSocketDataArray.setArg(receiverData.arg);
                     mTmpSocketDataArray.setObj(receiverData.obj);
+                    mTmpSocketDataArray.setArg(receiverData.arg);
+                    mTmpSocketDataArray.setModel(receiverData.getReceiveModel());
                     mTmpSocketDataArray.changeStateToReverse();
                     mTmpSocketDataArray.onAddHead(buf[i]);
 

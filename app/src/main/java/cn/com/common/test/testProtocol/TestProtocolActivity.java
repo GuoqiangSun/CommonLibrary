@@ -14,7 +14,6 @@ import cn.com.swain.support.protocolEngine.datagram.ProtocolException.EscapeIOEx
 import cn.com.swain.support.protocolEngine.datagram.SocketDataArray;
 import cn.com.swain.support.protocolEngine.datagram.dataproducer.SocketDataQueueProducer;
 import cn.com.swain.support.protocolEngine.pack.ReceivesData;
-import cn.com.swain.support.protocolEngine.pack.ResponseData;
 import cn.com.swain.support.protocolEngine.resolve.AbsProtocolProcessor;
 import cn.com.swain.support.protocolEngine.result.SimpleProtocolResult;
 import cn.com.swain.support.protocolEngine.task.FailTaskResult;
@@ -40,7 +39,8 @@ public class TestProtocolActivity extends AppCompatActivity {
 //        testSocketDataArray();
 
 
-        AbsProtocolProcessor absProtocolProcessor = ProtocolProcessorFactory.newSingleTaskMaxPkg(LooperManager.getInstance().getProtocolLooper(),
+        final AbsProtocolProcessor absProtocolProcessor = ProtocolProcessorFactory.newSingleChannelSingleTask(
+                LooperManager.getInstance().getProtocolLooper(),
                 new SimpleProtocolResult() {
                     @Override
                     public void onFail(FailTaskResult failTaskResult) {
@@ -57,7 +57,7 @@ public class TestProtocolActivity extends AppCompatActivity {
                         Tlog.v(TAG, " getProtocolParams:" + protocolParams.length);
 
                     }
-                }, ProtocolBuild.VERSION.VERSION_0);
+                }, ProtocolBuild.VERSION.VERSION_0, true);
 
         ProtocolDataCache.BuildParams mParams = new ProtocolDataCache.BuildParams();
         mParams.mCustom = 0;
@@ -66,9 +66,70 @@ public class TestProtocolActivity extends AppCompatActivity {
         ProtocolDataCache.getInstance().init(mParams);
         ProtocolDataCache.getInstance().onSCreate();
 
-        ResponseData electricityPrice = ProtocolDataCache.getElectricityPrice("00:00:00:00:00:00", 2);
-        ReceivesData mReceiveData = new ReceivesData(electricityPrice.toID, electricityPrice.data);
-        absProtocolProcessor.onInputServerData(mReceiveData);
+        LooperManager.getInstance().execute(new Runnable() {
+            @Override
+            public void run() {
+
+
+                byte[] buf = new byte[]{(byte) 0xff, 6, 18, 1, 0xd, 0, 0, 0, 0, 0, 2, 2, 0x1a,
+                        0, 12, 0xb, 13, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 17,
+                        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                        0, 0, 0, 0, 0, 0, 87, (byte) 0xa8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 58, 98, 0, 0, 0, 0, 0, 0,
+                        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+                        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 40, (byte) 2d, 0, 0, 0,
+                        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 80, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 62,
+                        (byte) 0xe5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 80, 0, 0, 0, 67, 0x4c, 0, 0, 0, 0, 0, 0, 0x4c, 0x2c, 0, 0, 0,
+                        0, 0, 0, 28, (byte) 0x8c, 0, 0, 0, 0, 0, 0, 0x4b, 0x6c, 0, 0, 0, 0, 0, 0, 0x4b, 0x2f, 0, 0, 0, 0, 0, 0, 0x4b, 0xc, 0, 0, 0, 0,
+                        0, 0, 4, 92, 0, 0, 0, 0, 0, 0, 0x4c, 0x3b, 0, 0, 0, 0, 0, 0, 0x4c, 27, 0, 0, 0, 0, 0, 0, 0x4b, (byte) 0xd5, 0, 0, 0, 0, 0,
+                        0, 21, 55, 99, 0, 0, 0, 0, 0, 0, 0x4c, 17, 0, 0, 0, 0, 0, 0, 0x4c, 0x2c, 0, 0, 0, 0, 0, 0, 0x4c, 0x4f, 0, 0, 0, 0, 0,
+                        0, 0x4c, 95, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0x5a, 84, 0, 0, 0, 0, 0, 0, 0x4b, 82, 0, 0, 0, 0, 0, 0, 0x4b,
+                        0x1a, 0, 0, 0, 0, 0, 0, 0x4b, 5, 0, 0, 0, 0, 0, 0, 0x4b, 0, 0, 0, 0, 0, 0, 0, 0x4b, 0, 0, 0, 0, 0, 0, 0, 0x4b, 0, 0, 0,
+                        0, 0, 0, 0, 0x4b, 0, 0, 0, 0, 0, 0, 0, 0x4b,
+                        0, 0, 0, 0, 0, 0, 0, 0x4b, 0, 0, 0, 0, 0, 0, 0, 0x4b, 0, 0, 0, 0, 0, 0, 0, 0x4b, 0, 0, 0, 0, 0, 0, 0, 0x4b, 0,
+                        0, 0, 0, 0, 0, 0, 0, 0, 0,
+                        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 0x4b, 0, 0,
+                        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0x1e, 43, 0, 0, 0, 0, 0, 0, 0x4c, 27, 0, 0, 0, 0,
+                        0, 0, 0x4b, 74, 0, 0, 0, 0, 0, 0, 0x4b, 0xb, 0, 0, 0, 0, 0, 0, 0x4b, 0, 0, 0, 0, 0, 0, 0, 0x4b, 0, 0, 0,
+                        0, 0, 0, 0, 0x4b, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 96, 0, 0, 0, 0, 0, 0, 0, 0x4b, 0, 0,
+                        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 96, 45, 0, 0, 0, 0, 0, 0, 0x4b, (byte) 0xac, 0, 0, 0, 0, 0, 0, 0x4b, (byte) 0xb6,
+                        0, 0, 0, 0, 0, 0, 0x4b, 0x6a, 0, 0, 0, 0, 0, 0, 0x4b, 48, 0, 0, 0, 0, 0, 0, 0x4b, 0x4b, 0, 0, 0, 0, 0, 0, 0x4b,
+                        0xf, 0, 0, 0, 0, 0, 0, 0x4b, 0, 0, 0, 0, 0, 0, 0, 0x4b, 0, 0, 0, 0, 0, 0, 0, 0x4b, 0, 0, 0, 0, 0, 0, 0, 0x4b, 67,
+                        0, 0, 0, 0, 0, 0, 0x4b, 87, 0, 0, 0, 0, 0, 0, 0x4b, 21, 0, 0, 0, 0, 0, 0, 0x4b, 6, 0, 0, 0, 0, 0, 0, 0x4b, 0xf,
+                        0, 0, 0, 0, 0, 0, 0x4b, 24, 0,
+                        0, 0, 0, 0, 4, 18, (byte) 0xab, 0, 0, 0, 0, 0, 3, 27, (byte) 9d, 0, 0, 0, 0, 0, 3, 0x2a, 25, 0, 0, 0, 0, 1, 0x5b, (byte) 0xee
+                };
+
+                ReceivesData mReceiveData = new ReceivesData("00:00:00:00:00:00", buf);
+                absProtocolProcessor.onInputServerData(mReceiveData);
+
+//                while (true) {
+//                    ResponseData electricityPrice = ProtocolDataCache.getElectricityPrice("00:00:00:00:00:00", 2);
+//                    ReceivesData mReceiveData = new ReceivesData(electricityPrice.toID, electricityPrice.data);
+//                    absProtocolProcessor.onInputServerData(mReceiveData);
+//
+//                }
+            }
+        });
 
     }
 

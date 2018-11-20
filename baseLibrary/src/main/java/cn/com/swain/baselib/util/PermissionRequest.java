@@ -38,8 +38,6 @@ public final class PermissionRequest {
     }
 
     public void release() {
-        mAllFinish = null;
-
         if (mWr != null) {
             mWr.clear();
             mWr = null;
@@ -83,23 +81,12 @@ public final class PermissionRequest {
     /**
      * 请求所有的权限
      *
-     * @param mAllFinish      所有权限请求完毕回调
-     * @param mResult         单个权限请求结果
+     * @param mResult         结果回调
      * @param permissionArray 权限
      */
-    public void requestAllPermission(OnAllPermissionFinish mAllFinish, OnPermissionResult mResult, String... permissionArray) {
-        setOnAllPermissionResult(mAllFinish);
-        requestAllPermission(mResult, permissionArray);
-    }
+    public void requestAllPermission(OnPermissionResult mResult, String... permissionArray) {
+        requestAllPermission(null, mResult, permissionArray);
 
-
-    private OnAllPermissionFinish mAllFinish;
-
-    /**
-     * 监听所有权限是否请求完毕
-     */
-    private void setOnAllPermissionResult(OnAllPermissionFinish mAllFinish) {
-        this.mAllFinish = mAllFinish;
     }
 
 
@@ -107,33 +94,38 @@ public final class PermissionRequest {
     private final Map<String, RequestPermissionMsg> mInternalPermissionQueueCache =
             Collections.synchronizedMap(new HashMap<String, RequestPermissionMsg>());
 
-
     /**
      * 请求所有的权限
      *
-     * @param mResult         结果回调
+     * @param mAllFinish      所有权限请求完毕回调
+     * @param mResult         单个权限请求结果
      * @param permissionArray 权限
      */
-    public void requestAllPermission(OnPermissionResult mResult, String... permissionArray) {
+    public void requestAllPermission(OnAllPermissionFinish mAllFinish, OnPermissionResult mResult, String... permissionArray) {
 
         final int size = mInternalPermissionQueue.size();
 
         if (permissionArray != null && permissionArray.length > 0) {
             for (String s : permissionArray) {
                 if (s != null && !"".equals(s)) {
-                    RequestPermissionMsg mMsg = new RequestPermissionMsg(mResult, s);
+                    RequestPermissionMsg mMsg = new RequestPermissionMsg(mResult, s, null);
                     mInternalPermissionQueue.offer(mMsg);
                 }
             }
         }
 
-        if (size <= 0) {
+        if (mAllFinish != null) {
+            RequestPermissionMsg mMsg = new RequestPermissionMsg(null, null, mAllFinish);
+            mInternalPermissionQueue.offer(mMsg);
+        }
+
+        if (size <= 0 && mAllFinish != null) {
             if (mHandler != null) {
                 mHandler.sendEmptyMessage(INTERNAL_PERMISSIONS_REQUEST_CODE);
             }
         }
-
     }
+
 
     /**
      * 请求单个权限
@@ -158,7 +150,7 @@ public final class PermissionRequest {
     public void requestPermission(OnPermissionResult mResult, String permissionStr) {
         if (permissionStr != null && !"".equals(permissionStr)) {
             final int size = mExternalPermissionQueue.size();
-            RequestPermissionMsg mMsg = new RequestPermissionMsg(mResult, permissionStr);
+            RequestPermissionMsg mMsg = new RequestPermissionMsg(mResult, permissionStr, null);
             mExternalPermissionQueue.offer(mMsg);
             if (size <= 0) {
                 if (mHandler != null) {
@@ -181,8 +173,10 @@ public final class PermissionRequest {
 
             case INTERNAL_REQUEST_PERMISSION_FINISH_WHAT:
 
-                if (mAllFinish != null) {
-                    mAllFinish.onAllPermissionRequestFinish();
+                RequestPermissionMsg internalPermissionMsgFinish = (RequestPermissionMsg) msg.obj;
+
+                if (internalPermissionMsgFinish != null && internalPermissionMsgFinish.mAllFinish != null) {
+                    internalPermissionMsgFinish.mAllFinish.onAllPermissionRequestFinish();
                 }
 
                 break;
@@ -190,9 +184,10 @@ public final class PermissionRequest {
             case INTERNAL_PERMISSIONS_REQUEST_CODE:
 
                 RequestPermissionMsg internalPermissionMsg = mInternalPermissionQueue.poll();
-                if (internalPermissionMsg == null) {
+                if (internalPermissionMsg == null || internalPermissionMsg.permission == null) {
                     if (mHandler != null) {
-                        mHandler.sendEmptyMessage(INTERNAL_REQUEST_PERMISSION_FINISH_WHAT);
+                        mHandler.obtainMessage(INTERNAL_REQUEST_PERMISSION_FINISH_WHAT, internalPermissionMsg).sendToTarget();
+//                        mHandler.sendEmptyMessage(INTERNAL_REQUEST_PERMISSION_FINISH_WHAT);
                     }
                     return;
                 }
@@ -375,11 +370,13 @@ public final class PermissionRequest {
     }
 
     private final class RequestPermissionMsg {
-        private RequestPermissionMsg(OnPermissionResult mResult, String permission) {
+        private RequestPermissionMsg(OnPermissionResult mResult, String permission, OnAllPermissionFinish mAllFinish) {
             this.permission = permission;
             this.mResult = mResult;
+            this.mAllFinish = mAllFinish;
         }
 
+        private OnAllPermissionFinish mAllFinish;
         private String permission;
         private OnPermissionResult mResult;
     }
