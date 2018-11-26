@@ -16,19 +16,16 @@ public interface IEscapeDataArray extends ITransformInputData, ITransformOutputD
 
     /**
      * 容量
-     *
      */
     int getCapacity();
 
     /**
      * 是转义状态
-     *
      */
     boolean isEscapeState();
 
     /**
      * 是反转义状态
-     *
      */
     boolean isReverseState();
 
@@ -51,19 +48,20 @@ public interface IEscapeDataArray extends ITransformInputData, ITransformOutputD
      */
     void changeStateToReverse();
 
-    /**
-     * 重置Point
-     */
-    void reset();
 
     /**
      * 数据置为0x00
      */
     void fillEmpty();
 
+
+    /**
+     * 重置Point
+     */
+    void reset();
+
     /**
      * 清空数据
      */
     void release();
-
 }

@@ -8,6 +8,7 @@ import cn.com.swain.support.protocolEngine.DataInspector.DataResolveInspector;
 import cn.com.swain.support.protocolEngine.datagram.dataproducer.SocketDataQueueProducer;
 import cn.com.swain.support.protocolEngine.pack.ReceivesData;
 import cn.com.swain.support.protocolEngine.result.IProtocolAnalysisResult;
+import cn.com.swain169.log.Tlog;
 
 /**
  * author: Guoqiang_Sun
@@ -47,31 +48,28 @@ public class ProtocolMultichannelProcessor extends AbsProtocolProcessor {
         this.supportLargerPkg = supportlargerPkg;
     }
 
-
     @Override
     public void release() {
         synchronized (synObj) {
-            if (mDataResolveQueueMap != null) {
-
-                for (int i = 0; i < mDataResolveQueueMap.size(); i++) {
-                    int i1 = mDataResolveQueueMap.keyAt(i);
-                    DataResolveQueue dataResolveQueue = mDataResolveQueueMap.get(i1);
-                    if (dataResolveQueue != null) {
-                        dataResolveQueue.release();
-                    }
+            for (int i = 0; i < mDataResolveQueueMap.size(); i++) {
+                int i1 = mDataResolveQueueMap.keyAt(i);
+                DataResolveQueue dataResolveQueue = mDataResolveQueueMap.get(i1);
+                if (dataResolveQueue != null) {
+                    dataResolveQueue.release();
                 }
-
-                mDataResolveQueueMap.clear();
             }
+            mDataResolveQueueMap.clear();
         }
     }
-
 
     @Override
     public void onInputServerData(ReceivesData mReceivesData) {
         DataResolveQueue mDataResolveQueue = getDataResolveQueue(mReceivesData);
         if (mDataResolveQueue != null) {
             mDataResolveQueue.postReceiveDataToQueue(mReceivesData);
+        } else {
+            Tlog.e(TAG, " ProtocolMultichannelProcessor onInputServerData mDataResolveQueue=null :"
+                    + String.valueOf(mReceivesData));
         }
     }
 
@@ -85,16 +83,21 @@ public class ProtocolMultichannelProcessor extends AbsProtocolProcessor {
 
     private DataResolveQueue getDataResolveQueue(int channel) {
 
-        DataResolveQueue dataResolveQueue;
-        synchronized (synObj) {
-            dataResolveQueue = mDataResolveQueueMap.get(channel);
-            if (dataResolveQueue == null) {
-                dataResolveQueue = new DataResolveQueue(protocolLooper,
-                        dataInspectorPool,
-                        new SocketDataQueueProducer(protocolVersion),
-                        supportLargerPkg ? new SocketDataQueueProducer(protocolVersion) : null);
+        DataResolveQueue dataResolveQueue = mDataResolveQueueMap.get(channel);
+        if (dataResolveQueue == null) {
+            synchronized (synObj) {
 
-                mDataResolveQueueMap.put(channel, dataResolveQueue);
+                dataResolveQueue = mDataResolveQueueMap.get(channel);
+
+                if (dataResolveQueue == null) {
+
+                    dataResolveQueue = new DataResolveQueue(protocolLooper,
+                            dataInspectorPool,
+                            new SocketDataQueueProducer(protocolVersion),
+                            supportLargerPkg ? new SocketDataQueueProducer(protocolVersion) : null);
+
+                    mDataResolveQueueMap.put(channel, dataResolveQueue);
+                }
 
             }
         }

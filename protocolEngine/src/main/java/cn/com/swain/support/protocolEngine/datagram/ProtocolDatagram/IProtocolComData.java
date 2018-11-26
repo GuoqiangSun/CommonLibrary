@@ -147,5 +147,25 @@ public interface IProtocolComData {
      */
     byte getProtocolTail();
 
+    /**
+     * has head
+     *
+     * @return true check success
+     */
+    boolean hasHead();
+
+    /**
+     * checkCrc
+     *
+     * @return true check success
+     */
+    boolean checkCrc();
+
+    /**
+     * has tail
+     *
+     * @return true check success
+     */
+    boolean hasTail();
 
 }

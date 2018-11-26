@@ -1,5 +1,7 @@
 package cn.com.swain169.log.logRecord.impl;
 
+import android.os.Environment;
+
 import java.io.File;
 
 import cn.com.swain169.log.logRecord.AbsLogRecord;
@@ -14,6 +16,13 @@ public class LogRecordManager extends AbsLogRecord {
 
     private final LogRecordClient mLogRecordClient;
     private ILogRecord mILogRecord;
+
+    public LogRecordManager() {
+        File externalStorageDirectory = Environment.getExternalStorageDirectory();
+        File logPath = new File(externalStorageDirectory, "swain");
+        long size = 1024 * 1024 * 6L;
+        this.mLogRecordClient = new LogRecordClient(logPath, "tmp", size);
+    }
 
     /**
      * @param logPath 日志保存路径

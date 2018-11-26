@@ -11,6 +11,10 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -28,11 +32,19 @@ public class UdpLanCom extends AbsFastUdp {
     public static final String TAG = "UdpLanCom";
 
     private WriteHandler mHandler;
-    private final ISocketResult mResult;
+    private ISocketResult mResult;
 
     private static final long MAX_DELAY = 1000 * 3L;
     private static final long DELAY = 500L;
 
+    public UdpLanCom(Looper mLooper) {
+        if (mLooper == null) {
+            throw new NullPointerException(" mLooper == null ");
+        }
+        this.mHandler = new WriteHandler(this, mLooper);
+    }
+
+    @Deprecated
     public UdpLanCom(Looper mLooper, ISocketResult mResult) {
 
         this.mHandler = new WriteHandler(this, mLooper);
@@ -42,6 +54,7 @@ public class UdpLanCom extends AbsFastUdp {
 
     private ExecutorService executorService;
 
+    @Override
     public void init() {
         release();
 
@@ -55,6 +68,25 @@ public class UdpLanCom extends AbsFastUdp {
     }
 
     private DatagramSocket mUdpSocket;
+
+    @Override
+    public DatagramSocket getDatagramSocket() {
+        return mUdpSocket;
+    }
+
+    @Override
+    public void regSocketResult(ISocketResult mResult) {
+        this.mResult = mResult;
+    }
+
+    @Override
+    public void unregSocketResult(ISocketResult mResult) {
+        if (this.mResult != null && this.mResult == mResult) {
+            this.mResult = null;
+        }
+    }
+
+
     private boolean run;
 
     private void initUdp() {
@@ -138,6 +170,7 @@ public class UdpLanCom extends AbsFastUdp {
 
     }
 
+    @Override
     public void release() {
 
         Tlog.v(TAG, " udpLanCom release ");
@@ -164,9 +197,8 @@ public class UdpLanCom extends AbsFastUdp {
         }
     }
 
-    private long mLastBroadMillis = System.currentTimeMillis();
-
-    private int mBroadTimes = 0;
+    private long aLastBroadMillis = System.currentTimeMillis();
+    private long aLastBroadDelay = MIN_DELAY;
 
     @Override
     public void broadcastDelay(UdpResponseMsg mResponseData) {
@@ -174,30 +206,42 @@ public class UdpLanCom extends AbsFastUdp {
     }
 
     @Override
-    public void broadcastDelay(UdpResponseMsg mResponseData, long DELAY, long maxDelay) {
+    public void broadcastDelay(UdpResponseMsg mResponseData, long delay, long maxDelay) {
 
         if (!run) {
             Tlog.e(TAG, " udp broadcastDelay ; but not run ");
         }
 
         long currentTimeMillis = System.currentTimeMillis();
+        long mLastBroadMillis = aLastBroadMillis;
+        long mLastDelay = aLastBroadDelay;
 
-        long delay = 10L;
+        long mDelay;
 
-        if (currentTimeMillis - mLastBroadMillis <= DELAY) {
-            delay = mBroadTimes * DELAY;
+        long diff = currentTimeMillis - mLastBroadMillis;
 
-            if (delay > maxDelay) {
-                delay = maxDelay;
-            } else if (delay <= 0) {
-                delay = DELAY;
-            }
-
+        if (diff > 0 && diff < delay) {
+            mDelay = delay - diff;
+        } else if (diff < 0) {
+            mDelay = mLastDelay + delay;
+        } else {
+            mDelay = MIN_DELAY;
         }
-        mLastBroadMillis = currentTimeMillis;
-        mBroadTimes++;
+
+        if (mDelay > maxDelay) {
+            if (mLastDelay > maxDelay) {
+                mDelay = mLastDelay + MIN_DELAY;
+            } else {
+                mDelay = maxDelay + MIN_DELAY;
+            }
+        }
+
+
         Message message = mHandler.obtainMessage(MSG_WHAT_BROAD_OBJ_DELAY, mResponseData);
         mHandler.sendMessageDelayed(message, delay);
+
+        aLastBroadMillis = currentTimeMillis + mDelay;
+        aLastBroadDelay = mDelay;
     }
 
     @Override
@@ -209,43 +253,79 @@ public class UdpLanCom extends AbsFastUdp {
         }
     }
 
-    private long mLastSendMillis = System.currentTimeMillis();
+    private long aLastSendMillis = System.currentTimeMillis();
+    private long aLastSendDelay = MIN_DELAY;
 
-    private int mSendTimes = 0;
+    private static final long MIN_DELAY = 50L;
 
     @Override
     public void writeDelay(UdpResponseMsg mResponseData) {
         writeDelay(mResponseData, DELAY, MAX_DELAY);
     }
 
+    private boolean showLog = true;
+
+    public void showLog(boolean showLog) {
+        this.showLog = showLog;
+    }
+
     @Override
-    public void writeDelay(UdpResponseMsg mResponseData, long DELAY, long maxDelay) {
+    public void writeDelay(UdpResponseMsg mResponseData, long delay, long maxDelay) {
 
         if (!run) {
             Tlog.e(TAG, " udp writeDelay ; but not run ");
         }
 
         long currentTimeMillis = System.currentTimeMillis();
+        long mLastSendMillis = aLastSendMillis;
+        long mLastDelay = aLastSendDelay;
 
-        long delay = 10L;
+        long mDelay;
 
-        if (currentTimeMillis - mLastSendMillis <= DELAY) {
-            delay = mSendTimes * DELAY;
+        long diff = currentTimeMillis - mLastSendMillis;
 
-            if (delay > MAX_DELAY) {
-                delay = MAX_DELAY;
-            } else if (delay <= 0) {
-                delay = DELAY;
-            }
-
+        if (diff > 0 && diff < delay) {
+            mDelay = delay - diff;
+        } else if (diff < 0) {
+            mDelay = mLastDelay + delay;
+        } else {
+            mDelay = MIN_DELAY;
         }
-        mLastSendMillis = currentTimeMillis;
-        mSendTimes++;
+
+        if (mDelay > maxDelay) {
+            if (mLastDelay > maxDelay) {
+                mDelay = mLastDelay + MIN_DELAY;
+            } else {
+                mDelay = maxDelay + MIN_DELAY;
+            }
+        }
+
+//        if (diff > 0 && diff <= DELAY) {
+//            delay = mSendTimes * DELAY;
+//
+//            if (delay > maxDelay) {
+//                delay = maxDelay;
+//            } else if (delay <= 0) {
+//                delay = DELAY;
+//            }
+//
+//        }
+
         Message message = mHandler.obtainMessage(MSG_WHAT_WRITE_OBJ_DELAY, mResponseData);
-        mHandler.sendMessageDelayed(message, delay);
+        mHandler.sendMessageDelayed(message, mDelay);
+
+        aLastSendMillis = currentTimeMillis + mDelay;
+        aLastSendDelay = mDelay;
+
+        if (showLog && Tlog.isDebug()) {
+            DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss.SSS", Locale.getDefault());
+            Tlog.v(TAG, " cur:" + dateFormat.format(new Date(currentTimeMillis))
+                    + " last:" + dateFormat.format(new Date(aLastSendMillis))
+                    + " diff:" + diff
+                    + " delay:" + aLastSendDelay);
+        }
 
     }
-
 
     private static final int MSG_WHAT_BROAD_OBJ = 0x02;
     private static final int MSG_WHAT_BROAD_OBJ_DELAY = 0x03;
@@ -262,7 +342,6 @@ public class UdpLanCom extends AbsFastUdp {
 
             case MSG_WHAT_BROAD_OBJ_DELAY:
                 broadObj(msg);
-                mBroadTimes--;
                 break;
 
             case MSG_WHAT_WRITE_OBJ:
@@ -270,7 +349,6 @@ public class UdpLanCom extends AbsFastUdp {
                 break;
             case MSG_WHAT_WRITE_OBJ_DELAY:
                 writeObj(msg);
-                mSendTimes--;
                 break;
             default:
 

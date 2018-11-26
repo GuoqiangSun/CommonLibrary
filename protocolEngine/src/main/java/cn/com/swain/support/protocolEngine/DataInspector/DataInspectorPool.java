@@ -6,7 +6,9 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import cn.com.swain.support.protocolEngine.ProtocolProcessor;
 import cn.com.swain.support.protocolEngine.datagram.SocketDataArray;
+import cn.com.swain169.log.Tlog;
 
 /**
  * author: Guoqiang_Sun
@@ -47,6 +49,7 @@ public class DataInspectorPool extends AbsDataInspector {
 
     @Override
     public void release() {
+        Tlog.e(ProtocolProcessor.TAG, " DataInspectorPool.release()");
         synchronized (synObj) {
             if (mPoolMap == null) {
                 return;
@@ -69,6 +72,8 @@ public class DataInspectorPool extends AbsDataInspector {
         ExecutorService pool = getPool(id);
         if (pool != null) {
             pool.execute(new DataResolveRun(mCallBack, code, mSocketDataArray));
+        } else {
+            Tlog.e(ProtocolProcessor.TAG, " DataInspectorPool onOutDataResolve pool=null");
         }
     }
 

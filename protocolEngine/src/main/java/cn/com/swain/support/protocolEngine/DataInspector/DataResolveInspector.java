@@ -1,9 +1,9 @@
 package cn.com.swain.support.protocolEngine.DataInspector;
 
+import cn.com.swain.support.protocolEngine.ProtocolCode;
 import cn.com.swain.support.protocolEngine.ProtocolProcessor;
 import cn.com.swain.support.protocolEngine.datagram.SocketDataArray;
 import cn.com.swain.support.protocolEngine.result.IProtocolAnalysisResult;
-import cn.com.swain.support.protocolEngine.ProtocolCode;
 import cn.com.swain169.log.Tlog;
 
 /**
@@ -17,8 +17,6 @@ public class DataResolveInspector extends AbsDataInspector {
     private String TAG = ProtocolProcessor.TAG;
 
     private final IProtocolAnalysisResult mProtocolCallBack;
-
-    private final ThreadLocal<DatagramInspector> mThreadLocal = new ThreadLocal<>();
 
     public DataResolveInspector(IProtocolAnalysisResult mProtocolCallBack) {
         this.mProtocolCallBack = mProtocolCallBack;
@@ -57,49 +55,35 @@ public class DataResolveInspector extends AbsDataInspector {
 
         }
 
-        DatagramInspector mCheckDatagram = mThreadLocal.get();
-        if (mCheckDatagram == null) {
-            mCheckDatagram = new DatagramInspector();
-            mThreadLocal.set(mCheckDatagram);
-        }
-
-        mCheckDatagram.setSocketDataArray(mSocketDataArray);
-
-        if (mCheckDatagram.isNull()) {
+        if (null == mSocketDataArray) {
             Tlog.e(TAG, " <ProtocolProcessor> onOutDataResolve ERROR_CODE_INTERNAL_PKG_NULL");
-            mCheckDatagram.clearCache();
             mProtocolCallBack.onPackNullError(ProtocolCode.ERROR_CODE_INTERNAL_PKG_NULL);
             return;
         }
 
-        if (!mCheckDatagram.hasHead()) {
+        if (!mSocketDataArray.hasHead()) {
             Tlog.e(TAG, " <ProtocolProcessor> onOutDataResolve ERROR_CODE_NO_HEAD");
-            mCheckDatagram.clearCache();
             mProtocolCallBack.onPackNoHeadError(ProtocolCode.ERROR_CODE_NO_HEAD, mSocketDataArray);
             return;
         }
 
-        if (!mCheckDatagram.checkCrc()) {
+        if (!mSocketDataArray.checkCrc()) {
             Tlog.e(TAG, " <ProtocolProcessor> onOutDataResolve ERROR_CODE_CRC");
-            mCheckDatagram.clearCache();
             mProtocolCallBack.onPackCrcError(ProtocolCode.ERROR_CODE_CRC, mSocketDataArray);
             return;
         }
 
-        if (!mCheckDatagram.hasTail()) {
+        if (!mSocketDataArray.hasTail()) {
             Tlog.e(TAG, " <ProtocolProcessor> onOutDataResolve ERROR_CODE_NO_TAIL");
-            mCheckDatagram.clearCache();
             mProtocolCallBack.onPackNoTailError(ProtocolCode.ERROR_CODE_NO_TAIL, mSocketDataArray);
             return;
         }
 
-        mCheckDatagram.clearCache();
         mProtocolCallBack.onSuccess(mSocketDataArray);
 
     }
 
     @Override
     public void release() {
-        mThreadLocal.remove();
     }
 }

@@ -1,6 +1,7 @@
 package cn.com.swain169.log;
 
 import cn.com.swain169.log.logRecord.AbsLogRecord;
+import cn.com.swain169.log.logRecord.impl.LogRecordManager;
 
 /**
  * author: Guoqiang_Sun
@@ -13,6 +14,10 @@ public class TFlog {
     }
 
     private static AbsLogRecord mRecordMsg;
+
+    public static synchronized boolean set(){
+        return set(new LogRecordManager());
+    }
 
     /**
      * when main Activity onCreate() ,need call {@link #startRecord()}

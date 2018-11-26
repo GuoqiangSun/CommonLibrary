@@ -1,6 +1,5 @@
 package cn.com.swain.support.protocolEngine.datagram;
 
-import cn.com.swain.support.protocolEngine.DataInspector.DatagramInspector;
 import cn.com.swain.support.protocolEngine.ProtocolBuild;
 import cn.com.swain.support.protocolEngine.ProtocolCode;
 import cn.com.swain.support.protocolEngine.ProtocolProcessor;
@@ -233,6 +232,23 @@ public class SocketDataArray extends AbsProtocolDataPack implements Cloneable, I
         checkStateIsReverse();
         return mProtocolComData.getProtocolCrc8();
     }
+
+
+    @Override
+    public boolean hasHead() {
+        return mProtocolComData.hasHead();
+    }
+
+    @Override
+    public boolean checkCrc() {
+        return mProtocolComData.checkCrc();
+    }
+
+    @Override
+    public boolean hasTail() {
+        return mProtocolComData.hasTail();
+    }
+
 
     /****************/
 
@@ -493,15 +509,15 @@ public class SocketDataArray extends AbsProtocolDataPack implements Cloneable, I
     }
 
     @Override
+    public void fillEmpty() {
+        mEscapeDataArray.fillEmpty();
+    }
+
+    @Override
     public void reset() {
         this.mEscapeDataArray.reset();
         this.mAbsProtocolDataPack.setParams(null);
         clearModel();
-    }
-
-    @Override
-    public void fillEmpty() {
-        mEscapeDataArray.fillEmpty();
     }
 
     @Override
@@ -556,21 +572,15 @@ public class SocketDataArray extends AbsProtocolDataPack implements Cloneable, I
         mSocketDataArray.changeStateToReverse();
         mSocketDataArray.onAddPackageReverse(pkgData);
 
-        DatagramInspector mCheckDatagram = new DatagramInspector(mSocketDataArray);
-
-        if (!mCheckDatagram.hasHead()) {
-            mCheckDatagram.clearCache();
+        if (!mSocketDataArray.hasHead()) {
             throw new EscapeIOException(" not has head [" + Integer.toHexString(ProtocolCode.STX) + "]");
         }
-        if (!mCheckDatagram.checkCrc()) {
-            mCheckDatagram.clearCache();
+        if (!mSocketDataArray.checkCrc()) {
             throw new EscapeIOException(" crc error ");
         }
-        if (!mCheckDatagram.hasTail()) {
-            mCheckDatagram.clearCache();
+        if (!mSocketDataArray.hasTail()) {
             throw new EscapeIOException(" not has tail [" + Integer.toHexString(ProtocolCode.ETX) + "]");
         }
-        mCheckDatagram.clearCache();
         return mSocketDataArray;
     }
 

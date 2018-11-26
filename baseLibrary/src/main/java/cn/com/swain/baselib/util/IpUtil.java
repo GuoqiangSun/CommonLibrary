@@ -12,6 +12,8 @@ import java.net.UnknownHostException;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * author: Guoqiang_Sun
@@ -31,11 +33,34 @@ public class IpUtil {
             "(1\\d{2}|2[0-4]\\d|25[0-5]|[1-9]\\d|\\d)\\." +
             "(1\\d{2}|2[0-4]\\d|25[0-5]|[1-9]\\d|\\d)$";
 
+
+    private static Pattern IP_COMPILE;
+
     /**
      * 判断IP地址的合法性，这里采用了正则表达式的方法来判断
      * return true，合法
      */
     public static boolean ipMatches(String text) {
+        // 这是真正的MAC地址；正则表达式;
+        if (text != null && !text.isEmpty()) {
+
+            if (IP_COMPILE == null) {
+                IP_COMPILE = Pattern.compile(IP_REGEX);
+            }
+
+            Matcher matcher = IP_COMPILE.matcher(text);
+            return matcher.matches();
+
+        }
+        return false;
+    }
+
+
+    /**
+     * 判断IP地址的合法性，这里采用了正则表达式的方法来判断
+     * return true，合法
+     */
+    public static boolean ipMatches2(String text) {
         if (text != null && !text.isEmpty()) {
             return text.matches(IP_REGEX);
         }

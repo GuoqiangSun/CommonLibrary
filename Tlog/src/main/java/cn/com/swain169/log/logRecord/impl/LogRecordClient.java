@@ -47,6 +47,8 @@ public class LogRecordClient implements ILogRecord {
 
     private static final int DEFAULT_RECORD_FILE_LENGTH = 1024 * 1024 * 6;
 
+    public static final long MAX_RECORD_SIZE = 1024 * 1024 * 512L;
+
     LogRecordClient(File logRootDir, String fileNamePrefix, long fileRecordSize) {
         if (logRootDir == null) {
             throw new RuntimeException("(LogRecordClient) logRootDir not found");
@@ -66,7 +68,7 @@ public class LogRecordClient implements ILogRecord {
             this.fileNamePrefix = "log";
         }
 
-        if (fileRecordSize < -1 || fileRecordSize > 1024 * 1024 * 512) {
+        if (fileRecordSize < -1 || fileRecordSize > MAX_RECORD_SIZE) {
             this.fileRecordSize = DEFAULT_RECORD_FILE_LENGTH;
         } else {
             this.fileRecordSize = fileRecordSize;
@@ -116,7 +118,6 @@ public class LogRecordClient implements ILogRecord {
     /**
      * 检测mBufferWriter是否已经创建
      *
-     * @return
      */
     synchronized boolean checkBufferWriter() {
         return mBufferWriter == null;
@@ -130,6 +131,8 @@ public class LogRecordClient implements ILogRecord {
     void createBufferWriter() {
         if (mHandler != null) {
             mHandler.sendEmptyMessage(MSG_WHAT_CHECK_BUFFER_WRITE);
+            // 开启同步
+            mHandler.sendEmptyMessageDelayed(MSG_WHAT_SYNC_CYCLE, MAX_WAIT_SYNC_TIME);
         }
     }
 
@@ -141,6 +144,7 @@ public class LogRecordClient implements ILogRecord {
     void releaseBufferWriter() {
         if (mHandler != null) {
             mHandler.sendEmptyMessage(MSG_WHAT_RELEASE_BUFFER_WRITE);
+            mHandler.removeMessages(MSG_WHAT_SYNC_CYCLE);
         }
     }
 
@@ -177,6 +181,9 @@ public class LogRecordClient implements ILogRecord {
     // 重新创建
     private static final int MSG_WHAT_RE_GENERAL = 0x05;
 
+    // 周期同步
+    private static final int MSG_WHAT_SYNC_CYCLE = 0x06;
+
 
     private final SimpleDateFormat mRecordDateFormat;
 
@@ -189,9 +196,8 @@ public class LogRecordClient implements ILogRecord {
     /**
      * 最大等10分钟同步一次数据
      */
-    private static final long MAX_WAIT_WRITE_TIME = 1000 * 60 * 10;
+    private static final long MAX_WAIT_SYNC_TIME = 1000 * 60 * 10;
 
-    private long lastWriteTm;
 
     private void handleMessage(Message msg) {
 
@@ -202,8 +208,7 @@ public class LogRecordClient implements ILogRecord {
 
                 writeMsgInThread(msg.obj, curTMs);
 
-                if (++writeTimes >= MAX_WRITE_BUFFER_TIMES
-                        || Math.abs(curTMs - lastWriteTm) > MAX_WAIT_WRITE_TIME) {
+                if (++writeTimes >= MAX_WRITE_BUFFER_TIMES) {
                     syncBufferWriterInThread();
 
                     if (msgFile != null && msgFile.length() >= fileRecordSize) {
@@ -212,7 +217,6 @@ public class LogRecordClient implements ILogRecord {
 
                 }
 
-                lastWriteTm = curTMs;
                 break;
 
             case MSG_WHAT_SYNC:
@@ -235,6 +239,19 @@ public class LogRecordClient implements ILogRecord {
             case MSG_WHAT_CHECK_BUFFER_WRITE:
 
                 checkBufferWriteInThread();
+
+                break;
+
+            case MSG_WHAT_SYNC_CYCLE:
+
+                if (mBufferWriter != null) {
+                    if (mHandler != null) {
+                        mHandler.sendEmptyMessageDelayed(MSG_WHAT_SYNC_CYCLE, MAX_WAIT_SYNC_TIME);
+                    }
+                    if (writeTimes > 0) {
+                        syncBufferWriterInThread();
+                    }
+                }
 
                 break;
 

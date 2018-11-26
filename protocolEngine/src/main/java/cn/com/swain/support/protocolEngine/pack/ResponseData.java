@@ -53,8 +53,8 @@ public class ResponseData {
     public String toString() {
 
         return baseDataToString()
-                + " SendModel:" + mSendModel.toString()
-                + " RepeatMsgModel:" + mRepeatMsgModel.toString();
+                + " SendModel:" + String.valueOf(mSendModel)
+                + " RepeatMsgModel:" + String.valueOf(mRepeatMsgModel);
 
     }
 

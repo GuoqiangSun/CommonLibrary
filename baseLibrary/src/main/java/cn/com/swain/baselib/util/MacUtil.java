@@ -14,6 +14,10 @@ public class MacUtil {
 
     private static Pattern MAC_COMPILE;
 
+    /**
+     * 判断MAC地址的合法性，这里采用了正则表达式的方法来判断
+     * return true，合法
+     */
     public static boolean macMatches(String text) {
         // 这是真正的MAC地址；正则表达式;
         if (text != null && !text.isEmpty()) {
@@ -25,6 +29,17 @@ public class MacUtil {
             Matcher matcher = MAC_COMPILE.matcher(text);
             return matcher.matches();
 
+        }
+        return false;
+    }
+
+    /**
+     * 判断MAC地址的合法性，这里采用了正则表达式的方法来判断
+     * return true，合法
+     */
+    public static boolean macMatches2(String text) {
+        if (text != null && !text.isEmpty()) {
+            return text.matches(MAC_ADDRESS);
         }
         return false;
     }

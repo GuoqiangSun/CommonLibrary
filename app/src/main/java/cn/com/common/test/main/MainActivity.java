@@ -9,7 +9,7 @@ import cn.com.common.test.R;
 import cn.com.common.test.testBle.BleScanActivity;
 import cn.com.common.test.testProtocol.TestProtocolActivity;
 import cn.com.common.test.testScrollView.ScrollViewActivity;
-import cn.com.swain.baselib.util.StatusBarUtil;
+import cn.com.common.test.testUdp.FastUdpActivity;
 import cn.com.swain169.log.TFlog;
 import cn.com.swain169.log.Tlog;
 
@@ -45,6 +45,10 @@ public class MainActivity extends AppCompatActivity {
 
     public void skipProtocol(View v) {
         startActivity(new Intent(this, TestProtocolActivity.class));
+    }
+
+    public void skipFastUdp(View view) {
+        startActivity(new Intent(this, FastUdpActivity.class));
     }
 
     private void testTFLog() {
@@ -100,5 +104,6 @@ public class MainActivity extends AppCompatActivity {
         Tlog.a("swain", " test Tlog a", new Throwable());
 
     }
+
 
 }

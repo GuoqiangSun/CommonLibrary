@@ -40,7 +40,7 @@ public class ReceivesData {
     public String toString() {
 
         return baseDataToString()
-                + " SecondModel:" + mReceiveModel.toString();
+                + " ReceiveModel:" + String.valueOf(mReceiveModel);
     }
 
     private String baseDataToString() {

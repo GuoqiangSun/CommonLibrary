@@ -167,6 +167,7 @@ public class DataResolveQueue extends Handler {
             mResolveData = new ResolveData();
             mResolveData.device = receiverData.fromID;
             mSocketArrayMap.put(receiverData.fromID, mResolveData);
+            Tlog.w(TAG, " DataResolveQueue mSocketArrayMap put " + receiverData.fromID);
         }
 
         SocketDataArray mTmpSocketDataArray = mResolveData.mLastSocketDataArray;

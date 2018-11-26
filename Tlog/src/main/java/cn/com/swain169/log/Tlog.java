@@ -63,6 +63,13 @@ public class Tlog {
         TFlog.set(recordMsg);
     }
 
+    public static void regIRecordMsgFile() {
+        TFlog.set();
+    }
+
+    /**
+     * 注销录制日志
+     */
     public static void unregTREcordMsgFile(AbsLogRecord recordMsg) {
         TFlog.remove(recordMsg);
     }
@@ -71,14 +78,23 @@ public class Tlog {
         TFlog.remove();
     }
 
+    /**
+     * 开始录制日志
+     */
     public static void startRecord() {
         TFlog.startRecord();
     }
 
+    /**
+     * 停止录制日志
+     */
     public static void stopRecord() {
         TFlog.stopRecord();
     }
 
+    /**
+     * 同步录制的日志到磁盘
+     */
     public static void syncRecordData() {
         TFlog.syncRecordData();
     }

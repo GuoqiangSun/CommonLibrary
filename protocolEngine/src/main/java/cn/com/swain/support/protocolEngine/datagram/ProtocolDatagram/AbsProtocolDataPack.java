@@ -128,5 +128,4 @@ public abstract class AbsProtocolDataPack implements IProtocolComData {
      */
     public abstract byte[] organizeProtocolData();
 
-
 }

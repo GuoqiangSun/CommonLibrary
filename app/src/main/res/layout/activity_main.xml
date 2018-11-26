@@ -19,7 +19,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:onClick="skipBleScan"
-            android:text="BleScan" />
+            android:text="BleScan"
+            android:textAllCaps="false" />
 
         <Button
             android:id="@+id/btnP2pServer"
@@ -27,7 +28,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:onClick="skipProtocol"
-            android:text="skipProtocol" />
+            android:text="skipProtocol"
+            android:textAllCaps="false" />
     </LinearLayout>
 
     <LinearLayout
@@ -42,6 +44,16 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:onClick="skipScrollTxt"
-            android:text="ScrollTxt" />
+            android:text="ScrollTxt"
+            android:textAllCaps="false" />
+
+        <Button
+            android:id="@+id/btnUdpTxt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:onClick="skipFastUdp"
+            android:text="testUdp"
+            android:textAllCaps="false" />
     </LinearLayout>
 </LinearLayout>
