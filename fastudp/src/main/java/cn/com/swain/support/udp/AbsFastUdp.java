@@ -1,5 +1,6 @@
 package cn.com.swain.support.udp;
 
+import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 
 /**
@@ -9,25 +10,63 @@ import java.net.DatagramSocket;
  */
 public abstract class AbsFastUdp {
 
+    /**
+     * 初始化
+     */
     public abstract void init();
 
-    public abstract void regSocketResult(ISocketResult mResult);
-
-    public abstract void unregSocketResult(ISocketResult mResult);
-
-    public abstract DatagramSocket getDatagramSocket();
-
+    /**
+     * 释放
+     */
     public abstract void release();
 
-    public abstract void broadcast(UdpResponseMsg mResponseData);
+    /**
+     * 打印log
+     */
+    public abstract void showLog(boolean showLog);
 
-    public abstract void broadcastDelay(UdpResponseMsg mResponseData);
+    /**
+     * 注册回调
+     */
+    public abstract void regUDPSocketResult(IUDPSocketResult mResult);
 
-    public abstract void broadcastDelay(UdpResponseMsg mResponseData, long delay, long maxDelay);
+    /**
+     * 取消注册
+     */
+    public abstract void unregUDPSocketResult(IUDPSocketResult mResult);
 
-    public abstract void write(UdpResponseMsg mResponseData);
+    /**
+     * get udp socket
+     */
+    public abstract DatagramSocket getDatagramSocket();
 
-    public abstract void writeDelay(UdpResponseMsg mResponseData);
+    /**
+     * 广播数据
+     */
+    public abstract void broadcast(DatagramPacket datagramPacket);
 
-    public abstract void writeDelay(UdpResponseMsg mResponseData, long delay, long maxDelay);
+    /**
+     * 广播数据
+     */
+    public abstract void broadcastDelay(DatagramPacket datagramPacket);
+
+    /**
+     * 广播数据
+     */
+    public abstract void broadcastDelay(DatagramPacket datagramPacket, long delay, long maxDelay);
+
+    /**
+     * 发送数据
+     */
+    public abstract void send(DatagramPacket datagramPacket);
+
+    /**
+     * 发送数据
+     */
+    public abstract void sendDelay(DatagramPacket datagramPacket);
+
+    /**
+     * 发送数据
+     */
+    public abstract void sendDelay(DatagramPacket datagramPacket, long delay, long maxDelay);
 }

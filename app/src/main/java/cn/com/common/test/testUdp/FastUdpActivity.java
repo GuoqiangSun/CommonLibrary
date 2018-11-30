@@ -12,7 +12,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.net.DatagramPacket;
 import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -23,9 +25,9 @@ import cn.com.common.test.global.LooperManager;
 import cn.com.swain.baselib.util.IpUtil;
 import cn.com.swain.baselib.util.StrUtil;
 import cn.com.swain.support.udp.AbsFastUdp;
+import cn.com.swain.support.udp.FastUdpFactory;
 import cn.com.swain.support.udp.ISocketResult;
-import cn.com.swain.support.udp.UdpLanCom;
-import cn.com.swain.support.udp.UdpResponseMsg;
+import cn.com.swain.support.udp.IUDPSocketResult;
 
 /**
  * author: Guoqiang_Sun
@@ -81,10 +83,11 @@ public class FastUdpActivity extends AppCompatActivity {
             }
         };
 
+        mFastUdp = FastUdpFactory.newFastUdp(LooperManager.getInstance().getWorkLooper());
 
-        mFastUdp = new UdpLanCom(LooperManager.getInstance().getWorkLooper(), new ISocketResult() {
+        mFastUdp.regUDPSocketResult(new IUDPSocketResult() {
             @Override
-            public void onSocketInitResult(boolean result, final String ip, final int port) {
+            public void onUDPSocketInitResult(boolean result, final String ip, final int port) {
 
                 mUIHandler.post(new Runnable() {
                     @Override
@@ -98,11 +101,16 @@ public class FastUdpActivity extends AppCompatActivity {
 
 
             @Override
-            public void onSocketReceiveData(String ip, int port, byte[] data) {
+            public void onUDPSocketReceiveData(String ip, int port, byte[] data) {
 
                 String format = dateFormat.format(new Date(System.currentTimeMillis()));
                 String msg = format + " " + ip + ":" + port + StrUtil.toString(data);
                 mUIHandler.obtainMessage(MSG_REC, msg).sendToTarget();
+
+            }
+
+            @Override
+            public void onUDPSocketReleaseResult(boolean result) {
 
             }
         });
@@ -123,11 +131,11 @@ public class FastUdpActivity extends AppCompatActivity {
 
     public void sendData(View view) {
 
-        UdpResponseMsg sendMsg = getSendMsg();
+        DatagramPacket sendMsg = getSendMsg();
         if (sendMsg != null) {
             String format = dateFormat.format(new Date(System.currentTimeMillis()));
-            mSendTxt.append(format + String.valueOf(sendMsg));
-            mFastUdp.write(sendMsg);
+            mSendTxt.append(format + stringValueOf(sendMsg));
+            mFastUdp.send(sendMsg);
         }
 
     }
@@ -142,19 +150,27 @@ public class FastUdpActivity extends AppCompatActivity {
         }
 
         send = true;
-        UdpResponseMsg sendMsg = getSendMsg();
+        DatagramPacket sendMsg = getSendMsg();
         if (sendMsg != null) {
             Toast.makeText(getApplicationContext(), "循环10次发送", Toast.LENGTH_SHORT).show();
             for (int i = 0; i < 10; i++) {
                 String format = dateFormat.format(new Date(System.currentTimeMillis()));
-                mSendTxt.append(format + String.valueOf(sendMsg));
-                mFastUdp.writeDelay(sendMsg);
+                mSendTxt.append(format + stringValueOf(sendMsg));
+                mFastUdp.sendDelay(sendMsg);
             }
         }
         send = false;
     }
 
-    private UdpResponseMsg getSendMsg() {
+    private String stringValueOf(DatagramPacket sendMsg) {
+        if (sendMsg == null) {
+            return "null";
+        }
+        return  IpUtil.valueOf(sendMsg);
+//        return sendMsg.getAddress().getHostName() + ":" + sendMsg.getPort() + " " + StrUtil.toString(sendMsg.getData());
+    }
+
+    private DatagramPacket getSendMsg() {
         String ip = mSendIpEdt.getText().toString();
 
         if (!IpUtil.ipMatches(ip)) {
@@ -187,11 +203,14 @@ public class FastUdpActivity extends AppCompatActivity {
             return null;
         }
 
-        UdpResponseMsg mUdpResponseMsg = new UdpResponseMsg();
-        mUdpResponseMsg.data = bytes;
-        mUdpResponseMsg.ip = ip;
-        mUdpResponseMsg.port = port;
-        return mUdpResponseMsg;
+        InetAddress byName = null;
+        try {
+            byName = InetAddress.getByName(ip);
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
+
+        return new DatagramPacket(bytes, bytes.length, byName, port);
 
     }
 

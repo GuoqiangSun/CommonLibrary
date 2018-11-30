@@ -14,7 +14,6 @@
         android:orientation="vertical">
 
         <Button
-            android:id="@+id/btnScanLe"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
@@ -23,13 +22,22 @@
             android:textAllCaps="false" />
 
         <Button
-            android:id="@+id/btnP2pServer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:onClick="skipProtocol"
             android:text="skipProtocol"
             android:textAllCaps="false" />
+
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:onClick="scanOR"
+            android:text="scanOR"
+            android:textAllCaps="false" />
+
     </LinearLayout>
 
     <LinearLayout
@@ -39,7 +47,6 @@
         android:orientation="vertical">
 
         <Button
-            android:id="@+id/btnScrollTxt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
@@ -48,12 +55,19 @@
             android:textAllCaps="false" />
 
         <Button
-            android:id="@+id/btnUdpTxt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:onClick="skipFastUdp"
             android:text="testUdp"
+            android:textAllCaps="false" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:onClick="skipFun"
+            android:text="skipFun"
             android:textAllCaps="false" />
     </LinearLayout>
 </LinearLayout>

@@ -19,16 +19,23 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".main.MainActivity">
+        <activity
+            android:name=".main.MainActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
 
-        <activity android:name=".testProtocol.TestProtocolActivity">
+        <activity
+            android:name=".testProtocol.TestProtocolActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait">
             <intent-filter>
 
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -36,14 +43,20 @@
         </activity>
 
 
-        <activity android:name=".testBle.BleScanActivity">
+        <activity
+            android:name=".testBle.BleScanActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait">
             <intent-filter>
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <activity android:name=".testBle.BleConActivity">
+        <activity
+            android:name=".testBle.BleConActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait">
             <intent-filter>
 
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -51,13 +64,24 @@
         </activity>
 
 
-        <activity android:name=".testScrollView.ScrollViewActivity">
+        <activity
+            android:name=".testScrollView.ScrollViewActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait">
             <intent-filter>
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".testUdp.FastUdpActivity" />
+        <activity
+            android:name=".testUdp.FastUdpActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".scanOR.ScanORCodeActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait" />
+        <activity android:name=".testFun.FunctionActivity" />
 
     </application>
 

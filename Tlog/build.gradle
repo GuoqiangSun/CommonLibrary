@@ -3,13 +3,11 @@ apply plugin: 'com.android.library'
 android {
     compileSdkVersion 27
 
-
-
     defaultConfig {
         minSdkVersion 19
         targetSdkVersion 27
-        versionCode 3101
-        versionName "3.1.01"
+        versionCode 3110
+        versionName "3.1.10"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
@@ -43,9 +41,9 @@ dependencies {
 //    //项目名称
 //    artifactId = 'Tlog'
 //    //版本号
-//    publishVersion = '3.1.06'
+//    publishVersion = '3.1.10'
 //    //描述，不重要
-//    desc = 'Tlog sdk 3.1.06'
+//    desc = 'Tlog sdk 3.1.10'
 //    //网站，不重要
 //    website = 'https://www.startai.com.cn'
 //

@@ -19,7 +19,6 @@ import java.util.Queue;
 import cn.com.swain.baselib.Queue.SyncLimitQueue;
 import cn.com.swain169.log.Tlog;
 
-
 /**
  * author: Guoqiang_Sun
  * date : 2018/6/9 0009
@@ -62,8 +61,8 @@ public final class PermissionRequest {
      *
      * @param permissionArray 权限
      */
-    public void requestAllPermission(String... permissionArray) {
-        requestAllPermission(null, null, permissionArray);
+    public void requestPermissions(String... permissionArray) {
+        requestPermissions(null, null, permissionArray);
     }
 
 
@@ -73,8 +72,8 @@ public final class PermissionRequest {
      * @param mAllFinish      所有权限请求完毕回调
      * @param permissionArray 权限
      */
-    public void requestAllPermission(OnAllPermissionFinish mAllFinish, String... permissionArray) {
-        requestAllPermission(mAllFinish, null, permissionArray);
+    public void requestPermissions(OnAllPermissionFinish mAllFinish, String... permissionArray) {
+        requestPermissions(mAllFinish, null, permissionArray);
     }
 
 
@@ -84,8 +83,8 @@ public final class PermissionRequest {
      * @param mResult         结果回调
      * @param permissionArray 权限
      */
-    public void requestAllPermission(OnPermissionResult mResult, String... permissionArray) {
-        requestAllPermission(null, mResult, permissionArray);
+    public void requestPermissions(OnPermissionResult mResult, String... permissionArray) {
+        requestPermissions(null, mResult, permissionArray);
 
     }
 
@@ -101,15 +100,16 @@ public final class PermissionRequest {
      * @param mResult         单个权限请求结果
      * @param permissionArray 权限
      */
-    public void requestAllPermission(OnAllPermissionFinish mAllFinish, OnPermissionResult mResult, String... permissionArray) {
+    public void requestPermissions(OnAllPermissionFinish mAllFinish, OnPermissionResult mResult, String... permissionArray) {
 
         final int size = mInternalPermissionQueue.size();
-
+        int offer = 0;
         if (permissionArray != null && permissionArray.length > 0) {
             for (String s : permissionArray) {
                 if (s != null && !"".equals(s)) {
                     RequestPermissionMsg mMsg = new RequestPermissionMsg(mResult, s, null);
                     mInternalPermissionQueue.offer(mMsg);
+                    offer++;
                 }
             }
         }
@@ -117,10 +117,16 @@ public final class PermissionRequest {
         if (mAllFinish != null) {
             RequestPermissionMsg mMsg = new RequestPermissionMsg(null, null, mAllFinish);
             mInternalPermissionQueue.offer(mMsg);
+            offer++;
         }
 
-        if (size <= 0 && mAllFinish != null) {
-            if (mHandler != null) {
+        if (size <= 0) {
+            if (offer > 0 && mHandler != null) {
+                mHandler.sendEmptyMessage(INTERNAL_PERMISSIONS_REQUEST_CODE);
+            }
+        } else {
+            final int size1 = mInternalPermissionQueue.size();
+            if (size1 == offer && offer > 0 && mHandler != null && !mHandler.hasMessages(INTERNAL_PERMISSIONS_REQUEST_CODE)) {
                 mHandler.sendEmptyMessage(INTERNAL_PERMISSIONS_REQUEST_CODE);
             }
         }
@@ -148,12 +154,23 @@ public final class PermissionRequest {
      * @param permissionStr 权限
      */
     public void requestPermission(OnPermissionResult mResult, String permissionStr) {
-        if (permissionStr != null && !"".equals(permissionStr)) {
-            final int size = mExternalPermissionQueue.size();
-            RequestPermissionMsg mMsg = new RequestPermissionMsg(mResult, permissionStr, null);
-            mExternalPermissionQueue.offer(mMsg);
-            if (size <= 0) {
-                if (mHandler != null) {
+        if (permissionStr == null || "".equals(permissionStr)) {
+            if (mResult != null) {
+                mResult.onPermissionRequestResult(permissionStr, false);
+            }
+            return;
+        }
+        final int size = mExternalPermissionQueue.size();
+        RequestPermissionMsg mMsg = new RequestPermissionMsg(mResult, permissionStr, null);
+        mExternalPermissionQueue.offer(mMsg);
+        if (size <= 0) {
+            if (mHandler != null) {
+                mHandler.sendEmptyMessage(EXTERNAL_PERMISSIONS_REQUEST_CODE);
+            }
+        } else {
+            final int size1 = mExternalPermissionQueue.size();
+            if (size1 == 1) {
+                if (mHandler != null && !mHandler.hasMessages(EXTERNAL_PERMISSIONS_REQUEST_CODE)) {
                     mHandler.sendEmptyMessage(EXTERNAL_PERMISSIONS_REQUEST_CODE);
                 }
             }
@@ -185,9 +202,8 @@ public final class PermissionRequest {
 
                 RequestPermissionMsg internalPermissionMsg = mInternalPermissionQueue.poll();
                 if (internalPermissionMsg == null || internalPermissionMsg.permission == null) {
-                    if (mHandler != null) {
+                    if (mHandler != null) { // finish
                         mHandler.obtainMessage(INTERNAL_REQUEST_PERMISSION_FINISH_WHAT, internalPermissionMsg).sendToTarget();
-//                        mHandler.sendEmptyMessage(INTERNAL_REQUEST_PERMISSION_FINISH_WHAT);
                     }
                     return;
                 }

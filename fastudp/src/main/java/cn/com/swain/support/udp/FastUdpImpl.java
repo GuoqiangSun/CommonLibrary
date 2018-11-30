@@ -9,56 +9,86 @@ import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
-import java.net.InetAddress;
 import java.net.SocketException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import cn.com.swain.baselib.util.IpUtil;
+import cn.com.swain.baselib.util.StrUtil;
 import cn.com.swain169.log.Tlog;
 
 /**
  * author: Guoqiang_Sun
- * date : 2018/6/6 0006
- * desc :
+ * date: 2018/11/28 0028
+ * Desc:
  */
-@Deprecated
-public class UdpLanCom  {
+class FastUdpImpl extends AbsFastUdp {
 
-    public static final String TAG = "UdpLanCom";
+    public static final String TAG = "fastUdp";
 
     private WriteHandler mHandler;
-    private ISocketResult mResult;
+    private IUDPSocketResult mResult;
 
     private static final long MAX_DELAY = 1000 * 3L;
     private static final long DELAY = 500L;
 
-    @Deprecated
-    public UdpLanCom(Looper mLooper) {
+
+    private static final String ERROR_IP = "0.0.0.0";
+    private static final int ERROR_PORT = -1;
+
+    FastUdpImpl(Looper mLooper) {
         if (mLooper == null) {
             throw new NullPointerException(" mLooper == null ");
         }
         this.mHandler = new WriteHandler(this, mLooper);
     }
 
-    @Deprecated
-    public UdpLanCom(Looper mLooper, ISocketResult mResult) {
+    private boolean showLog = false;
 
-        this.mHandler = new WriteHandler(this, mLooper);
-        this.mResult = mResult;
+    private DateFormat dateFormat;
 
+    @Override
+    public void showLog(boolean showLog) {
+        this.showLog = showLog;
+        if (showLog && this.dateFormat == null) {
+            this.dateFormat = new SimpleDateFormat("HH:mm:ss.SSS", Locale.getDefault());
+        }
     }
 
     private ExecutorService executorService;
 
+    @Override
     public void init() {
-        release();
 
-        executorService = Executors.newSingleThreadExecutor();
+        if (run) {
+
+            DatagramSocket datagramSocket = getDatagramSocket();
+
+            Tlog.v(TAG, " init UDP  datagramSocket==null?" + (datagramSocket == null));
+
+            if (datagramSocket != null && !datagramSocket.isClosed()) {
+                if (mResult != null) {
+                    String ip = datagramSocket.getLocalAddress().getHostName();
+                    int port = datagramSocket.getLocalPort();
+                    mResult.onUDPSocketInitResult(true, ip, port);
+                }
+            } else {
+                if (mResult != null) {
+                    mResult.onUDPSocketInitResult(false, ERROR_IP, ERROR_PORT);
+                }
+            }
+
+            return;
+        }
+
+        if (executorService == null || executorService.isShutdown()) {
+            executorService = Executors.newSingleThreadExecutor();
+        }
         executorService.execute(new Runnable() {
             @Override
             public void run() {
@@ -69,65 +99,54 @@ public class UdpLanCom  {
 
     private DatagramSocket mUdpSocket;
 
+    @Override
     public DatagramSocket getDatagramSocket() {
         return mUdpSocket;
     }
 
-    public void regSocketResult(ISocketResult mResult) {
+    @Override
+    public void regUDPSocketResult(IUDPSocketResult mResult) {
         this.mResult = mResult;
     }
 
-    public void unregSocketResult(ISocketResult mResult) {
+    @Override
+    public void unregUDPSocketResult(IUDPSocketResult mResult) {
         if (this.mResult != null && this.mResult == mResult) {
             this.mResult = null;
         }
     }
 
-
     private boolean run;
 
     private void initUdp() {
 
-        String ip = "0.0.0.0";
-        int port = -1;
-        try {
-            mUdpSocket = new DatagramSocket();
 
-            InetAddress localAddress = mUdpSocket.getLocalAddress();
-            byte[] address = localAddress.getAddress();
-            ip = String.format("%x.%x.%x.%x", address[0], address[1], address[2], address[3]);
-            port = mUdpSocket.getLocalPort();
+        DatagramSocket datagramSocket = newDatagramSocket();
 
-            String localIpV4Address = IpUtil.getLocalIpV4Address();
-
-            Tlog.e(TAG, " DatagramSocket init() ip:" + ip + " port:" + port + " localIpV4Address:" + localIpV4Address);
-
-            this.run = true;
-        } catch (SocketException e) {
-            e.printStackTrace();
-            Tlog.e(TAG, " DatagramSocket init:", e);
-            this.run = false;
-        }
-
-        if (mResult != null) {
-            mResult.onSocketInitResult(run, ip, port);
-        }
-
-        Tlog.v(TAG, " UdpLanCom init finish ; run : " + run);
-
-        if (!this.run) {
+        if (datagramSocket == null) {
             Tlog.e(TAG, " init lan com udp fail ... ");
-            release();
+            if (mResult != null) {
+                mResult.onUDPSocketInitResult(false, ERROR_IP, ERROR_PORT);
+            }
             return;
         }
 
-//        Thread.currentThread().setPriority(Process.THREAD_PRIORITY_DEFAULT);
+        this.run = true;
+
+        String ip = datagramSocket.getLocalAddress().getHostName();
+        int port = datagramSocket.getLocalPort();
+        this.mUdpSocket = datagramSocket;
+
+        Tlog.e(TAG, " DatagramSocket init success ip:" + ip + " port:" + port);
+        if (mResult != null) {
+            mResult.onUDPSocketInitResult(run, ip, port);
+        }
+
         Process.setThreadPriority(Process.THREAD_PRIORITY_DEFAULT);
 
         final int mReceiveLength = 1024;
-        byte[] mRecBuf = new byte[mReceiveLength];
+        final byte[] mRecBuf = new byte[mReceiveLength];
         final DatagramPacket mReceivePacket = new DatagramPacket(mRecBuf, mReceiveLength);
-
 
         try {
             while (run) {
@@ -139,21 +158,22 @@ public class UdpLanCom  {
                     continue;
                 }
 
-                byte[] data = new byte[length];
-                System.arraycopy(mRecBuf, 0, data, 0, length);
+                byte[] data = Arrays.copyOf(mRecBuf, length);
+
+//                byte[] data = new byte[length];
+//                System.arraycopy(mRecBuf, 0, data, 0, length);
+
                 String hostAddress = mReceivePacket.getAddress().getHostAddress();
                 int port1 = mReceivePacket.getPort();
 
                 if (Tlog.isDebug()) {
-                    StringBuilder sb = new StringBuilder();
-                    for (byte b : data) {
-                        sb.append(Integer.toHexString(b & 0xFF)).append(" , ");
-                    }
-                    Tlog.d(TAG, " receive-" + hostAddress + ":" + port1 + " " + sb.toString());
+                    Tlog.d(TAG, " receive-" + hostAddress + ":" + port1 + " " + StrUtil.toString(data));
                 }
 
                 if (mResult != null) {
-                    mResult.onSocketReceiveData(hostAddress, port1, data);
+                    mResult.onUDPSocketReceiveData(hostAddress, port1, data);
+                } else {
+                    Tlog.e(TAG, " receive one pkg mResult=null");
                 }
             }
 
@@ -165,13 +185,31 @@ public class UdpLanCom  {
         Tlog.i(TAG, "udp run finish ");
         release();
 
+        if (mResult != null) {
+            mResult.onUDPSocketReleaseResult(true);
+            mResult = null;
+        }
     }
 
+    private DatagramSocket newDatagramSocket() {
+        DatagramSocket datagramSocket = null;
+        try {
+            datagramSocket = new DatagramSocket();
+        } catch (SocketException e) {
+            e.printStackTrace();
+            Tlog.e(TAG, " newDatagramSocket:", e);
+        }
+        return datagramSocket;
+    }
+
+    @Override
     public void release() {
 
-        Tlog.v(TAG, " udpLanCom release ");
+        Tlog.e(TAG, " release FastUdpImpl ");
 
         this.run = false;
+
+        mHandler.removeCallbacksAndMessages(null);
 
         if (executorService != null) {
             executorService.shutdownNow();
@@ -184,9 +222,10 @@ public class UdpLanCom  {
 
     }
 
-    public void broadcast(UdpResponseMsg mResponseData) {
+    @Override
+    public void broadcast(DatagramPacket datagramPacket) {
         if (run) {
-            mHandler.obtainMessage(MSG_WHAT_BROAD_OBJ, mResponseData).sendToTarget();
+            mHandler.obtainMessage(MSG_WHAT_BROAD_OBJ, datagramPacket).sendToTarget();
         } else {
             Tlog.e(TAG, " udp broadcast ; but not run ");
         }
@@ -195,11 +234,13 @@ public class UdpLanCom  {
     private long aLastBroadMillis = System.currentTimeMillis();
     private long aLastBroadDelay = MIN_DELAY;
 
-    public void broadcastDelay(UdpResponseMsg mResponseData) {
-        broadcastDelay(mResponseData, DELAY, MAX_DELAY);
+    @Override
+    public void broadcastDelay(DatagramPacket datagramPacket) {
+        broadcastDelay(datagramPacket, DELAY, MAX_DELAY);
     }
 
-    public void broadcastDelay(UdpResponseMsg mResponseData, long delay, long maxDelay) {
+    @Override
+    public void broadcastDelay(DatagramPacket datagramPacket, long delay, long maxDelay) {
 
         if (!run) {
             Tlog.e(TAG, " udp broadcastDelay ; but not run ");
@@ -229,19 +270,19 @@ public class UdpLanCom  {
             }
         }
 
-
-        Message message = mHandler.obtainMessage(MSG_WHAT_BROAD_OBJ_DELAY, mResponseData);
+        Message message = mHandler.obtainMessage(MSG_WHAT_BROAD_OBJ_DELAY, datagramPacket);
         mHandler.sendMessageDelayed(message, mDelay);
 
         aLastBroadMillis = currentTimeMillis + mDelay;
         aLastBroadDelay = mDelay;
     }
 
-    public void write(UdpResponseMsg mResponseData) {
+    @Override
+    public void send(DatagramPacket datagramPacket) {
         if (run) {
-            mHandler.obtainMessage(MSG_WHAT_WRITE_OBJ, mResponseData).sendToTarget();
+            mHandler.obtainMessage(MSG_WHAT_WRITE_OBJ, datagramPacket).sendToTarget();
         } else {
-            Tlog.e(TAG, " udp write ; but not run ");
+            Tlog.e(TAG, " udp send ; but not run ");
         }
     }
 
@@ -250,20 +291,16 @@ public class UdpLanCom  {
 
     private static final long MIN_DELAY = 50L;
 
-    public void writeDelay(UdpResponseMsg mResponseData) {
-        writeDelay(mResponseData, DELAY, MAX_DELAY);
+    @Override
+    public void sendDelay(DatagramPacket datagramPacket) {
+        sendDelay(datagramPacket, DELAY, MAX_DELAY);
     }
 
-    private boolean showLog = true;
-
-    public void showLog(boolean showLog) {
-        this.showLog = showLog;
-    }
-
-    public void writeDelay(UdpResponseMsg mResponseData, long delay, long maxDelay) {
+    @Override
+    public void sendDelay(DatagramPacket datagramPacket, long delay, long maxDelay) {
 
         if (!run) {
-            Tlog.e(TAG, " udp writeDelay ; but not run ");
+            Tlog.e(TAG, " udp sendDelay ; but not run ");
         }
 
         long currentTimeMillis = System.currentTimeMillis();
@@ -301,14 +338,16 @@ public class UdpLanCom  {
 //
 //        }
 
-        Message message = mHandler.obtainMessage(MSG_WHAT_WRITE_OBJ_DELAY, mResponseData);
+        Message message = mHandler.obtainMessage(MSG_WHAT_WRITE_OBJ_DELAY, datagramPacket);
         mHandler.sendMessageDelayed(message, mDelay);
 
         aLastSendMillis = currentTimeMillis + mDelay;
         aLastSendDelay = mDelay;
 
         if (showLog && Tlog.isDebug()) {
-            DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss.SSS", Locale.getDefault());
+            if (dateFormat == null) {
+                dateFormat = new SimpleDateFormat("HH:mm:ss.SSS", Locale.getDefault());
+            }
             Tlog.v(TAG, " cur:" + dateFormat.format(new Date(currentTimeMillis))
                     + " last:" + dateFormat.format(new Date(aLastSendMillis))
                     + " diff:" + diff
@@ -327,18 +366,18 @@ public class UdpLanCom  {
         switch (msg.what) {
 
             case MSG_WHAT_BROAD_OBJ:
-                broadObj(msg);
+                sendObj(msg);
                 break;
 
             case MSG_WHAT_BROAD_OBJ_DELAY:
-                broadObj(msg);
+                sendObj(msg);
                 break;
 
             case MSG_WHAT_WRITE_OBJ:
-                writeObj(msg);
+                sendObj(msg);
                 break;
             case MSG_WHAT_WRITE_OBJ_DELAY:
-                writeObj(msg);
+                sendObj(msg);
                 break;
             default:
 
@@ -347,99 +386,37 @@ public class UdpLanCom  {
 
     }
 
-    private void writeObj(Message msg) {
+    private void sendObj(Message msg) {
 
-        UdpResponseMsg mResponseData = (UdpResponseMsg) msg.obj;
+        DatagramPacket datagramPacket = (DatagramPacket) msg.obj;
 
-        if (mResponseData == null) {
-            Tlog.e(TAG, " writeObj mResponseData==null ");
+        if (datagramPacket == null) {
+            Tlog.e(TAG, " sendObj datagramPacket==null ");
             return;
         }
-
-        String ip = mResponseData.ip;
-
-        InetAddress byName;
-        try {
-            byName = InetAddress.getByName(ip);
-        } catch (Exception e) {
-            e.printStackTrace();
-            Tlog.e(TAG, "writeObj InetAddress.getByName(" + ip + ") ", e);
-            return;
-        }
-
-        int port = mResponseData.port;
-        byte[] buf = mResponseData.data;
-        int length = buf.length;
 
         if (Tlog.isDebug()) {
-            Tlog.i(TAG, " writeObj-" + String.valueOf(mResponseData));
+            Tlog.i(TAG, " sendObj-" + IpUtil.valueOf(datagramPacket));
         }
-
-        DatagramPacket datagramPacket = new DatagramPacket(buf, length, byName, port);
 
         if (mUdpSocket != null) {
             try {
                 mUdpSocket.send(datagramPacket);
             } catch (IOException e) {
                 e.printStackTrace();
-                Tlog.e(TAG, " writeObj IOException ", e);
+                Tlog.e(TAG, " sendObj IOException ", e);
             }
         } else {
-            Tlog.e(TAG, " writeObj mUdpSocket==null ");
+            Tlog.e(TAG, " sendObj mUdpSocket==null ");
         }
 
     }
 
-
-    private void broadObj(Message msg) {
-
-        UdpResponseMsg mResponseData = (UdpResponseMsg) msg.obj;
-
-        if (mResponseData == null) {
-            Tlog.e(TAG, " broadObj mResponseData==null ");
-            return;
-        }
-
-
-        String ip = mResponseData.ip;
-
-        InetAddress byName;
-        try {
-            byName = InetAddress.getByName(ip);
-        } catch (Exception e) {
-            e.printStackTrace();
-            Tlog.e(TAG, "broadObj InetAddress.getByName(" + ip + ") ", e);
-            return;
-        }
-
-        int port = mResponseData.port;
-        byte[] buf = mResponseData.data;
-        int length = buf.length;
-
-        if (Tlog.isDebug()) {
-            Tlog.i(TAG, " broadObj-" + String.valueOf(mResponseData));
-        }
-
-        DatagramPacket datagramPacket = new DatagramPacket(buf, length, byName, port);
-
-        if (mUdpSocket != null) {
-            try {
-                mUdpSocket.send(datagramPacket);
-            } catch (IOException e) {
-                e.printStackTrace();
-                Tlog.e(TAG, " broadObj IOException ", e);
-            }
-
-        } else {
-            Tlog.e(TAG, " broadObj mUdpSocket==null ");
-        }
-
-    }
 
     private static class WriteHandler extends Handler {
-        WeakReference<UdpLanCom> wr;
+        WeakReference<FastUdpImpl> wr;
 
-        private WriteHandler(UdpLanCom mUdpLanCom, Looper mLooper) {
+        private WriteHandler(FastUdpImpl mUdpLanCom, Looper mLooper) {
             super(mLooper);
             wr = new WeakReference<>(mUdpLanCom);
         }
@@ -448,10 +425,10 @@ public class UdpLanCom  {
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
 
-            UdpLanCom mUdpLanCom;
+            FastUdpImpl mFastUdpImpl;
 
-            if (wr != null && (mUdpLanCom = wr.get()) != null) {
-                mUdpLanCom.handleMessage(msg);
+            if (wr != null && (mFastUdpImpl = wr.get()) != null) {
+                mFastUdpImpl.handleMessage(msg);
             } else {
                 Tlog.e(TAG, " UdpLanCom = null ");
             }

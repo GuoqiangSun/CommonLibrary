@@ -2,6 +2,7 @@ package cn.com.swain169.log;
 
 import android.util.Log;
 
+import java.io.File;
 import java.util.Formatter;
 
 import cn.com.swain169.log.logRecord.AbsLogRecord;
@@ -63,8 +64,12 @@ public class Tlog {
         TFlog.set(recordMsg);
     }
 
-    public static void regIRecordMsgFile() {
-        TFlog.set();
+    /**
+     * 注册录制文件类
+     *
+     */
+    public static void regIRecordMsgFile(File logPath) {
+        TFlog.set(logPath);
     }
 
     /**

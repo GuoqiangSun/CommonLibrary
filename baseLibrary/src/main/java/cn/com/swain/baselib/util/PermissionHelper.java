@@ -145,7 +145,7 @@ public class PermissionHelper {
 
             mRequest = new PermissionRequest(this);
 
-            mRequest.requestAllPermission(this, this.permissionMsg.mResult, this.permissionMsg.permissions);
+            mRequest.requestPermissions(this, this.permissionMsg.mResult, this.permissionMsg.permissions);
 
         }
 

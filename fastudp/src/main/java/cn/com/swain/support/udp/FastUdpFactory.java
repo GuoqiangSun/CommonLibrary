@@ -10,7 +10,7 @@ import android.os.Looper;
 public class FastUdpFactory {
 
     public static AbsFastUdp newFastUdp(Looper mLooper) {
-        return new UdpLanCom(mLooper);
+        return new FastUdpImpl(mLooper);
     }
 
 }

@@ -33,18 +33,6 @@ public class MacUtil {
         return false;
     }
 
-    /**
-     * 判断MAC地址的合法性，这里采用了正则表达式的方法来判断
-     * return true，合法
-     */
-    public static boolean macMatches2(String text) {
-        if (text != null && !text.isEmpty()) {
-            return text.matches(MAC_ADDRESS);
-        }
-        return false;
-    }
-
-
     public static String byteToMacStr(byte[] protocolParams, int start) {
 
         if (protocolParams == null || protocolParams.length < start + 6) {

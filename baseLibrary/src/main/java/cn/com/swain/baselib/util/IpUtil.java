@@ -4,6 +4,7 @@ import android.content.Context;
 import android.net.DhcpInfo;
 import android.net.wifi.WifiManager;
 
+import java.net.DatagramPacket;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.InterfaceAddress;
@@ -56,20 +57,12 @@ public class IpUtil {
     }
 
 
-    /**
-     * 判断IP地址的合法性，这里采用了正则表达式的方法来判断
-     * return true，合法
-     */
-    public static boolean ipMatches2(String text) {
-        if (text != null && !text.isEmpty()) {
-            return text.matches(IP_REGEX);
-        }
-        return false;
-    }
-
-
     public static final String BROAD_IP_BOUND = "255.255.255.255";
 
+    /**
+     * 获取全域广播地址
+     * （有些路由器会屏蔽这个广播地址,慎用）
+     */
     public static InetAddress getBoundBroadcast() {
 
         try {
@@ -83,6 +76,11 @@ public class IpUtil {
     }
 
 
+    /**
+     * 获取wifiIP的广播地址
+     * <p>
+     * 根据wifi的ip 子网掩码 算出广播地址
+     */
     public static InetAddress getWiFiBroadcastAddress(Context mContext) {
         WifiManager myWifiManager = (WifiManager) mContext.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         if (myWifiManager == null) {
@@ -106,6 +104,10 @@ public class IpUtil {
     }
 
 
+    /**
+     * 获取本机广播地址
+     * 通过Android接口获取
+     */
     public static InetAddress getLocalBroadcastAddress() {
         try {
             Enumeration<NetworkInterface> eni = NetworkInterface
@@ -200,6 +202,25 @@ public class IpUtil {
     }
 
 
+    /**
+     * 获取本机广播地址
+     * <p>
+     * 先从wifi里面获取，获取不到，再从本地网络配置表里获取，否则返回全域广播地址
+     */
+    public static InetAddress getBroadcastAddress(Context app) {
+        InetAddress address = getWiFiBroadcastAddress(app);
+        if (address == null || BROAD_IP_BOUND.equalsIgnoreCase(address.getHostAddress())) {
+            address = getLocalBroadcastAddress();
+            if (address == null) {
+                address = getBoundBroadcast();
+            }
+        }
+        return address;
+    }
+
+    /**
+     * 获取本机Ipv4地址
+     */
     public static String getLocalIpV4Address() {
         try {
             for (Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces(); en.hasMoreElements(); ) {
@@ -217,16 +238,14 @@ public class IpUtil {
         return null;
     }
 
-
-    public static InetAddress getBroadcastAddress(Context app) {
-        InetAddress address = IpUtil.getWiFiBroadcastAddress(app);
-        if (address == null || address.getHostAddress().equalsIgnoreCase(IpUtil.BROAD_IP_BOUND)) {
-            address = IpUtil.getLocalBroadcastAddress();
-            if (address == null) {
-                address = IpUtil.getBoundBroadcast();
-            }
+    /**
+     * DatagramPacket 转字符串
+     */
+    public static String valueOf(DatagramPacket sendMsg) {
+        if (sendMsg == null) {
+            return "DatagramPacket is null";
         }
-        return address;
+        return " ip " + sendMsg.getAddress().getHostAddress() + ":" + sendMsg.getPort() + " " + StrUtil.toString(sendMsg.getData());
     }
 
 }

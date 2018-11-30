@@ -1,5 +1,7 @@
 package cn.com.swain169.log;
 
+import java.io.File;
+
 import cn.com.swain169.log.logRecord.AbsLogRecord;
 import cn.com.swain169.log.logRecord.impl.LogRecordManager;
 
@@ -15,8 +17,8 @@ public class TFlog {
 
     private static AbsLogRecord mRecordMsg;
 
-    public static synchronized boolean set(){
-        return set(new LogRecordManager());
+    public static synchronized boolean set(File logPath){
+        return set(new LogRecordManager(logPath));
     }
 
     /**

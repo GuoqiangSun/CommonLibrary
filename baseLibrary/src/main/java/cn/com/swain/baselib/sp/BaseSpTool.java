@@ -26,31 +26,31 @@ public abstract class BaseSpTool {
     public void putString(String key, String value) {
         Editor edit = sp.edit();
         edit.putString(key, value);
-        edit.commit();
+        edit.apply();
     }
 
     public void putInt(String key, int value) {
         Editor edit = sp.edit();
         edit.putInt(key, value);
-        edit.commit();
+        edit.apply();
     }
 
     public void putLong(String key, long value) {
         Editor edit = sp.edit();
         edit.putLong(key, value);
-        edit.commit();
+        edit.apply();
     }
 
     public void putFloat(String key, float value) {
         Editor edit = sp.edit();
         edit.putFloat(key, value);
-        edit.commit();
+        edit.apply();
     }
 
     public void putBoolean(String key, boolean value) {
         Editor edit = sp.edit();
         edit.putBoolean(key, value);
-        edit.commit();
+        edit.apply();
     }
 
     public String getString(String key, String defValue) {

@@ -10,6 +10,8 @@ import cn.com.swain.baselib.util.StrUtil;
  * date: 2018/10/22 0022
  * Desc:
  */
+
+@Deprecated
 public class UdpResponseMsg implements Parcelable {
 
     public UdpResponseMsg() {
@@ -57,6 +59,6 @@ public class UdpResponseMsg implements Parcelable {
 
     @Override
     public String toString() {
-        return " ip:" + ip + ":" + port + StrUtil.toString(data);
+        return " ip:" + ip + ":" + port  + " " + StrUtil.toString(data);
     }
 }

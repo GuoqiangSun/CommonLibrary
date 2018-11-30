@@ -4,6 +4,9 @@ import android.app.Application;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.ImageFormat;
+import android.graphics.Rect;
+import android.graphics.YuvImage;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.MediaStore;
@@ -164,6 +167,100 @@ public class PhotoUtils {
         fileOutputStream.write(baos.toByteArray());
         fileOutputStream.flush();
         fileOutputStream.close();
+    }
+
+
+    /**
+     * 压缩摄像头数据
+     *
+     * @param data
+     * @param width
+     * @param height
+     * @return ByteArrayOutputStream
+     */
+    public static ByteArrayOutputStream compressCameraData(byte[] data, int width, int height) {
+
+//        Tlog.v("compressImg", " -- compressImg -- ");
+
+        ByteArrayOutputStream compressOfYuv = compressOfYuv(data, width, height);
+
+        if (compressOfYuv != null) {
+
+            final byte[] byteArray = compressOfYuv.toByteArray();
+
+            return compressOfOpts(byteArray);
+
+        }
+
+        return null;
+    }
+
+    /**
+     *
+     * convert to jpg
+     *
+     * @param CameraBufferData
+     * @param width
+     * @param height
+     * @return ByteArrayOutputStream
+     */
+    public static ByteArrayOutputStream compressOfYuv(byte[] CameraBufferData, int width, int height) {
+        if (CameraBufferData == null || CameraBufferData.length <= 0) {
+            return null;
+        }
+//        Tlog.v("compressImg", " before CompressOfYuv : " + CameraBufferData.length);
+
+        YuvImage yuvImage = new YuvImage(CameraBufferData, ImageFormat.NV21, width, height, null);
+        final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        yuvImage.compressToJpeg(new Rect(0, 0, width, height), 35, byteArrayOutputStream);
+
+//        Tlog.v("compressImg", " after CompressOfYuv : " + byteArrayOutputStream.size());
+//
+//        Tlog.v("compressImg",
+//                " CompressOfYuv difference : " + (CameraBufferData.length - byteArrayOutputStream.size()));
+
+        return byteArrayOutputStream;
+    }
+
+    public static ByteArrayOutputStream compressOfOpts(byte[] data) {
+        if (data == null || data.length <= 0) {
+            return null;
+        }
+        Tlog.v("compressImg", " before compressOfOpts : " + data.length);
+
+        BitmapFactory.Options opts = new BitmapFactory.Options();
+        // // 不占用内存 只计算宽高
+        // opts.inJustDecodeBounds = true;
+        // Bitmap decodeByteArray = BitmapFactory.decodeByteArray(data, 0,
+        // data.length, opts);
+        // // 计算图片的宽高
+        // int outWidth = opts.outWidth;
+        // int outHeight = opts.outHeight;
+
+        // 真正的把图片加载到内存里面去
+        opts.inJustDecodeBounds = false;
+
+        // 设置 这两个值 图片占用内存会更小
+        opts.inDither = true; // 防抖动
+        opts.inPreferredConfig = Bitmap.Config.ARGB_8888; // 设置图片格式RGB8888
+
+        opts.inPurgeable = true;
+        opts.inInputShareable = false;
+
+        // 设置压缩比
+        opts.inSampleSize = 2;
+
+        Bitmap decodeByteArrayBitmap = BitmapFactory.decodeByteArray(data, 0, data.length, opts);
+
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        decodeByteArrayBitmap.compress(Bitmap.CompressFormat.JPEG, 80, baos);
+
+//        Tlog.v("compressImg", " after compressOfOpts : " + baos.size());
+
+//        Tlog.v("compressImg", " compressOfOpts difference : " + (data.length - baos.size()));
+
+        return baos;
+
     }
 
 
