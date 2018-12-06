@@ -3,12 +3,16 @@ package cn.com.swain.support.udp;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 
+import cn.com.swain.support.udp.impl.IUDPResult;
+
 /**
  * author: Guoqiang_Sun
  * date: 2018/11/13 0013
  * Desc:
  */
 public abstract class AbsFastUdp {
+
+    public static final String TAG = "fastUdp";
 
     /**
      * 初始化
@@ -28,12 +32,12 @@ public abstract class AbsFastUdp {
     /**
      * 注册回调
      */
-    public abstract void regUDPSocketResult(IUDPSocketResult mResult);
+    public abstract void regUDPSocketResult(IUDPResult mResult);
 
     /**
      * 取消注册
      */
-    public abstract void unregUDPSocketResult(IUDPSocketResult mResult);
+    public abstract void unregUDPSocketResult(IUDPResult mResult);
 
     /**
      * get udp socket

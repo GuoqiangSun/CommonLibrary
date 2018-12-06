@@ -14,6 +14,7 @@ import cn.com.common.test.testBle.BleScanActivity;
 import cn.com.common.test.testFun.FunctionActivity;
 import cn.com.common.test.testProtocol.TestProtocolActivity;
 import cn.com.common.test.testScrollView.ScrollViewActivity;
+import cn.com.common.test.testUdp.FastMultiUdpActivity;
 import cn.com.common.test.testUdp.FastUdpActivity;
 import cn.com.swain.baselib.util.PermissionRequest;
 import cn.com.swain169.log.TFlog;
@@ -79,6 +80,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    public void skipMultiUdp(View view) {
+        startActivity(new Intent(this, FastMultiUdpActivity.class));
+    }
+
     public void scanOR(View view) {
         startActivity(new Intent(this, ScanORCodeActivity.class));
     }
@@ -141,6 +146,5 @@ public class MainActivity extends AppCompatActivity {
         Tlog.a("swain", " test Tlog a", new Throwable());
 
     }
-
 
 }

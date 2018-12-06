@@ -6,8 +6,8 @@ android {
     defaultConfig {
         minSdkVersion 19
         targetSdkVersion 27
-        versionCode 3110
-        versionName "3.1.10"
+        versionCode 3111
+        versionName "3.1.11"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
@@ -20,11 +20,15 @@ android {
         }
     }
 
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-//    implementation 'com.android.support:appcompat-v7:27.1.1'
+    //    implementation 'com.android.support:appcompat-v7:27.1.1'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
@@ -33,20 +37,20 @@ dependencies {
 }
 
 
-//apply plugin: 'com.novoda.bintray-release'
-//publish {
-//
-//    //bintray.com用户名
-//    userOrg = 'swain169'
-//    //自定义，别人引用时  groupId:artifactId:publishVersion
-//    groupId = 'cn.com.swain169'
-//    //项目名称
-//    artifactId = 'fastudp'
-//    //版本号
-//    publishVersion = '3.1.10'
-//    //描述，不重要
-//    desc = '结构优化'
-//    //网站，不重要
-//    website = 'https://www.startai.com.cn'
-//
-//}
+apply plugin: 'com.novoda.bintray-release'
+publish {
+
+    //bintray.com用户名
+    userOrg = 'swain169'
+    //自定义，别人引用时  groupId:artifactId:publishVersion
+    groupId = 'cn.com.swain169'
+    //项目名称
+    artifactId = 'fastudp'
+    //版本号
+    publishVersion = '3.1.11'
+    //描述，不重要
+    desc = '结构优化'
+    //网站，不重要
+    website = 'https://www.startai.com.cn'
+
+}

@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="horizontal"
     android:paddingTop="10dp"
-    tools:context=".testFun.FunctionActivity">
+    >
 
     <LinearLayout
         android:layout_width="0dp"

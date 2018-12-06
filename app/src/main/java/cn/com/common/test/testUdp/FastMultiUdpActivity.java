@@ -8,6 +8,7 @@ import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,13 +28,14 @@ import cn.com.swain.baselib.util.StrUtil;
 import cn.com.swain.support.udp.AbsFastUdp;
 import cn.com.swain.support.udp.FastUdpFactory;
 import cn.com.swain.support.udp.impl.IUDPResult;
+import cn.com.swain169.log.Tlog;
 
 /**
  * author: Guoqiang_Sun
  * date: 2018/11/23 0023
  * Desc:
  */
-public class FastUdpActivity extends AppCompatActivity {
+public class FastMultiUdpActivity extends AppCompatActivity {
 
     private AbsFastUdp mFastUdp;
     EditText mSendEdt;
@@ -47,28 +49,40 @@ public class FastUdpActivity extends AppCompatActivity {
 
     DateFormat dateFormat;
 
+    EditText mInitIpEdt;
+
+    Handler mUIHandler;
+
+    TextView mUdpIpTxt;
+
+    EditText mInitPortEdt;
+    Button mUdpInitBtn;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_fast_udp);
+        setContentView(R.layout.activity_fast_multi_udp);
 
         mSendEdt = findViewById(R.id.edtData);
         mSendTxt = findViewById(R.id.txtSend);
         mRecTxt = findViewById(R.id.txtNotify);
-        final TextView mUdpIpTxt = findViewById(R.id.udp_ip_txt);
-
+        mUdpIpTxt = findViewById(R.id.udp_ip_txt);
 
         mSendIpEdt = findViewById(R.id.udp_send_ip_edt);
         mSendPortEdt = findViewById(R.id.udp_send_port_edt);
 
-
         mLocalIpTxt = findViewById(R.id.local_ip_txt);
         mLocalIpTxt.setText(IpUtil.getLocalIpV4Address());
 
+        mInitIpEdt = findViewById(R.id.udp_init_ip_edt);
+        mInitPortEdt = findViewById(R.id.udp_init_port_edt);
+
+        mUdpInitBtn = findViewById(R.id.toggle_udp_btn);
+
         dateFormat = new SimpleDateFormat("HH:mm:ss.SSS", Locale.getDefault());
 
-        final Handler mUIHandler = new Handler(Looper.getMainLooper()) {
+        mUIHandler = new Handler(Looper.getMainLooper()) {
             @Override
             public void handleMessage(Message msg) {
                 super.handleMessage(msg);
@@ -80,22 +94,70 @@ public class FastUdpActivity extends AppCompatActivity {
             }
         };
 
-        mFastUdp = FastUdpFactory.newFastUniUdp(LooperManager.getInstance().getWorkLooper());
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mFastUdp != null) {
+            mFastUdp.release();
+        }
+        mUIHandler.removeCallbacksAndMessages(null);
+    }
+
+    public void initMultiUdp(View view) {
+
+        if (mFastUdp != null) {
+//            Toast.makeText(getApplicationContext(), "already init udp", Toast.LENGTH_SHORT).show();
+            mFastUdp.release();
+            return;
+        }
+
+        String s = mInitIpEdt.getText().toString();
+
+        InetAddress groupAddress;
+        try {
+            groupAddress = InetAddress.getByName(s);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(getApplicationContext(), "ip parse error", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        String s1 = mInitPortEdt.getText().toString();
+
+        int port;
+        try {
+            port = Integer.parseInt(s1);
+        } catch (Exception e) {
+            Tlog.e(" parseInt ", e);
+            Toast.makeText(getApplicationContext(), "port input error", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // target hostname is : 234.1.1.1, 234.2.2.2, 234.3.3.3 to 234.100.100.100
+
+        mFastUdp = FastUdpFactory.newFastMultiUdp(LooperManager.getInstance().getWorkLooper(),
+                groupAddress, port, false);
 
         mFastUdp.regUDPSocketResult(new IUDPResult() {
             @Override
-            public void onUDPInitResult(boolean result, final String ip, final int port) {
+            public void onUDPInitResult(final boolean result, final String ip, final int port) {
 
                 mUIHandler.post(new Runnable() {
                     @Override
                     public void run() {
-                        String msg = String.valueOf(ip) + ":" + String.valueOf(port);
-                        mUdpIpTxt.setText(msg);
+                        Toast.makeText(getApplicationContext(), result ? "udp init success" : "udp init error", Toast.LENGTH_SHORT).show();
+                        if (result) {
+                            String msg = String.valueOf(ip) + ":" + String.valueOf(port);
+                            mUdpIpTxt.setText(msg);
+                            String msg1 = "UnInit";
+                            mUdpInitBtn.setText(msg1);
+                        }
                     }
                 });
 
             }
-
 
             @Override
             public void onUDPReceiveData(String ip, int port, byte[] data) {
@@ -107,8 +169,21 @@ public class FastUdpActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onUDPReleaseResult(boolean result) {
+            public void onUDPReleaseResult(final boolean result) {
+                mUIHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getApplicationContext(), result ? "udp unInit success" : "udp unInit error", Toast.LENGTH_SHORT).show();
 
+                        if (result) {
+                            mFastUdp = null;
+                            mUdpIpTxt.setText("");
+                            String msg1 = "Init";
+                            mUdpInitBtn.setText(msg1);
+                        }
+
+                    }
+                });
             }
         });
         mFastUdp.init();
@@ -116,17 +191,14 @@ public class FastUdpActivity extends AppCompatActivity {
 
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (mFastUdp != null) {
-            mFastUdp.release();
-        }
-    }
-
     private static final int MSG_REC = 0x00;
 
     public void sendData(View view) {
+
+        if (mFastUdp == null) {
+            Toast.makeText(getApplicationContext(), "not init udp", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         DatagramPacket sendMsg = getSendMsg();
         if (sendMsg != null) {
@@ -143,6 +215,11 @@ public class FastUdpActivity extends AppCompatActivity {
 
         if (send) {
             Toast.makeText(getApplicationContext(), "正在循环发送", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (mFastUdp == null) {
+            Toast.makeText(getApplicationContext(), "not init udp", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -236,6 +313,5 @@ public class FastUdpActivity extends AppCompatActivity {
         }
         Toast.makeText(applicationContext, "broadIP:" + address, Toast.LENGTH_SHORT).show();
     }
-
 
 }

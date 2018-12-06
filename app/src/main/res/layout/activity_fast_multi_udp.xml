@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:paddingTop="10dp">
+    android:paddingTop="10dp"
+    >
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
-
 
         <TextView
             android:layout_width="wrap_content"
@@ -29,17 +30,65 @@
             android:onClick="flushLocalIp"
             android:textSize="16sp" />
 
-
         <TextView
             android:id="@+id/udp_ip_txt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="30dp"
             android:clickable="true"
             android:focusable="true"
             android:focusableInTouchMode="true"
             android:onClick="getBroadIp"
-            android:text="192.168.1.1"
             android:textSize="18sp" />
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingStart="5dp"
+        android:paddingEnd="10dp">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+
+            <EditText
+                android:id="@+id/udp_init_ip_edt"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.7"
+                android:digits="0123456789."
+                android:hint="Init IP 234.1.1.1"
+                android:inputType="number"
+                android:textSize="16sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=":"
+                android:textSize="16sp" />
+
+            <EditText
+                android:id="@+id/udp_init_port_edt"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.3"
+                android:hint="port"
+                android:inputType="number"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/toggle_udp_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="initMultiUdp"
+            android:text="init"
+            android:textSize="16sp" />
 
     </LinearLayout>
 
@@ -63,7 +112,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="0.7"
                 android:digits="0123456789."
-                android:hint="Send IP 192.168.1.1"
+                android:hint="Send IP 234.1.1.1"
                 android:inputType="number"
                 android:textSize="16sp" />
 
@@ -112,7 +161,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:hint="ff 00 99 aa ee"
+                android:hint="ff aa 00 99"
                 android:textSize="14sp" />
 
             <Button

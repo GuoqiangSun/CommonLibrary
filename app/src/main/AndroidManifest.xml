@@ -82,6 +82,7 @@
             android:configChanges="orientation"
             android:screenOrientation="portrait" />
         <activity android:name=".testFun.FunctionActivity" />
+        <activity android:name=".testUdp.FastMultiUdpActivity" />
 
     </application>
 

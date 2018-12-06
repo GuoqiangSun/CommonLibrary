@@ -47,6 +47,13 @@ public class StrUtil {
      * 数组转字符串显示
      */
     public static String toString(byte[] a) {
+        return toHexString(a);
+    }
+
+    /**
+     * 数组转十六进制字符串显示
+     */
+    public static String toHexString(byte[] a) {
         if (a == null)
             return "null";
         int iMax = a.length - 1;
@@ -57,6 +64,26 @@ public class StrUtil {
         b.append('[');
         for (int i = 0; ; i++) {
             b.append(Integer.toHexString(a[i] & 0xFF));
+            if (i == iMax)
+                return b.append(']').toString();
+            b.append(", ");
+        }
+    }
+
+    /**
+     * 数组转字符显示
+     */
+    public static String toCharString(byte[] a) {
+        if (a == null)
+            return "null";
+        int iMax = a.length - 1;
+        if (iMax == -1)
+            return "[]";
+
+        StringBuilder b = new StringBuilder();
+        b.append('[');
+        for (int i = 0; ; i++) {
+            b.append(String.valueOf((char) a[i]));
             if (i == iMax)
                 return b.append(']').toString();
             b.append(", ");

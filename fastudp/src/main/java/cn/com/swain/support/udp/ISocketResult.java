@@ -14,6 +14,4 @@ public interface ISocketResult {
 
     void onSocketReleaseResult(boolean result);
 
-//    void broadc
-
 }

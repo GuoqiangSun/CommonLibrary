@@ -28,6 +28,16 @@ public class WiFiUtil {
             return "unknown";
         }
         WifiManager mWiFiManager = (WifiManager) applicationContext.getSystemService(Context.WIFI_SERVICE);
+        return getConnectedWiFiSSID(mWiFiManager);
+    }
+
+    /**
+     * 获取连接WiFi的SSID
+     *
+     * @param mWiFiManager {@link WifiManager}
+     * @return SSID
+     */
+    public static String getConnectedWiFiSSID(WifiManager mWiFiManager) {
         if (mWiFiManager == null) {
             return "unknown";
         }
@@ -66,6 +76,9 @@ public class WiFiUtil {
      */
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public static boolean is5GHz(WifiManager mWiFiManager) {
+        if (null == mWiFiManager) {
+            return false;
+        }
         WifiInfo connectionInfo = mWiFiManager.getConnectionInfo();
         if (connectionInfo.getNetworkId() == -1) {
             return false;
@@ -93,10 +106,10 @@ public class WiFiUtil {
      * @return BSSID
      */
     public static String getWiFiBSSID(String ssid, Application applicationContext) {
-        WifiManager mWiFiManager = (WifiManager) applicationContext.getSystemService(Context.WIFI_SERVICE);
-        if (mWiFiManager == null) {
+        if (null == applicationContext) {
             return "";
         }
+        WifiManager mWiFiManager = (WifiManager) applicationContext.getSystemService(Context.WIFI_SERVICE);
         return getWiFiBSSID(ssid, mWiFiManager);
     }
 
@@ -127,11 +140,29 @@ public class WiFiUtil {
     /**
      * 获取连接WiFi的BSSID
      *
+     * @param applicationContext {@link Application}
+     * @return BSSID
+     */
+    public static String getConnectWiFiBSSID(Application applicationContext) {
+        if (applicationContext == null) {
+            return "";
+        }
+
+        WifiManager mWiFiManager = (WifiManager) applicationContext.getSystemService(Context.WIFI_SERVICE);
+
+        return getConnectWiFiBSSID(mWiFiManager);
+    }
+
+    /**
+     * 获取连接WiFi的BSSID
+     *
      * @param mWiFiManager {@link WifiManager}
      * @return BSSID
      */
     public static String getConnectWiFiBSSID(WifiManager mWiFiManager) {
-
+        if (mWiFiManager == null) {
+            return "";
+        }
         WifiInfo connectionInfo = mWiFiManager.getConnectionInfo();
 
         if (connectionInfo.getNetworkId() == -1) {
@@ -150,6 +181,10 @@ public class WiFiUtil {
      * @return BSSID
      */
     public static String getConnectWiFiBSSID(String ssid, WifiManager mWiFiManager) {
+
+        if (mWiFiManager == null) {
+            return "";
+        }
 
         String conSSID = checkWiFiName(ssid);
 
@@ -171,6 +206,9 @@ public class WiFiUtil {
      * @return BSSID
      */
     public static String getWiFiBSSIDByConfig(int networkID, WifiManager mWiFiManager) {
+        if (mWiFiManager == null) {
+            return "";
+        }
         List<WifiConfiguration> configuredNetworks = mWiFiManager.getConfiguredNetworks();
         if (configuredNetworks != null) {
             for (WifiConfiguration mWiFiConfig : configuredNetworks) {
@@ -195,6 +233,9 @@ public class WiFiUtil {
      */
     public static int getNetworkIDByConfig(String ssid, WifiManager mWiFiManager) {
         if (null == ssid) {
+            return -1;
+        }
+        if (mWiFiManager == null) {
             return -1;
         }
         ssid = checkWiFiName(ssid);
