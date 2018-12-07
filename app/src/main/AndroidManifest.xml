@@ -83,6 +83,7 @@
             android:screenOrientation="portrait" />
         <activity android:name=".testFun.FunctionActivity" />
         <activity android:name=".testUdp.FastMultiUdpActivity" />
+        <activity android:name=".p2p.p2pAndroid.P2pClientActivity" />
 
     </application>
 

@@ -9,6 +9,7 @@ import android.view.View;
 
 import cn.com.common.test.R;
 import cn.com.common.test.global.FileManager;
+import cn.com.common.test.p2p.p2pAndroid.P2pClientActivity;
 import cn.com.common.test.scanOR.ScanORCodeActivity;
 import cn.com.common.test.testBle.BleScanActivity;
 import cn.com.common.test.testFun.FunctionActivity;
@@ -91,6 +92,11 @@ public class MainActivity extends AppCompatActivity {
 
     public void skipFun(View view) {
         startActivity(new Intent(this, FunctionActivity.class));
+    }
+
+
+    public void p2pClient(View view) {
+        startActivity(new Intent(this, P2pClientActivity.class));
     }
 
     private void testTFLog() {

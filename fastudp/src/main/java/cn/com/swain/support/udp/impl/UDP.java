@@ -160,14 +160,14 @@ public class UDP implements Runnable {
     private static DatagramSocket newUDP(BuildUDPParams mBuildUDPParams) {
 
         if (mBuildUDPParams.groupInet == null) {
-            return newDatagramSocket(mBuildUDPParams.bindPort, mBuildUDPParams.isReuseAddress);
+            return newUnicastSocket(mBuildUDPParams.bindPort, mBuildUDPParams.isReuseAddress);
         } else {
             return newMulticastSocket(mBuildUDPParams.bindPort, mBuildUDPParams.isReuseAddress, mBuildUDPParams.groupInet);
         }
 
     }
 
-    public static DatagramSocket newDatagramSocket(int bindPort, boolean reuseAddress) {
+    public static DatagramSocket newUnicastSocket(int bindPort, boolean reuseAddress) {
         DatagramSocket datagramSocket = null;
         try {
             if (bindPort >= 0 && bindPort <= 65535) {
