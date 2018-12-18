@@ -6,8 +6,8 @@ android {
     defaultConfig {
         minSdkVersion 17
         targetSdkVersion 27
-        versionCode 3110
-        versionName "3.1.10"
+        versionCode 3111
+        versionName "3.1.11"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
@@ -43,9 +43,9 @@ dependencies {
 //    //项目名称
 //    artifactId = 'protocolEngine'
 //    //版本号
-//    publishVersion = '3.1.10'
+//    publishVersion = '3.1.11'
 //    //描述，不重要
-//    desc = 'restructe send receive Pack model'
+//    desc = 'restructe send receive Pack model2'
 //    //网站，不重要
 //    website = 'https://www.startai.com.cn'
 //
