@@ -9,34 +9,20 @@ import cn.com.swain.baselib.util.Bit;
  */
 public class BaseModel {
 
-    public static final int SEND_MODEL_CASUAL = 0x00;
+    public static final int EMPTY = 0x00000000;
 
     private final Bit mBit;
 
     public BaseModel() {
-        this(SEND_MODEL_CASUAL);
+        this(EMPTY);
     }
 
     public BaseModel(BaseModel model) {
-        this(model != null ? model.getModel() : SEND_MODEL_CASUAL);
+        this(model != null ? model.getModel() : EMPTY);
     }
 
     public BaseModel(int model) {
         this.mBit = new Bit(model);
-    }
-
-    /**
-     * 设置随意模式
-     */
-    public void setModelCasual() {
-        mBit.addDevice(SEND_MODEL_CASUAL);
-    }
-
-    /**
-     * 是否随意通信模式
-     */
-    public boolean isModelCasual() {
-        return getModel() == SEND_MODEL_CASUAL;
     }
 
     /**
@@ -48,23 +34,13 @@ public class BaseModel {
         mBit.add(bitPoint);
     }
 
-    /**
-     * 设置模式
-     *
-     * @param mModelNew model
-     */
-    public void addDevice(int mModelNew) {
-
-        mBit.addDevice(mModelNew);
-
-    }
 
     /**
      * 设置模式
      *
      * @param mModelNew {@link BaseModel}
      */
-    public void addDevice(BaseModel mModelNew) {
+    public final void addModel(BaseModel mModelNew) {
 
         int modelNew = 0;
 
@@ -72,7 +48,18 @@ public class BaseModel {
             modelNew = mModelNew.getModel();
         }
 
-        mBit.addDevice(modelNew);
+        addDevice(modelNew);
+
+    }
+
+    /**
+     * 设置模式
+     *
+     * @param mModelNew model
+     */
+    public final void addDevice(int mModelNew) {
+
+        mBit.addDevice(mModelNew);
 
     }
 
@@ -88,20 +75,9 @@ public class BaseModel {
     /**
      * 设置模式
      *
-     * @param mModelNew model
-     */
-    public void removeDevice(int mModelNew) {
-
-        mBit.removeDevice(mModelNew);
-
-    }
-
-    /**
-     * 设置模式
-     *
      * @param mModelNew {@link BaseModel}
      */
-    public void removeDevice(BaseModel mModelNew) {
+    public final void removeModel(BaseModel mModelNew) {
 
         int modelNew = 0;
 
@@ -109,9 +85,21 @@ public class BaseModel {
             modelNew = mModelNew.getModel();
         }
 
-        mBit.removeDevice(modelNew);
+        removeDevice(modelNew);
 
     }
+
+    /**
+     * 设置模式
+     *
+     * @param mModelNew model
+     */
+    public final void removeDevice(int mModelNew) {
+
+        mBit.removeDevice(mModelNew);
+
+    }
+
 
     /**
      * 获取模式

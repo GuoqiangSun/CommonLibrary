@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 
+import java.util.Arrays;
+
 import cn.com.common.test.global.LooperManager;
 import cn.com.common.test.main.CommonApplication;
 import cn.com.swain.support.protocolEngine.DataInspector.DatagramInspector;
@@ -14,6 +16,7 @@ import cn.com.swain.support.protocolEngine.datagram.ProtocolException.EscapeIOEx
 import cn.com.swain.support.protocolEngine.datagram.SocketDataArray;
 import cn.com.swain.support.protocolEngine.datagram.dataproducer.SocketDataQueueProducer;
 import cn.com.swain.support.protocolEngine.pack.ReceivesData;
+import cn.com.swain.support.protocolEngine.pack.ResponseData;
 import cn.com.swain.support.protocolEngine.resolve.AbsProtocolProcessor;
 import cn.com.swain.support.protocolEngine.result.SimpleProtocolResult;
 import cn.com.swain.support.protocolEngine.task.FailTaskResult;
@@ -28,6 +31,7 @@ import cn.com.swain169.log.Tlog;
 public class TestProtocolActivity extends AppCompatActivity {
 
     private static String TAG = CommonApplication.TAG;
+    AbsProtocolProcessor absProtocolProcessor;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -39,22 +43,25 @@ public class TestProtocolActivity extends AppCompatActivity {
 //        testSocketDataArray();
 
 
-        final AbsProtocolProcessor absProtocolProcessor = ProtocolProcessorFactory.newSingleChannelSingleTask(
+        absProtocolProcessor = ProtocolProcessorFactory.newSingleChannelSingleTask(
                 LooperManager.getInstance().getProtocolLooper(),
                 new SimpleProtocolResult() {
                     @Override
                     public void onFail(FailTaskResult failTaskResult) {
-                        Tlog.v(TAG, " onFail:" + String.valueOf(failTaskResult));
+                        Tlog.e(TAG, " onFail:" + String.valueOf(failTaskResult));
                     }
 
                     @Override
                     public void onSuccess(SocketDataArray mSocketDataArray) {
-                        Tlog.v(TAG, " onSuccess " + String.valueOf(mSocketDataArray));
-
-                        Tlog.v(TAG, " getProtocolParamsLength:" + mSocketDataArray.getProtocolParamsLength());
+                        Tlog.e(TAG, " onSuccess " + String.valueOf(mSocketDataArray));
 
                         byte[] protocolParams = mSocketDataArray.getProtocolParams();
-                        Tlog.v(TAG, " getProtocolParams:" + protocolParams.length);
+                        Tlog.v(TAG, " getProtocolParamsLength:"
+                                + mSocketDataArray.getProtocolParamsLength()
+                                + " getProtocolParams:"
+                                + protocolParams.length);
+
+                        mSocketDataArray.setISUnUsed();
 
                     }
                 }, ProtocolBuild.VERSION.VERSION_0, true);
@@ -122,26 +129,56 @@ public class TestProtocolActivity extends AppCompatActivity {
                 ReceivesData mReceiveData = new ReceivesData("00:00:00:00:00:00", buf);
                 absProtocolProcessor.onInputServerData(mReceiveData);
 
-//                while (true) {
-//                    ResponseData electricityPrice = ProtocolDataCache.getElectricityPrice("00:00:00:00:00:00", 2);
-//                    ReceivesData mReceiveData = new ReceivesData(electricityPrice.toID, electricityPrice.data);
-//                    absProtocolProcessor.onInputServerData(mReceiveData);
-//
-//                }
+                ResponseData electricityPrice = ProtocolDataCache.getElectricityPrice("00:00:00:00:00:00", 2);
+
+                ResponseData monetaryUnit = ProtocolDataCache.getMonetaryUnit("00:00:00:00:00:00", (byte) 0x03);
+
+                byte[] bytes = Arrays.copyOf(monetaryUnit.data, monetaryUnit.data.length);
+                if (bytes[3] != 0x69) {
+                    bytes[3] = 0x69;
+                } else {
+                    bytes[3] = (byte) 0x96;
+                }
+
+
+                exe = true;
+                while (exe) {
+                    mReceiveData = new ReceivesData(electricityPrice.toID, electricityPrice.data);
+                    absProtocolProcessor.onInputServerData(mReceiveData);
+
+                    mReceiveData = new ReceivesData(monetaryUnit.toID, monetaryUnit.data);
+                    absProtocolProcessor.onInputServerData(mReceiveData);
+
+
+                    mReceiveData = new ReceivesData(monetaryUnit.toID, bytes);
+                    absProtocolProcessor.onInputServerData(mReceiveData);
+
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
+                }
             }
         });
 
     }
 
+    private boolean exe;
+
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
+        exe = false;
+        run = false;
         if (pm != null) {
             pm.release();
         }
-        run = false;
+        if (absProtocolProcessor != null) {
+            absProtocolProcessor.release();
+        }
     }
 
     private ProtocolProcessor pm;

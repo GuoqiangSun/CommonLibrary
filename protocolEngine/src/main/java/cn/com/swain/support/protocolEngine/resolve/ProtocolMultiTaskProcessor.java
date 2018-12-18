@@ -8,27 +8,27 @@ import cn.com.swain.support.protocolEngine.datagram.dataproducer.ISocketDataProd
 import cn.com.swain.support.protocolEngine.datagram.dataproducer.SocketDataQueueProducer;
 import cn.com.swain.support.protocolEngine.pack.ReceivesData;
 import cn.com.swain.support.protocolEngine.result.IProtocolAnalysisResult;
+import cn.com.swain169.log.Tlog;
 
 /**
  * author: Guoqiang_Sun
  * date : 2018/4/2 0002
- * desc :
+ * desc : 单渠道,多任务
  */
 
-public class ProtocolLargerProcessor extends AbsProtocolProcessor {
+public class ProtocolMultiTaskProcessor extends AbsProtocolProcessor {
 
-    public static final String TAG = "ProtocolProcessor";
     private DataResolveQueue mDataResolveQueue;
 
-    public ProtocolLargerProcessor(Looper protocolLooper,
-                                   IProtocolAnalysisResult mProtocolCallBack,
-                                   int protocolVersion,
-                                   int poolSize,
-                                   boolean supportLargerPkg) {
+    public ProtocolMultiTaskProcessor(Looper protocolLooper,
+                                      IProtocolAnalysisResult mProtocolCallBack,
+                                      int protocolVersion,
+                                      int callBackPoolSize,
+                                      boolean supportLargerPkg) {
         this(protocolLooper, mProtocolCallBack,
                 new SocketDataQueueProducer(protocolVersion),
                 supportLargerPkg ? new SocketDataQueueProducer(protocolVersion) : null,
-                poolSize);
+                callBackPoolSize);
     }
 
     /**
@@ -36,13 +36,13 @@ public class ProtocolLargerProcessor extends AbsProtocolProcessor {
      * @param mProtocolCallBack         回调
      * @param mSocketDataProducer       一般包的生产者
      * @param mLargerSocketDataProducer 超大包的生产者
-     * @param poolSize                  回调线程池的大小
+     * @param callBackPoolSize          回调线程池的大小
      */
-    public ProtocolLargerProcessor(Looper protocolLooper,
-                                   IProtocolAnalysisResult mProtocolCallBack,
-                                   ISocketDataProducer mSocketDataProducer,
-                                   ISocketDataProducer mLargerSocketDataProducer,
-                                   int poolSize) {
+    public ProtocolMultiTaskProcessor(Looper protocolLooper,
+                                      IProtocolAnalysisResult mProtocolCallBack,
+                                      ISocketDataProducer mSocketDataProducer,
+                                      ISocketDataProducer mLargerSocketDataProducer,
+                                      int callBackPoolSize) {
 
         if (mProtocolCallBack == null) {
             throw new NullPointerException(" <ProtocolProcessor> IProtocolAnalysisResult==null . ");
@@ -57,7 +57,7 @@ public class ProtocolLargerProcessor extends AbsProtocolProcessor {
         }
 
         this.mDataResolveQueue = new DataResolveQueue(protocolLooper,
-                new DataInspectorPool(new DataResolveInspector(mProtocolCallBack), poolSize),
+                new DataInspectorPool(new DataResolveInspector(mProtocolCallBack), callBackPoolSize),
                 mSocketDataProducer,
                 mLargerSocketDataProducer);
     }
@@ -74,6 +74,9 @@ public class ProtocolLargerProcessor extends AbsProtocolProcessor {
     public void onInputServerData(ReceivesData mReceivesData) {
         if (mDataResolveQueue != null) {
             mDataResolveQueue.postReceiveDataToQueue(mReceivesData);
+        } else {
+            Tlog.e(TAG, " ProtocolMultiTaskProcessor onInputServerData mDataResolveQueue=null :"
+                    + String.valueOf(mReceivesData));
         }
     }
 }

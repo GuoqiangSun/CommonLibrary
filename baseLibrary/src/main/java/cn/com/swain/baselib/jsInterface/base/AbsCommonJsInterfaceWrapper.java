@@ -29,16 +29,24 @@ public class AbsCommonJsInterfaceWrapper extends AbsJsInterface {
 
     @Override
     public String getName() {
+        if (mJsInterface == null) {
+            return null;
+        }
         return mJsInterface.getName();
     }
 
     @Override
     public void release() {
-        mJsInterface.release();
+        if (mJsInterface != null) {
+            mJsInterface.release();
+        }
     }
 
     @Override
     public AbsJsInterface getJsInterface() {
+        if (mJsInterface == null) {
+            return null;
+        }
         return mJsInterface.getJsInterface();
     }
 

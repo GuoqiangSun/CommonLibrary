@@ -2,9 +2,7 @@ package cn.com.swain.support.protocolEngine.datagram;
 
 import cn.com.swain.support.protocolEngine.ProtocolBuild;
 import cn.com.swain.support.protocolEngine.ProtocolCode;
-import cn.com.swain.support.protocolEngine.ProtocolProcessor;
 import cn.com.swain.support.protocolEngine.datagram.ProtocolDatagram.AbsProtocolDataPack;
-import cn.com.swain.support.protocolEngine.datagram.ProtocolDatagram.IProtocolComData;
 import cn.com.swain.support.protocolEngine.datagram.ProtocolDatagram.ProtocolDataPackFactory;
 import cn.com.swain.support.protocolEngine.datagram.ProtocolException.DatagramStateException;
 import cn.com.swain.support.protocolEngine.datagram.ProtocolException.EscapeIOException;
@@ -12,6 +10,7 @@ import cn.com.swain.support.protocolEngine.datagram.escape.EscapeDataArray;
 import cn.com.swain.support.protocolEngine.datagram.escape.IEscapeDataArray;
 import cn.com.swain.support.protocolEngine.pack.BaseModel;
 import cn.com.swain.support.protocolEngine.pack.ComModel;
+import cn.com.swain.support.protocolEngine.resolve.AbsProtocolProcessor;
 import cn.com.swain169.log.Tlog;
 
 /**
@@ -19,30 +18,27 @@ import cn.com.swain169.log.Tlog;
  * date : 2018/8/1 0016
  * desc :
  */
-public class SocketDataArray extends AbsProtocolDataPack implements Cloneable, IProtocolComData, IEscapeDataArray {
+public class SocketDataArray extends AbsProtocolDataPack implements Cloneable, IEscapeDataArray {
+
+    private final String TAG = AbsProtocolProcessor.TAG;
 
     private final IEscapeDataArray mEscapeDataArray;
-    private final IProtocolComData mProtocolComData;
     private final AbsProtocolDataPack mAbsProtocolDataPack;
 
-    private final String TAG = ProtocolProcessor.TAG;
-
     private static final int DATA_BODY = 12;
-
 
     public SocketDataArray(int version) {
 
         Tlog.v(TAG, " new SocketDataArray() version:" + version);
-        int body = version <= ProtocolBuild.VERSION.VERSION_0 ? DATA_BODY : DATA_BODY + 6;
+        int body = version <= ProtocolBuild.VERSION.VERSION_0 ? DATA_BODY : (DATA_BODY + DATA_BODY / 2);
         this.mEscapeDataArray = new EscapeDataArray(body);
         this.mAbsProtocolDataPack = ProtocolDataPackFactory.generalSecureDataPack(version, this.mEscapeDataArray);
-        this.mProtocolComData = this.mAbsProtocolDataPack;
     }
 
 
     /**
      * 是否收到一包完整的数据包
-     * 只要收到包头，包尾就算受到完整的数据包
+     * 只要收到包头，包尾就算收到完整的数据包
      */
     private boolean isCompletePkg;
 
@@ -130,7 +126,7 @@ public class SocketDataArray extends AbsProtocolDataPack implements Cloneable, I
         if (mModel == null) {
             mModel = new ComModel(mModelNew);
         }
-        this.mModel.addDevice(mModelNew);
+        this.mModel.addModel(mModelNew);
     }
 
     /****************/
@@ -145,108 +141,111 @@ public class SocketDataArray extends AbsProtocolDataPack implements Cloneable, I
     @Override
     public byte getProtocolHead() {
         checkStateIsReverse();
-        return mProtocolComData.getProtocolHead();
+        return mAbsProtocolDataPack.getProtocolHead();
     }
 
     @Override
     public byte getProtocolTail() {
         checkStateIsReverse();
-        return mProtocolComData.getProtocolTail();
+        return mAbsProtocolDataPack.getProtocolTail();
     }
 
     @Override
     public int getProtocolVersion() {
         checkStateIsReverse();
-        return mProtocolComData.getProtocolVersion();
+        return mAbsProtocolDataPack.getProtocolVersion();
     }
 
     @Override
     public int getProtocolSequence() {
         checkStateIsReverse();
-        return mProtocolComData.getProtocolSequence();
+        return mAbsProtocolDataPack.getProtocolSequence();
     }
 
     @Override
     public int getProtocolToken(int point) {
         checkStateIsReverse();
-        return mProtocolComData.getProtocolToken(point);
+        return mAbsProtocolDataPack.getProtocolToken(point);
     }
 
     @Override
     public int getProtocolToken() {
         checkStateIsReverse();
-        return mProtocolComData.getProtocolToken();
+        return mAbsProtocolDataPack.getProtocolToken();
     }
 
     @Override
     public int getProtocolCustom() {
         checkStateIsReverse();
-        return mProtocolComData.getProtocolCustom();
+        return mAbsProtocolDataPack.getProtocolCustom();
     }
 
     @Override
     public int getProtocolProduct() {
         checkStateIsReverse();
-        return mProtocolComData.getProtocolProduct();
+        return mAbsProtocolDataPack.getProtocolProduct();
     }
 
 
     @Override
     public int getProtocolValidLength() {
         checkStateIsReverse();
-        return mProtocolComData.getProtocolValidLength();
+        return mAbsProtocolDataPack.getProtocolValidLength();
     }
 
     @Override
     public int getProtocolParamsLength() {
         checkStateIsReverse();
-        return mProtocolComData.getProtocolParamsLength();
+        return mAbsProtocolDataPack.getProtocolParamsLength();
     }
 
     @Override
     public byte getProtocolType() {
         checkStateIsReverse();
-        return mProtocolComData.getProtocolType();
+        return mAbsProtocolDataPack.getProtocolType();
     }
 
     @Override
     public byte getProtocolCmd() {
         checkStateIsReverse();
-        return mProtocolComData.getProtocolCmd();
+        return mAbsProtocolDataPack.getProtocolCmd();
     }
 
     @Override
     public byte[] getProtocolNeedCheckData() {
         checkStateIsReverse();
-        return mProtocolComData.getProtocolNeedCheckData();
+        return mAbsProtocolDataPack.getProtocolNeedCheckData();
     }
 
     @Override
     public byte[] getProtocolParams() {
         checkStateIsReverse();
-        return mProtocolComData.getProtocolParams();
+        return mAbsProtocolDataPack.getProtocolParams();
     }
 
     @Override
     public byte getProtocolCrc8() {
         checkStateIsReverse();
-        return mProtocolComData.getProtocolCrc8();
+        return mAbsProtocolDataPack.getProtocolCrc8();
     }
 
 
     @Override
-    public boolean hasHead() {
-        return mProtocolComData.hasHead();
+    public boolean hasProtocolHead() {
+        checkStateIsReverse();
+        return mAbsProtocolDataPack.hasProtocolHead();
     }
 
     @Override
-    public boolean checkCrc() {
-        return mProtocolComData.checkCrc();
+    public boolean checkProtocolCrc() {
+        checkStateIsReverse();
+        return mAbsProtocolDataPack.checkProtocolCrc();
     }
 
     @Override
-    public boolean hasTail() {
-        return mProtocolComData.hasTail();
+    public boolean hasProtocolTail() {
+        checkStateIsReverse();
+        return mAbsProtocolDataPack.hasProtocolTail();
     }
 
 
@@ -531,12 +530,13 @@ public class SocketDataArray extends AbsProtocolDataPack implements Cloneable, I
 
     @Override
     public String toString() {
-        return ("SocketDataArray :" + hashCode()
+        return "SocketDataArray :" + hashCode()
                 + "-"
-                + String.valueOf(mProtocolComData)
+                + String.valueOf(mAbsProtocolDataPack)
                 + " \n "
                 + String.valueOf(mEscapeDataArray)
-                + String.valueOf(mModel));
+                + " \n "
+                + String.valueOf(mModel);
     }
 
     @Override
@@ -572,13 +572,13 @@ public class SocketDataArray extends AbsProtocolDataPack implements Cloneable, I
         mSocketDataArray.changeStateToReverse();
         mSocketDataArray.onAddPackageReverse(pkgData);
 
-        if (!mSocketDataArray.hasHead()) {
+        if (!mSocketDataArray.hasProtocolHead()) {
             throw new EscapeIOException(" not has head [" + Integer.toHexString(ProtocolCode.STX) + "]");
         }
-        if (!mSocketDataArray.checkCrc()) {
+        if (!mSocketDataArray.checkProtocolCrc()) {
             throw new EscapeIOException(" crc error ");
         }
-        if (!mSocketDataArray.hasTail()) {
+        if (!mSocketDataArray.hasProtocolTail()) {
             throw new EscapeIOException(" not has tail [" + Integer.toHexString(ProtocolCode.ETX) + "]");
         }
         return mSocketDataArray;

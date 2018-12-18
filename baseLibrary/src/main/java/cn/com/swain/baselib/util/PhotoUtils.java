@@ -50,10 +50,24 @@ public class PhotoUtils {
         return intent;
     }
 
+
     /**
      * 请求本地图片
      */
     public static Intent requestLocalPhoto() {
+
+        Intent intent = new Intent(Intent.ACTION_PICK);
+        intent.setDataAndType(
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                "image/*");
+
+        return intent;
+    }
+
+    /**
+     * 请求本地资源文件
+     */
+    public static Intent requestContent() {
         Intent intent;
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
             intent = new Intent(Intent.ACTION_GET_CONTENT);
@@ -196,7 +210,6 @@ public class PhotoUtils {
     }
 
     /**
-     *
      * convert to jpg
      *
      * @param CameraBufferData

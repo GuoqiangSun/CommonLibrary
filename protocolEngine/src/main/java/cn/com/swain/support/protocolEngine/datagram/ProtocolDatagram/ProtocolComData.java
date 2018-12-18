@@ -3,8 +3,8 @@ package cn.com.swain.support.protocolEngine.datagram.ProtocolDatagram;
 import cn.com.swain.baselib.util.StrUtil;
 import cn.com.swain.support.protocolEngine.ProtocolBuild;
 import cn.com.swain.support.protocolEngine.ProtocolCode;
-import cn.com.swain.support.protocolEngine.ProtocolProcessor;
 import cn.com.swain.support.protocolEngine.datagram.escape.IEscapeDataArray;
+import cn.com.swain.support.protocolEngine.resolve.AbsProtocolProcessor;
 import cn.com.swain.support.protocolEngine.utils.CrcUtil;
 import cn.com.swain169.log.Tlog;
 
@@ -215,19 +215,19 @@ public class ProtocolComData extends AbsProtocolDataPack {
     }
 
     @Override
-    public boolean hasHead() {
+    public boolean hasProtocolHead() {
         return (getProtocolHead() == ProtocolCode.STX);
     }
 
     @Override
-    public boolean checkCrc() {
+    public boolean checkProtocolCrc() {
 
         byte[] checkField;
         try {
             checkField = getProtocolNeedCheckData();
         } catch (Exception e) {
 
-            Tlog.e(ProtocolProcessor.TAG, " checkCrc() Exception:", e);
+            Tlog.e(AbsProtocolProcessor.TAG, " checkProtocolCrc() Exception:", e);
 
             return false;
         }
@@ -243,7 +243,7 @@ public class ProtocolComData extends AbsProtocolDataPack {
         boolean crcResult = b == protocolCrc8;
 
         if (!crcResult && Tlog.isDebug()) {
-            Tlog.e(ProtocolProcessor.TAG, Integer.toHexString(protocolCrc8)
+            Tlog.e(AbsProtocolProcessor.TAG, Integer.toHexString(protocolCrc8)
                     + " " + Integer.toHexString(b) + " " + StrUtil.toString(checkField));
         }
 
@@ -251,7 +251,7 @@ public class ProtocolComData extends AbsProtocolDataPack {
     }
 
     @Override
-    public boolean hasTail() {
+    public boolean hasProtocolTail() {
         return (getProtocolTail() == ProtocolCode.ETX);
     }
 

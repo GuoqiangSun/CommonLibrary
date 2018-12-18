@@ -107,11 +107,13 @@ public class ScanORCodeActivity extends AppCompatActivity {
 
         mPwdInfoTxt.setText("");
 
-        String pre = mSecretKey + deviceSeq;
+        String pre = "" + deviceSeq;
 
-        for (int i = 0; i < 12; i++) {
+        for (int i = 0; i < 40; i++) {
             String seq = getSeq(i);
+//            String seq = String.valueOf(i);
             String msg = pre + seq;
+
 
             Tlog.v(TAG, " calcul str:" + msg);
 
@@ -119,15 +121,15 @@ public class ScanORCodeActivity extends AppCompatActivity {
 
                 String strMD5 = MD5Util.getStrMD5(msg);
                 byte[] bytes = StrUtil.splitHexStr(strMD5);
-                String showHexMd5 = StrUtil.toString(bytes);
-                Tlog.v(TAG, " hexMd5:" + showHexMd5);
+                String hexMd5 = StrUtil.toString(bytes);
+                Tlog.v(TAG, " hexMd5:" + hexMd5);
 
                 String pwd = calculPwd2(bytes);
 
                 if (mPwdInfoTxt != null) {
-                    mPwdInfoTxt.append(seq + " : \n");
                     mPwdInfoTxt.append("md5:" + strMD5 + "\n");
-                    mPwdInfoTxt.append("pwd:" + pwd + "\n\n");
+                    mPwdInfoTxt.append("hexMd5:" + hexMd5 + "\n");
+                    mPwdInfoTxt.append(" seq:" + seq + "  pwd:" + pwd + "\n\n");
                 }
 
 
@@ -170,6 +172,13 @@ public class ScanORCodeActivity extends AppCompatActivity {
         int c = (((md5[15] & 0xFF) >> 4) & 0x03) + 1;
         int d = (((md5[15] & 0xFF) >> 2) & 0x03) + 1;
         int e = ((md5[15] & 0xFF) & 0x03) + 1;
+
+        Tlog.v(TAG, " calculPwd2 : a:" + a + " b:" + b + " c:" + c + " d:" + d + " e:" + e);
+        Tlog.v(TAG, " calculPwdH : a:" + Integer.toHexString(a)
+                + " b:" + Integer.toHexString(b)
+                + " c:" + Integer.toHexString(c)
+                + "d:" + Integer.toHexString(d)
+                + " e:" + Integer.toHexString(e));
 
         return String.valueOf(a)
                 + String.valueOf(b)

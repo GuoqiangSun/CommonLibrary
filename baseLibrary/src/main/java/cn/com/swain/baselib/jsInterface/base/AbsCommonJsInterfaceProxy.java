@@ -12,7 +12,9 @@ import cn.com.swain.baselib.jsInterface.method.BaseCommonJsUtils;
  * date : 2018/8/29 0029
  * desc :
  */
-public abstract class AbsCommonJsInterfaceProxy extends AbsCommonJsInterfaceWrapper implements IJSRequest {
+public abstract class AbsCommonJsInterfaceProxy
+        extends AbsCommonJsInterfaceWrapper
+        implements IJSRequest {
 
     public AbsCommonJsInterfaceProxy(String name, AbsJsInterface mJsInterface) {
         super(name, mJsInterface);
@@ -26,30 +28,30 @@ public abstract class AbsCommonJsInterfaceProxy extends AbsCommonJsInterfaceWrap
     @Override
     public void handleJsRequest(String jsonData) {
 
+        JSONObject json;
+        String key;
         try {
-            JSONObject json = new JSONObject(jsonData);
-            String key = json.getString(BaseCommonJsUtils.KEY_MSG_TYPE);
-
-            final BaseCommonJsRequestBean mData = new BaseCommonJsRequestBean();
-            mData.setRootJsonObj(json);
-            mData.setMsgType(key);
-            mData.setRootJsonStr(jsonData);
-
-            switch (mData.getMsgType()) {
-                case BaseCommonJsUtils.TYPE_REQUEST_BACK:
-
-                    onJsPressBack();
-
-                    break;
-            }
-
-            onJsRequest(mData);
-
-
+            json = new JSONObject(jsonData);
+            key = json.getString(BaseCommonJsUtils.KEY_MSG_TYPE);
         } catch (JSONException e) {
             e.printStackTrace();
             onJsDataParseError(e, jsonData);
+            return;
         }
+        final BaseCommonJsRequestBean mData = new BaseCommonJsRequestBean();
+        mData.setRootJsonObj(json);
+        mData.setMsgType(key);
+        mData.setRootJsonStr(jsonData);
+
+        switch (mData.getMsgType()) {
+            case BaseCommonJsUtils.TYPE_REQUEST_BACK:
+
+                onJsPressBack();
+
+                break;
+        }
+
+        onJsRequest(mData);
 
     }
 

@@ -16,10 +16,10 @@ import cn.com.swain.support.protocolEngine.result.IProtocolAnalysisResult;
  * date : 2018/4/2 0002
  * desc :
  */
-
+@Deprecated
 public class ProtocolProcessor extends AbsProtocolProcessor {
 
-    public static final String TAG = "ProtocolProcessor";
+
     private DataResolveQueue mDataResolveQueue;
 
     public ProtocolProcessor(Looper protocolLooper,

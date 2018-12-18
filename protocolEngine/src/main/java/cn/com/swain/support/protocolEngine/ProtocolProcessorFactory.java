@@ -3,8 +3,8 @@ package cn.com.swain.support.protocolEngine;
 import android.os.Looper;
 
 import cn.com.swain.support.protocolEngine.resolve.AbsProtocolProcessor;
-import cn.com.swain.support.protocolEngine.resolve.ProtocolLargerProcessor;
-import cn.com.swain.support.protocolEngine.resolve.ProtocolMultichannelProcessor;
+import cn.com.swain.support.protocolEngine.resolve.ProtocolMultiTaskProcessor;
+import cn.com.swain.support.protocolEngine.resolve.ProtocolMultiChannelProcessor;
 import cn.com.swain.support.protocolEngine.result.IProtocolAnalysisResult;
 
 /**
@@ -161,7 +161,7 @@ public class ProtocolProcessorFactory {
                                                                  int protocolVersion,
                                                                  int callBackPollSize,
                                                                  boolean supportLargerPkg) {
-        return new ProtocolLargerProcessor(protocolLooper,
+        return new ProtocolMultiTaskProcessor(protocolLooper,
                 mProtocolCallBack,
                 protocolVersion,
                 callBackPollSize,
@@ -214,7 +214,7 @@ public class ProtocolProcessorFactory {
                                                                 int protocolVersion,
                                                                 int callBackPollSize,
                                                                 boolean supportLargerPkg) {
-        return new ProtocolMultichannelProcessor(protocolLooper,
+        return new ProtocolMultiChannelProcessor(protocolLooper,
                 mProtocolCallBack,
                 protocolVersion,
                 callBackPollSize,

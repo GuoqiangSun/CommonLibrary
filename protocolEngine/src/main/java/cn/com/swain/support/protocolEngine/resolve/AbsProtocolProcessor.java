@@ -9,6 +9,7 @@ import cn.com.swain.support.protocolEngine.IO.IDataProtocolInput;
  */
 public abstract class AbsProtocolProcessor implements IDataProtocolInput {
 
+    public static final String TAG = "ProtocolProcessor";
 
     public abstract void release();
 

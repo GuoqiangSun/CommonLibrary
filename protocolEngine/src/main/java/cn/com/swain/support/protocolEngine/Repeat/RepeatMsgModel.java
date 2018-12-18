@@ -32,9 +32,11 @@ public class RepeatMsgModel {
 
     public void setMaxRepeatTimes(int maxRepeatTimes) {
         if (maxRepeatTimes < 0) {
-            return;
+            maxRepeatTimes = 0;
         }
         this.maxRepeatTimes = maxRepeatTimes;
+        checkNeedRepeat();
+
     }
 
     public int getMaxRepeatTimes() {
@@ -48,14 +50,18 @@ public class RepeatMsgModel {
     private int repeatSendTimes = 0;
 
     public void setRepeatOnce() {
-
-        if (++repeatSendTimes >= maxRepeatTimes) {
-            needRepeatSend = false;
-        }
+        ++repeatSendTimes;
+        checkNeedRepeat();
 
     }
 
-    public int getCurRepeastTimes(){
+    private void checkNeedRepeat() {
+        if (this.repeatSendTimes >= this.maxRepeatTimes) {
+            needRepeatSend = false;
+        }
+    }
+
+    public int getCurRepeastTimes() {
         return repeatSendTimes;
     }
 

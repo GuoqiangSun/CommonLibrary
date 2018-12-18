@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import cn.com.swain.support.protocolEngine.ProtocolCode;
-import cn.com.swain.support.protocolEngine.ProtocolProcessor;
 import cn.com.swain.support.protocolEngine.datagram.SocketDataArray;
 import cn.com.swain.support.protocolEngine.datagram.dataproducer.ISocketDataProducer;
 import cn.com.swain.support.protocolEngine.pack.ReceivesData;
@@ -23,7 +22,7 @@ import cn.com.swain169.log.Tlog;
 
 public class DataResolveQueue extends Handler {
 
-    private String TAG = ProtocolProcessor.TAG;
+    private String TAG = AbsProtocolProcessor.TAG;
     private final IDataResolveCallBack mCallBack;
     private final ISocketDataProducer mSocketDataProducer;
     private final ISocketDataProducer mLargerSocketDataProducer;
@@ -92,20 +91,13 @@ public class DataResolveQueue extends Handler {
         switch (msg.what) {
             case MSG_WHAT_ANALYSIS:
 
-                final ReceivesData mReceiverData = (ReceivesData) msg.obj;
-                resolveData(mReceiverData);
+                resolveData((ReceivesData) msg.obj);
 
                 break;
 
             case MSG_WHAT_CALLBACK:
 
-                Object obj = msg.obj;
-                SocketDataArray mSocketDataArray = null;
-                if (obj != null) {
-                    mSocketDataArray = (SocketDataArray) obj;
-                }
-
-                mCallBack.onOutDataResolve(msg.arg1, mSocketDataArray);
+                mCallBack.onOutDataResolve(msg.arg1, (SocketDataArray) msg.obj);
 
                 break;
 
@@ -287,7 +279,8 @@ public class DataResolveQueue extends Handler {
                                 message.arg1 = ProtocolCode.ERROR_CODE_RESOLVE_MORE_LENGTH;
                                 message.obj = null;
                                 message.sendToTarget();
-                                Tlog.e(TAG, " PARSE ERROR .Parsing data , but count(" + mResolveData.count + ")>=MAX_COUNT(" + MAX_COUNT + ")");
+                                Tlog.e(TAG, " PARSE ERROR .Parsing data , but count("
+                                        + mResolveData.count + ")>=MAX_COUNT(" + MAX_COUNT + ")");
                             }
                         }
 
@@ -295,7 +288,8 @@ public class DataResolveQueue extends Handler {
                     } else {
 
                         // 没有解析到头部字节
-                        Tlog.e(TAG, " PARSE ERROR . parse buf[" + i + "](" + Integer.toHexString(buf[i] & 0xFF) + ") , but no parsing to STX . ");
+                        Tlog.e(TAG, " PARSE ERROR . parse buf[" + i + "]("
+                                + Integer.toHexString(buf[i] & 0xFF) + ") , but no parsing to STX . ");
                     }
 
 
