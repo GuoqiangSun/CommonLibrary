@@ -11,6 +11,8 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <!--<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />-->
 
+    <uses-permission android:name="android.permission.VIBRATE" />
+
     <application
         android:name=".main.CommonApplication"
         android:allowBackup="true"
@@ -81,9 +83,22 @@
             android:name=".scanOR.ScanORCodeActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait" />
-        <activity android:name=".testFun.FunctionActivity" />
-        <activity android:name=".testUdp.FastMultiUdpActivity" />
-        <activity android:name=".p2p.p2pAndroid.P2pClientActivity" />
+        <activity
+            android:name=".testFun.FunctionActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".testUdp.FastMultiUdpActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".p2p.p2pAndroid.P2pClientActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".shake.ShakeActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait" />
 
     </application>
 

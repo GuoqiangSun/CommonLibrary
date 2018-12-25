@@ -99,6 +99,22 @@ public class Bit {
     }
 
     /**
+     * 判断bitPoint位是否为 1
+     */
+    public final boolean isOne(int bitPoint) {
+        checkPoint(bitPoint);
+        return ((this.device >> bitPoint) & 0x01) == 1;
+    }
+    
+    /**
+     * 判断bitPoint位是否为 0
+     */
+    public final boolean isZero(int bitPoint) {
+        checkPoint(bitPoint);
+        return ((this.device >> bitPoint) & 0x01) == 0;
+    }
+
+    /**
      * 置为 0x00
      */
     public final Bit fillEmpty() {
@@ -142,7 +158,7 @@ public class Bit {
         System.out.println("mun" + i + " bit[" + 1 + "]" + " is one?" + one + "; is zero?" + zero);
 
         Bit mBit = new Bit(i);
-        int tmpDevice  = i-1;
+        int tmpDevice = i - 1;
         System.out.println("tmpDevice binary:" + Integer.toBinaryString(tmpDevice));
 
         mBit.removeDevice(tmpDevice);

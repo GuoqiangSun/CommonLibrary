@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="horizontal"
     android:paddingTop="10dp"
+    tools:context=".main.MainActivity"
     >
 
     <LinearLayout
@@ -44,6 +45,15 @@
             android:layout_gravity="center_horizontal"
             android:onClick="p2pClient"
             android:text="P2pClient"
+            android:textAllCaps="false" />
+
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:onClick="shake"
+            android:text="shake"
             android:textAllCaps="false" />
 
     </LinearLayout>

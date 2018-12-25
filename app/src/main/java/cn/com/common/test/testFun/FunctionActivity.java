@@ -1,5 +1,9 @@
 package cn.com.common.test.testFun;
 
+import android.Manifest;
+import android.content.Context;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -9,26 +13,38 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.net.NetworkInterface;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import cn.com.common.test.R;
 import cn.com.swain.baselib.util.CpuUtil;
+import cn.com.swain.baselib.util.PermissionRequest;
+import cn.com.swain.baselib.util.WiFiUtil;
 import cn.com.swain169.log.Tlog;
 
 public class FunctionActivity extends AppCompatActivity {
 
     private ExecutorService executorService;
     private Handler mUIHandler;
+    TextView mWifiInfoTxt;
+
+    PermissionRequest request;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_function);
 
+        request = new PermissionRequest(this);
+
         final TextView mCpuInfoTxt = findViewById(R.id.cpu_info_txt);
+
+        mWifiInfoTxt = findViewById(R.id.wifi_mac_txt);
 
         executorService = Executors.newCachedThreadPool();
 
@@ -54,7 +70,7 @@ public class FunctionActivity extends AppCompatActivity {
         testCpu = false;
         executorService.shutdown();
         super.onDestroy();
-
+        request.release();
     }
 
     private boolean testCpu;
@@ -96,4 +112,51 @@ public class FunctionActivity extends AppCompatActivity {
         }
 
     }
+
+    public void getWiFiMac(View view) {
+
+
+        request.requestPermission(new PermissionRequest.OnPermissionResult() {
+            @Override
+            public void onPermissionRequestResult(String permission, boolean granted) {
+
+                mWifiInfoTxt.setText(getWifiMacAddress());
+
+            }
+        }, Manifest.permission.ACCESS_COARSE_LOCATION);
+
+    }
+
+
+    private String getWifiMacAddress() {
+        String defaultMac = "02:00:00:00:00:00";
+        try {
+            List<NetworkInterface> interfaces = Collections
+                    .list(NetworkInterface.getNetworkInterfaces());
+            for (NetworkInterface ntwInterface : interfaces) {
+
+                if (ntwInterface.getName().equalsIgnoreCase("wlan0")) {//之前是p2p0，修正为wlan
+                    byte[] byteMac = ntwInterface.getHardwareAddress();
+                    StringBuilder strBuilder = new StringBuilder();
+                    if (byteMac != null) {
+                        for (byte aByteMac : byteMac) {
+                            strBuilder.append(String
+                                    .format("%02X:", aByteMac));
+                        }
+                    }
+
+                    if (strBuilder.length() > 0) {
+                        strBuilder.deleteCharAt(strBuilder.length() - 1);
+                    }
+
+                    return strBuilder.toString();
+                }
+
+            }
+        } catch (Exception e) {
+//             Log.d(TAG, e.getMessage());
+        }
+        return defaultMac;
+    }
+
 }
