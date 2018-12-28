@@ -1,12 +1,12 @@
-package cn.com.swain169.log;
+package cn.com.swain.baselib.log;
 
 import android.util.Log;
 
 import java.io.File;
 import java.util.Formatter;
 
-import cn.com.swain169.log.logRecord.AbsLogRecord;
-
+import cn.com.swain.baselib.log.logRecord.AbsLogRecord;
+import cn.com.swain.baselib.log.logRecord.impl.LogRecordManager;
 
 /**
  * author: Guoqiang_Sun
@@ -41,7 +41,7 @@ public class Tlog {
      *
      * @param flag if flag is true
      *             need call this method {@link #regIRecordMsgFile(AbsLogRecord)}
-     *             or {@link cn.com.swain169.log.TFlog#set(AbsLogRecord)}
+     *             or {@link TFlog#set(AbsLogRecord)}
      */
     public static void setLogRecordDebug(boolean flag) {
         LOG_RECORD_DEBUG = flag;
@@ -59,7 +59,7 @@ public class Tlog {
      * when main Activity onCreate() ,need call {@link #startRecord()}
      * when main Activity onDestroy() ,if you need not record,need call {@link #startRecord()}
      *
-     * @param recordMsg you can use {@link cn.com.swain169.log.logRecord.impl.LogRecordManager }
+     * @param recordMsg you can use {@link LogRecordManager }
      */
     public static void regIRecordMsgFile(AbsLogRecord recordMsg) {
         TFlog.set(recordMsg);

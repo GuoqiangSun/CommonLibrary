@@ -10,7 +10,7 @@ import android.view.SurfaceHolder;
 
 import java.util.ArrayList;
 
-import cn.com.swain169.log.Tlog;
+import cn.com.swain.baselib.log.Tlog;
 
 /**
  * author: Guoqiang_Sun

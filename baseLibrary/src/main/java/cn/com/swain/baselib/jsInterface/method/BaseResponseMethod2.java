@@ -39,6 +39,10 @@ public class BaseResponseMethod2 extends BaseResponseMethod {
         this.errorCode = errorCode;
     }
 
+    public String getErrorCode() {
+        return errorCode;
+    }
+
     public String toMethod(JSONObject data) {
 
         JSONObject jsonObject = mBean.toJsonObj();

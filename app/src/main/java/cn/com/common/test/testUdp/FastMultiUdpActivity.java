@@ -28,7 +28,7 @@ import cn.com.swain.baselib.util.StrUtil;
 import cn.com.swain.support.udp.AbsFastUdp;
 import cn.com.swain.support.udp.FastUdpFactory;
 import cn.com.swain.support.udp.impl.IUDPResult;
-import cn.com.swain169.log.Tlog;
+import cn.com.swain.baselib.log.Tlog;
 
 /**
  * author: Guoqiang_Sun

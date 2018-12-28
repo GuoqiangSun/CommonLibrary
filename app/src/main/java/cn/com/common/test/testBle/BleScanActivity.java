@@ -31,7 +31,7 @@ import cn.com.swain.support.ble.scan.AbsBleScan;
 import cn.com.swain.support.ble.scan.BleScanAuto;
 import cn.com.swain.support.ble.scan.IBleScanObserver;
 import cn.com.swain.support.ble.scan.ScanBle;
-import cn.com.swain169.log.Tlog;
+import cn.com.swain.baselib.log.Tlog;
 
 /**
  * author: Guoqiang_Sun

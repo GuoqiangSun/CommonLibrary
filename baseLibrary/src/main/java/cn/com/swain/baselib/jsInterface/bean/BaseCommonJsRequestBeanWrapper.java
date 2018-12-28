@@ -54,4 +54,24 @@ public class BaseCommonJsRequestBeanWrapper extends AbsBaseCommonJsRequestBean {
     public String getStringByRootJson(String key) {
         return mBean.getStringByRootJson(key);
     }
+
+    @Override
+    public int getIntByRootJson(String key) {
+        return mBean.getIntByRootJson(key);
+    }
+
+    @Override
+    public long getLongByRootJson(String key) {
+        return mBean.getLongByRootJson(key);
+    }
+
+    @Override
+    public double getDoubleByRootJson(String key) {
+        return mBean.getDoubleByRootJson(key);
+    }
+
+    @Override
+    public boolean getBooleanByRootJson(String key) {
+        return mBean.getBooleanByRootJson(key);
+    }
 }

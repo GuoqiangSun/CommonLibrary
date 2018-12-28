@@ -2,7 +2,7 @@ package cn.com.swain.baselib.util;
 
 import android.support.v4.content.FileProvider;
 
-import cn.com.swain169.log.Tlog;
+import cn.com.swain.baselib.log.Tlog;
 
 /**
  * author: Guoqiang_Sun

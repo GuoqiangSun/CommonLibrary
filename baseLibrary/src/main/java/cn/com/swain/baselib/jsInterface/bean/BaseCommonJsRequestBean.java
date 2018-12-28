@@ -71,6 +71,54 @@ public class BaseCommonJsRequestBean extends AbsBaseCommonJsRequestBean {
     }
 
     @Override
+    public int getIntByRootJson(String key) {
+        if (jsonObj != null) {
+            try {
+                return jsonObj.getInt(key);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return -1;
+    }
+
+    @Override
+    public long getLongByRootJson(String key) {
+        if (jsonObj != null) {
+            try {
+                return jsonObj.getLong(key);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return -1;
+    }
+
+    @Override
+    public double getDoubleByRootJson(String key) {
+        if (jsonObj != null) {
+            try {
+                return jsonObj.getDouble(key);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return -1;
+    }
+
+    @Override
+    public boolean getBooleanByRootJson(String key) {
+        if (jsonObj != null) {
+            try {
+                return jsonObj.getBoolean(key);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return false;
+    }
+
+    @Override
     public String toString() {
         return "BaseCommonJsRequestBean{" +
                 "msgType='" + msgType + '\'' +

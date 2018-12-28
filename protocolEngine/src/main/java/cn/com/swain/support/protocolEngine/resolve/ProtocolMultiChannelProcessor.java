@@ -6,7 +6,7 @@ import android.util.SparseArray;
 import cn.com.swain.support.protocolEngine.ProtocolProcessorFactory;
 import cn.com.swain.support.protocolEngine.pack.ReceivesData;
 import cn.com.swain.support.protocolEngine.result.IProtocolAnalysisResult;
-import cn.com.swain169.log.Tlog;
+import cn.com.swain.baselib.log.Tlog;
 
 /**
  * author: Guoqiang_Sun

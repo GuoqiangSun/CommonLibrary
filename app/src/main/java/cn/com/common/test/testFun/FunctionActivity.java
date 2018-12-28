@@ -1,9 +1,6 @@
 package cn.com.common.test.testFun;
 
 import android.Manifest;
-import android.content.Context;
-import android.net.wifi.WifiInfo;
-import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -24,8 +21,7 @@ import java.util.concurrent.Executors;
 import cn.com.common.test.R;
 import cn.com.swain.baselib.util.CpuUtil;
 import cn.com.swain.baselib.util.PermissionRequest;
-import cn.com.swain.baselib.util.WiFiUtil;
-import cn.com.swain169.log.Tlog;
+import cn.com.swain.baselib.log.Tlog;
 
 public class FunctionActivity extends AppCompatActivity {
 

@@ -10,7 +10,7 @@ import java.util.Date;
 import java.util.Locale;
 
 import cn.com.swain.baselib.app.IApp.IApp;
-import cn.com.swain169.log.Tlog;
+import cn.com.swain.baselib.log.Tlog;
 
 /**
  * author: Guoqiang_Sun
@@ -103,7 +103,7 @@ public abstract class FileTemplate implements IApp {
     public String saveProductDetectionLog(String msg) {
         File debugPath = getDebugPath();
         SimpleDateFormat mDateFormat = new SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault());
-        String child = mDateFormat.format(new Date(System.currentTimeMillis())) + ".log";
+        String child = mDateFormat.format(new Date(System.currentTimeMillis())) + ".cn.com.swain169.log";
         File logPath = new File(debugPath, child);
 
         if (FileUtil.saveFileMsg(logPath, msg)) {
@@ -117,7 +117,7 @@ public abstract class FileTemplate implements IApp {
      */
     public void saveH5Exception(String msg) {
         File debugPath = getDebugPath();
-        File logPath = new File(debugPath, "H5Error.log");
+        File logPath = new File(debugPath, "H5Error.cn.com.swain169.log");
         FileUtil.saveException(logPath, generalHeadMsg(null).toString(), msg, FileUtil.isAppend(logPath, 60));
     }
 
@@ -135,7 +135,7 @@ public abstract class FileTemplate implements IApp {
      */
     public void saveAppException(Thread t, Throwable ex) {
         File debugPath = getDebugPath();
-        File logPath = new File(debugPath, "AppError.log");
+        File logPath = new File(debugPath, "AppError.cn.com.swain169.log");
         FileUtil.saveException(logPath, generalHeadMsg(t).toString(), ex, FileUtil.isAppend(logPath, 60));
     }
 
@@ -214,7 +214,7 @@ public abstract class FileTemplate implements IApp {
         return new File(getProjectPath(), APP_DB_PATH_NAME);
     }
 
-    private static final String APP_PROJECT_PATH_NAME = "app";
+    private static final String APP_PROJECT_PATH_NAME = "App";
 
     /**
      * 获取app缓存数据的目录
@@ -236,8 +236,18 @@ public abstract class FileTemplate implements IApp {
      */
     public File getAppRootPath() {
 
-        return new File(getStoragePath(), APP_ROOT_PATH_NAME);
+        String path = initAppRootPath();
 
+        if (path == null) {
+            path = APP_ROOT_PATH_NAME;
+        }
+
+        return new File(getStoragePath(), path);
+
+    }
+
+    protected String initAppRootPath() {
+        return null;
     }
 
 

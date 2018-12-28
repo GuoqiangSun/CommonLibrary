@@ -1,4 +1,4 @@
-package cn.com.swain169.log.logRecord.impl;
+package cn.com.swain.baselib.log.logRecord.impl;
 
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -16,7 +16,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import cn.com.swain169.log.logRecord.ILogRecord;
+import cn.com.swain.baselib.log.logRecord.ILogRecord;
 
 /**
  * author: Guoqiang_Sun
@@ -38,7 +38,7 @@ public class LogRecordClient implements ILogRecord {
     /**
      * 文件的后缀名
      */
-    private static final String fileNameSuffix = ".cn.com.swain169.log";
+    private static final String fileNameSuffix = ".log";
 
     /**
      * 一个文件录制的最大大小
@@ -65,7 +65,7 @@ public class LogRecordClient implements ILogRecord {
         if (fileNamePrefix != null) {
             this.fileNamePrefix = fileNamePrefix;
         } else {
-            this.fileNamePrefix = "cn.com.swain169.log";
+            this.fileNamePrefix = "log";
         }
 
         if (fileRecordSize < -1 || fileRecordSize > MAX_RECORD_SIZE) {
@@ -91,7 +91,7 @@ public class LogRecordClient implements ILogRecord {
         if (mHT == null) {
             synchronized (synObj) {
                 if (mHT == null) {
-                    mHT = new HandlerThread("writeMsg");
+                    mHT = new HandlerThread("writeLog");
                     mHT.start();
                     mHandler = new FileRecordHandler(mHT.getLooper(), this);
                 }
@@ -298,7 +298,7 @@ public class LogRecordClient implements ILogRecord {
         final String name = fileNamePrefix
                 + "_"
                 + mFileNameDateFormat.format(new Date())
-                + "_"
+                + "_p"
                 + String.valueOf(Process.myPid())
                 + fileNameSuffix;
         return new File(logRootDir, name);
@@ -491,7 +491,6 @@ public class LogRecordClient implements ILogRecord {
     @Override
     public void recordMsgA(String TAG, String msg) {
         if (mHandler != null) {
-//            String cn.com.swain169.log = getTid() + " A/" + TAG + ":" + msg;
             LogMsg mLogMsg = new LogMsg(TAG, msg, Log.ASSERT);
             mHandler.obtainMessage(MSG_WHAT_RECORD, mLogMsg).sendToTarget();
         }
@@ -500,7 +499,6 @@ public class LogRecordClient implements ILogRecord {
     @Override
     public void recordMsgA(String TAG, Throwable e) {
         if (mHandler != null) {
-//            String cn.com.swain169.log = getTid() + " A/" + TAG + ":" + Log.getStackTraceString(e);
             LogMsg mLogMsg = new LogMsg(TAG, e, Log.ASSERT);
             mHandler.obtainMessage(MSG_WHAT_RECORD, mLogMsg).sendToTarget();
         }
@@ -510,7 +508,6 @@ public class LogRecordClient implements ILogRecord {
     @Override
     public void recordMsgA(String TAG, String msg, Throwable e) {
         if (mHandler != null) {
-//            String cn.com.swain169.log = getTid() + " A/" + TAG + ":" + msg + Log.getStackTraceString(e);
             LogMsg mLogMsg = new LogMsg(TAG, msg, e, Log.ASSERT);
             mHandler.obtainMessage(MSG_WHAT_RECORD, mLogMsg).sendToTarget();
         }
@@ -572,7 +569,7 @@ public class LogRecordClient implements ILogRecord {
                     break;
             }
 
-            sb.append(TAG).append(":");
+            sb.append(TAG).append(": ");
             if (msg != null) {
                 sb.append(msg);
             }

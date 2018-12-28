@@ -19,8 +19,8 @@ import cn.com.common.test.testScrollView.ScrollViewActivity;
 import cn.com.common.test.testUdp.FastMultiUdpActivity;
 import cn.com.common.test.testUdp.FastUdpActivity;
 import cn.com.swain.baselib.util.PermissionRequest;
-import cn.com.swain169.log.TFlog;
-import cn.com.swain169.log.Tlog;
+import cn.com.swain.baselib.log.TFlog;
+import cn.com.swain.baselib.log.Tlog;
 
 public class MainActivity extends AppCompatActivity {
 

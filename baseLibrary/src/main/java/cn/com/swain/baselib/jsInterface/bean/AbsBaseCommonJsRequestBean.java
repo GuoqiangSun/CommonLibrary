@@ -29,4 +29,12 @@ public abstract class AbsBaseCommonJsRequestBean {
 
     public abstract String getStringByRootJson(String key);
 
+    public abstract int getIntByRootJson(String key);
+
+    public abstract long getLongByRootJson(String key);
+
+    public abstract double getDoubleByRootJson(String key);
+
+    public abstract boolean getBooleanByRootJson(String key);
+
 }
