@@ -242,9 +242,9 @@ public class MarqueeRefreshThread implements Runnable {
 
         Canvas mCanvas = null;
 
-        try {
-            while (this.run) {
-                synchronized (holder) {
+        while (this.run) {
+            synchronized (holder) {
+                try {
 
                     mCanvas = holder.lockCanvas(rect);
 
@@ -252,25 +252,27 @@ public class MarqueeRefreshThread implements Runnable {
                         Tlog.e(TAG, " lockCanvas canvas == null ");
                         continue;
                     }
-                }
+
 
 //                long checkEmptyMillis = System.currentTimeMillis();
-                drawCanvas(mCanvas);
+                    drawCanvas(mCanvas);
 
 //                    Tlog.e(TAG, " drawCanvas : " +  (System.currentTimeMillis() - checkEmptyMillis) );
-            }
-        } catch (Exception e) {
-            Tlog.e(TAG, " drawCanvas : ", e);
-        } finally {
-            if (mCanvas != null) {
-                try {
-                    holder.unlockCanvasAndPost(mCanvas);
+
                 } catch (Exception e) {
-                    Tlog.e(TAG, " unlockCanvasAndPost : ", e);
+                    Tlog.e(TAG, " drawCanvas : ", e);
+                    break;
+                } finally {
+                    if (mCanvas != null) {
+                        try {
+                            holder.unlockCanvasAndPost(mCanvas);
+                        } catch (Exception e) {
+                            Tlog.e(TAG, " unlockCanvasAndPost : ", e);
+                        }
+                    }
                 }
             }
         }
-
 
     }
 
