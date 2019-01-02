@@ -40,7 +40,7 @@ public class Tlog {
      * <p>
      *
      * @param flag if flag is true
-     *             need call this method {@link #regIRecordMsgFile(AbsLogRecord)}
+     *             need call this method {@link #set(AbsLogRecord)}
      *             or {@link TFlog#set(AbsLogRecord)}
      */
     public static void setLogRecordDebug(boolean flag) {
@@ -61,26 +61,25 @@ public class Tlog {
      *
      * @param recordMsg you can use {@link LogRecordManager }
      */
-    public static void regIRecordMsgFile(AbsLogRecord recordMsg) {
+    public static void set(AbsLogRecord recordMsg) {
         TFlog.set(recordMsg);
     }
 
     /**
      * 注册录制文件类
-     *
      */
-    public static void regIRecordMsgFile(File logPath) {
+    public static void set(File logPath) {
         TFlog.set(logPath);
     }
 
     /**
      * 注销录制日志
      */
-    public static void unregTREcordMsgFile(AbsLogRecord recordMsg) {
+    public static void remove(AbsLogRecord recordMsg) {
         TFlog.remove(recordMsg);
     }
 
-    public static void unregTREcordMsgFile() {
+    public static void remove() {
         TFlog.remove();
     }
 

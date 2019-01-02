@@ -8,19 +8,19 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
 import cn.com.common.test.R;
-import cn.com.common.test.shake.ShakeActivity;
 import cn.com.common.test.global.FileManager;
 import cn.com.common.test.p2p.p2pAndroid.P2pClientActivity;
 import cn.com.common.test.scanOR.ScanORCodeActivity;
+import cn.com.common.test.shake.ShakeActivity;
 import cn.com.common.test.testBle.BleScanActivity;
 import cn.com.common.test.testFun.FunctionActivity;
 import cn.com.common.test.testProtocol.TestProtocolActivity;
 import cn.com.common.test.testScrollView.ScrollViewActivity;
 import cn.com.common.test.testUdp.FastMultiUdpActivity;
 import cn.com.common.test.testUdp.FastUdpActivity;
-import cn.com.swain.baselib.util.PermissionRequest;
 import cn.com.swain.baselib.log.TFlog;
 import cn.com.swain.baselib.log.Tlog;
+import cn.com.swain.baselib.util.PermissionRequest;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -94,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
             public void onPermissionRequestResult(String permission, boolean granted) {
                 Tlog.v(" MainActivity requestPermissions " + permission + " " + granted);
                 if (granted) {
-                    Tlog.regIRecordMsgFile(FileManager.getInstance().getLogPath());
+                    Tlog.set(FileManager.getInstance().getLogPath());
                     testLog();
                 }
             }

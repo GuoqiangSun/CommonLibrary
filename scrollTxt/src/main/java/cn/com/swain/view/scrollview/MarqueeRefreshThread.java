@@ -27,7 +27,7 @@ public class MarqueeRefreshThread implements Runnable {
     // split msg length;
     private static final int DEFAULT_MAX_MSG_LENGTH = 500;
 
-    private SurfaceHolder holder;
+    private final SurfaceHolder holder;
     private TextPaint mTextPaint;
 
     public MarqueeRefreshThread(SurfaceHolder holder, TextPaint mTextPaint) {
@@ -239,12 +239,12 @@ public class MarqueeRefreshThread implements Runnable {
 
         Tlog.v(TAG, " MarqueeRefreshThread start draw... ");
 
-        while (this.run) {
 
-            synchronized (holder) {
-                Canvas mCanvas = null;
+        Canvas mCanvas = null;
 
-                try {
+        try {
+            while (this.run) {
+                synchronized (holder) {
 
                     mCanvas = holder.lockCanvas(rect);
 
@@ -252,27 +252,25 @@ public class MarqueeRefreshThread implements Runnable {
                         Tlog.e(TAG, " lockCanvas canvas == null ");
                         continue;
                     }
-
-                    long checkEmptyMillis = System.currentTimeMillis();
-                    drawCanvas(mCanvas);
-                    long diff = (System.currentTimeMillis() - checkEmptyMillis);
-
-//                    Tlog.e(TAG, " drawCanvas : " + diff );
-
-                } catch (Exception e) {
-
-                } finally {
-                    if (mCanvas != null) {
-                        try {
-                            holder.unlockCanvasAndPost(mCanvas);
-                        } catch (Exception e) {
-                        }
-                    }
                 }
 
-            }
+//                long checkEmptyMillis = System.currentTimeMillis();
+                drawCanvas(mCanvas);
 
+//                    Tlog.e(TAG, " drawCanvas : " +  (System.currentTimeMillis() - checkEmptyMillis) );
+            }
+        } catch (Exception e) {
+            Tlog.e(TAG, " drawCanvas : ", e);
+        } finally {
+            if (mCanvas != null) {
+                try {
+                    holder.unlockCanvasAndPost(mCanvas);
+                } catch (Exception e) {
+                    Tlog.e(TAG, " unlockCanvasAndPost : ", e);
+                }
+            }
         }
+
 
     }
 

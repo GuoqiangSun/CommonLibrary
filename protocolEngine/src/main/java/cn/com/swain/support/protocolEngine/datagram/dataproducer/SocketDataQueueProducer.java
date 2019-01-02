@@ -2,9 +2,9 @@ package cn.com.swain.support.protocolEngine.datagram.dataproducer;
 
 import java.util.Arrays;
 
+import cn.com.swain.baselib.log.Tlog;
 import cn.com.swain.support.protocolEngine.ProtocolProcessor;
 import cn.com.swain.support.protocolEngine.datagram.SocketDataArray;
-import cn.com.swain.baselib.log.Tlog;
 
 /**
  * author: Guoqiang_Sun
@@ -72,8 +72,9 @@ public class SocketDataQueueProducer implements ISocketDataProducer {
         Tlog.e(TAG, name + " bufClear ");
         this.size = 0;
         this.point = 0;
-        Arrays.fill(mSocketDataArrays, null);
-        this.mSocketDataArrays = null;
+        if (mSocketDataArrays != null) {
+            Arrays.fill(mSocketDataArrays, null);
+        }
     }
 
     private void gc() {

@@ -3,13 +3,11 @@ apply plugin: 'com.android.library'
 android {
     compileSdkVersion 27
 
-
-
     defaultConfig {
         minSdkVersion 19
         targetSdkVersion 27
-        versionCode 3101
-        versionName "3.1.01"
+        versionCode 3201
+        versionName "3.2.01"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
@@ -32,7 +30,6 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     implementation project(':baseLibrary')
-//    implementation project(':Tlog')
 }
 
 
@@ -47,9 +44,9 @@ dependencies {
 //    //项目名称
 //    artifactId = 'fastble'
 //    //版本号
-//    publishVersion = '3.1.01'
+//    publishVersion = '3.2.01'
 //    //描述，不重要
-//    desc = 'fastble sdk 3.1.01'
+//    desc = '移除loglib'
 //    //网站，不重要
 //    website = 'https://www.startai.com.cn'
 //

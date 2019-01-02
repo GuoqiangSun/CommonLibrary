@@ -107,6 +107,9 @@ public class LogRecordClient implements ILogRecord {
         if (mHT != null) {
             synchronized (synObj) {
                 if (mHT != null) {
+                    if (mHandler != null) {
+                        mHandler.release();
+                    }
                     mHandler = null;
                     mHT.quitSafely();
                     mHT = null;
@@ -117,7 +120,6 @@ public class LogRecordClient implements ILogRecord {
 
     /**
      * 检测mBufferWriter是否已经创建
-     *
      */
     synchronized boolean checkBufferWriter() {
         return mBufferWriter == null;
@@ -587,6 +589,12 @@ public class LogRecordClient implements ILogRecord {
         FileRecordHandler(Looper mLooper, LogRecordClient mFileRecordClient) {
             super(mLooper);
             wr = new WeakReference<>(mFileRecordClient);
+        }
+
+        void release() {
+            if (wr != null) {
+                wr.clear();
+            }
         }
 
         @Override
