@@ -21,7 +21,7 @@ import cn.com.swain.baselib.log.Tlog;
 
 public class BleScanAuto extends AbsBleScan {
 
-    public static final String TAG = "BleScan";
+    public static final String TAG = "fastBle";
 
     private BleScanImpl mBaseBleScan;
 
@@ -95,13 +95,9 @@ public class BleScanAuto extends AbsBleScan {
         }
     }
 
-
     @Override
     public void bsBleStateChange(boolean on) {
         this.mBaseBleScan.setBTState(on);
-        if (on) {
-            this.mBaseBleScan.checkBluetoothLeScanner();
-        }
     }
 
     @Override
@@ -137,7 +133,7 @@ public class BleScanAuto extends AbsBleScan {
                 try {
                     isScan = mBaseBleScan.startScan();
                 } catch (Exception e) {
-
+                    Tlog.e(TAG, "startLeScan Exception", e);
                 }
 
                 if (!isScan) {
@@ -161,13 +157,14 @@ public class BleScanAuto extends AbsBleScan {
                 try {
                     mBaseBleScan.stopScan();
                 } catch (Exception e) {
-
+                    Tlog.e(TAG, "stopScan Exception", e);
                 }
                 if (mBleScanObserver != null) {
                     mBleScanObserver.onBsStopScan();
                 } else {
                     Tlog.e(TAG, " scanBle mBleScanObserver==null . ");
                 }
+
             } else {
                 Tlog.e(TAG, " le not scanning ... ");
             }

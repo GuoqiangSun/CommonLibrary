@@ -28,7 +28,7 @@ import cn.com.swain.baselib.log.Tlog;
 
 public class BleConnectEngine extends AbsBleConnect {
 
-    public static final String TAG = "BleCon";
+    public static final String TAG = "fastBle";
 
     private MGattCallBack mGattCallBack = new MGattCallBack();
 

@@ -41,7 +41,7 @@ import cn.com.swain.baselib.log.Tlog;
 
 public class BleScanActivity extends AppCompatActivity {
 
-    private String TAG = "testBle";
+    private String TAG = "fastBle";
     private ProgressBar progress;
     private BleScanAdapter mLstvAdapter;
     private TextView mTxtBleState;

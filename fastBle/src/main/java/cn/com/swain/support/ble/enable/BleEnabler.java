@@ -21,7 +21,7 @@ import cn.com.swain.baselib.log.Tlog;
 
 public class BleEnabler extends AbsBleEnable {
 
-    private static final String TAG = "BleEnable";
+    private static final String TAG = "fastBle";
 
     private BluetoothAdapter mBluetoothAdapter;
 
@@ -29,8 +29,12 @@ public class BleEnabler extends AbsBleEnable {
 
     public BleEnabler(Context mCtx, Looper mWorkLooper) {
         BluetoothManager mBluetoothManager = (BluetoothManager) mCtx.getSystemService(Context.BLUETOOTH_SERVICE);
-        BluetoothAdapter mBluetoothAdapter = mBluetoothManager.getAdapter();
-        init(mWorkLooper, mBluetoothAdapter);
+        if (mBluetoothManager != null) {
+            BluetoothAdapter mBluetoothAdapter = mBluetoothManager.getAdapter();
+            init(mWorkLooper, mBluetoothAdapter);
+        } else {
+            Tlog.e(TAG, " mBluetoothManager=null ");
+        }
     }
 
     private void init(Looper mWorkLooper, BluetoothAdapter mBluetoothAdapter) {

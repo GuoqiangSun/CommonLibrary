@@ -46,7 +46,7 @@ dependencies {
 //    //版本号
 //    publishVersion = '3.2.01'
 //    //描述，不重要
-//    desc = '移除loglib'
+//    desc = '监听蓝牙状态切换来切换扫描蓝牙操作'
 //    //网站，不重要
 //    website = 'https://www.startai.com.cn'
 //

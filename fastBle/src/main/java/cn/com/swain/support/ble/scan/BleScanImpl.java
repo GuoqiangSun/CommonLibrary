@@ -24,7 +24,26 @@ import cn.com.swain.baselib.log.Tlog;
 class BleScanImpl {
 
     private final BluetoothAdapter mBluetoothAdapter;
-    private BluetoothLeScanner bluetoothLeScanner;
+    private BluetoothLeScanner mBluetoothLeScanner;
+
+    private boolean checkBluetoothEnabled() {
+        return mBluetoothAdapter != null && mBluetoothAdapter.isEnabled() && mBluetoothAdapter.getState() == BluetoothAdapter.STATE_ON;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    private BluetoothLeScanner getBluetoothLeScanner() {
+
+        if (mBluetoothLeScanner == null) {
+            if (checkBluetoothEnabled()) {
+                Tlog.w(TAG, "getBluetoothLeScanner() new BluetoothLeScanner. ");
+                mBluetoothLeScanner = mBluetoothAdapter.getBluetoothLeScanner();
+            } else {
+                Tlog.w(TAG, "getBluetoothLeScanner() BT not enable");
+            }
+        }
+        return mBluetoothLeScanner;
+    }
+
     private final AbsBleScan mOnLeScan;
 
     private String TAG = BleScanAuto.TAG;
@@ -36,37 +55,44 @@ class BleScanImpl {
 
     public BleScanImpl(BluetoothAdapter mBluetoothAdapter, AbsBleScan mOnLeScan) {
 
-        Tlog.v(TAG, " Build.VERSION.SDK_INT  " + Build.VERSION.SDK_INT);
+        Tlog.v(TAG, "BleScanImpl Build.VERSION.SDK_INT  " + Build.VERSION.SDK_INT);
 
         this.mOnLeScan = mOnLeScan;
         this.mBluetoothAdapter = mBluetoothAdapter;
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            this.bluetoothLeScanner = mBluetoothAdapter.getBluetoothLeScanner();
+            if (checkBluetoothEnabled()) {
+                this.mBluetoothLeScanner = mBluetoothAdapter.getBluetoothLeScanner();
+            } else {
+                mBluetoothLeScanner = null;
+                Tlog.w(TAG, " BleScanImpl checkBluetoothEnabled() BT not enable ");
+            }
             this.mScannerCallBack = new BleScanCBL();
             this.mBleScanCallBack = null;
         } else {
             this.mBleScanCallBack = new BleScanImpl.BleScanCB();
-            this.bluetoothLeScanner = null;
+            this.mBluetoothLeScanner = null;
             this.mScannerCallBack = null;
         }
     }
 
-    private boolean mBTEnable;
+    private volatile boolean mBTEnable;
 
     void setBTState(boolean on) {
-        this.mBTEnable = on;
-    }
 
-    void checkBluetoothLeScanner() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            if (this.bluetoothLeScanner == null) {
-                this.bluetoothLeScanner = mBluetoothAdapter.getBluetoothLeScanner();
+        if (mBTEnable != on) {
+            Tlog.w(TAG, " BleScanImpl BT state change ");
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                if (on) {
+                    getBluetoothLeScanner();
+                } else {
+                    mBluetoothLeScanner = null;
+                }
             }
         }
 
+        this.mBTEnable = on;
     }
-
 
     boolean startScan() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -84,14 +110,14 @@ class BleScanImpl {
     }
 
     private boolean startLeScan() {
-        if (mBluetoothAdapter != null) {
+        if (checkBluetoothEnabled()) {
             return mBluetoothAdapter.startLeScan(mBleScanCallBack);
         }
         return false;
     }
 
     private void stopLeScan() {
-        if (mBluetoothAdapter != null) {
+        if (checkBluetoothEnabled()) {
             mBluetoothAdapter.stopLeScan(mBleScanCallBack);
         }
     }
@@ -99,14 +125,7 @@ class BleScanImpl {
     /*************/
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private boolean startLeScanner() {
-
-        if (!mBTEnable) {
-            return false;
-        }
-
-        if (bluetoothLeScanner == null) {
-            bluetoothLeScanner = mBluetoothAdapter.getBluetoothLeScanner();
-        }
+        BluetoothLeScanner bluetoothLeScanner = getBluetoothLeScanner();
 
         if (bluetoothLeScanner != null) {
             bluetoothLeScanner.startScan(mScannerCallBack);
@@ -120,12 +139,7 @@ class BleScanImpl {
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private void stopLeScanner() {
-        if (!mBTEnable) {
-            return;
-        }
-        if (bluetoothLeScanner == null) {
-            bluetoothLeScanner = mBluetoothAdapter.getBluetoothLeScanner();
-        }
+        BluetoothLeScanner bluetoothLeScanner = getBluetoothLeScanner();
         if (bluetoothLeScanner != null) {
             bluetoothLeScanner.stopScan(mScannerCallBack);
         } else {
