@@ -1,6 +1,8 @@
 package cn.com.swain.baselib.file;
 
 import android.app.Application;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Environment;
 
 import java.io.File;
@@ -94,6 +96,7 @@ public abstract class FileTemplate implements IApp {
 
     }
 
+
     public boolean mkdirs(File resourcePath) {
 
         return resourcePath != null && (resourcePath.exists() || resourcePath.mkdirs());
@@ -117,7 +120,7 @@ public abstract class FileTemplate implements IApp {
      */
     public void saveH5Exception(String msg) {
         File debugPath = getDebugPath();
-        File logPath = new File(debugPath, "H5Error.cn.com.swain169.log");
+        File logPath = new File(debugPath, "H5Error.log");
         FileUtil.saveException(logPath, generalHeadMsg(null).toString(), msg, FileUtil.isAppend(logPath, 60));
     }
 
@@ -135,7 +138,7 @@ public abstract class FileTemplate implements IApp {
      */
     public void saveAppException(Thread t, Throwable ex) {
         File debugPath = getDebugPath();
-        File logPath = new File(debugPath, "AppError.cn.com.swain169.log");
+        File logPath = new File(debugPath, "AppError.log");
         FileUtil.saveException(logPath, generalHeadMsg(t).toString(), ex, FileUtil.isAppend(logPath, 60));
     }
 
@@ -229,14 +232,14 @@ public abstract class FileTemplate implements IApp {
 
     protected abstract File initMyProjectPath();
 
-    protected static final String APP_ROOT_PATH_NAME = "startai";
+    protected static final String APP_ROOT_PATH_NAME = "swain";
 
     /**
      * 获取公司域名缓存数据的目录
      */
     public File getAppRootPath() {
 
-        String path = initAppRootPath();
+        String path = initMyAppRootPath();
 
         if (path == null) {
             path = APP_ROOT_PATH_NAME;
@@ -246,7 +249,7 @@ public abstract class FileTemplate implements IApp {
 
     }
 
-    protected String initAppRootPath() {
+    protected String initMyAppRootPath() {
         return null;
     }
 

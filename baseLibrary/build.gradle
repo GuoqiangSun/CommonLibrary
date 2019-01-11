@@ -6,8 +6,8 @@ android {
     defaultConfig {
         minSdkVersion 18
         targetSdkVersion 27
-        versionCode 3201
-        versionName "3.2.01"
+        versionCode 3203
+        versionName "3.2.03"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
@@ -40,9 +40,9 @@ dependencies {
 //    //项目名称
 //    artifactId = 'baselib'
 //    //版本号
-//    publishVersion = '3.2.01'
+//    publishVersion = '3.2.03'
 //    //描述，不重要
-//    desc = '移除loglib'
+//    desc = '增加权限组申请'
 //    //网站，不重要
 //    website = 'https://www.startai.com.cn'
 //

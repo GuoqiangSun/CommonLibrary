@@ -24,9 +24,7 @@ public class BaseResponseMethod2 extends BaseResponseMethod {
     private boolean result;
 
     public void setResult(boolean result) {
-
         this.result = result;
-
     }
 
     public boolean getResult() {
@@ -42,6 +40,7 @@ public class BaseResponseMethod2 extends BaseResponseMethod {
     public String getErrorCode() {
         return errorCode;
     }
+
 
     public String toMethod(JSONObject data) {
 

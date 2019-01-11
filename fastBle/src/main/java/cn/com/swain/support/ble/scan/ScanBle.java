@@ -65,13 +65,27 @@ public class ScanBle implements Parcelable {
     };
 
     /**
-     * 地址 名称是否可用
+     * 检测 mac是否为 null or {@link #DEFAULT_ADDRESS}
+     */
+    public boolean checkMac() {
+        return this.address != null && !this.address.equalsIgnoreCase(DEFAULT_ADDRESS);
+    }
+
+
+    /**
+     * 检测 name是否为 null or {@link #DEFAULT_NAME}
+     */
+    public boolean checkName() {
+        return this.name != null && !this.name.equalsIgnoreCase(DEFAULT_NAME);
+    }
+
+    /**
+     * 地址 名称 是否可用
      *
      * @return true valid false invalid
      */
     public boolean isValid() {
-        return this.address != null && !this.address.equalsIgnoreCase(DEFAULT_ADDRESS)
-                && this.name != null && !this.name.equalsIgnoreCase(DEFAULT_NAME);
+        return checkMac() && checkName();
     }
 
     public void setConnected() {
@@ -128,13 +142,28 @@ public class ScanBle implements Parcelable {
             return false;
         }
         if (uuidStrs == null || uuidStrs.size() <= 0) {
-            return true;
+            return false;
         }
         for (ParcelUuid mParcelUuid : serviceUuids) {
             for (String uStr : uuidStrs) {
                 if (mParcelUuid.getUuid().toString().equalsIgnoreCase(uStr)) {
                     return true;
                 }
+            }
+        }
+        return false;
+    }
+
+    public boolean startWithMac(List<String> macStrs) {
+        if (checkMac()) {
+            return false;
+        }
+        if (macStrs == null || macStrs.size() <= 0) {
+            return false;
+        }
+        for (String mStr : macStrs) {
+            if (this.address.startsWith(mStr)) {
+                return true;
             }
         }
         return false;

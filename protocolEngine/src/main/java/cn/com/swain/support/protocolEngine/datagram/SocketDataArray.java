@@ -1,5 +1,6 @@
 package cn.com.swain.support.protocolEngine.datagram;
 
+import cn.com.swain.baselib.log.Tlog;
 import cn.com.swain.support.protocolEngine.ProtocolBuild;
 import cn.com.swain.support.protocolEngine.ProtocolCode;
 import cn.com.swain.support.protocolEngine.datagram.ProtocolDatagram.AbsProtocolDataPack;
@@ -11,7 +12,6 @@ import cn.com.swain.support.protocolEngine.datagram.escape.IEscapeDataArray;
 import cn.com.swain.support.protocolEngine.pack.BaseModel;
 import cn.com.swain.support.protocolEngine.pack.ComModel;
 import cn.com.swain.support.protocolEngine.resolve.AbsProtocolProcessor;
-import cn.com.swain.baselib.log.Tlog;
 
 /**
  * author: Guoqiang_Sun
@@ -127,6 +127,10 @@ public class SocketDataArray extends AbsProtocolDataPack implements Cloneable, I
             mModel = new ComModel(mModelNew);
         }
         this.mModel.addModel(mModelNew);
+    }
+
+    public ComModel getComModel() {
+        return mModel;
     }
 
     /****************/

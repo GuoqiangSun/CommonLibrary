@@ -1,12 +1,16 @@
 package cn.com.swain.baselib.util;
 
 import android.app.Activity;
+import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.util.SparseArray;
 import android.view.MotionEvent;
 import android.view.WindowManager;
@@ -20,7 +24,7 @@ import cn.com.swain.baselib.log.Tlog;
  */
 public class PermissionHelper {
 
-    private static String TAG = "permissionRequest";
+    private static String TAG = PermissionRequest.TAG;
 
     /**
      * 请求权限
@@ -78,9 +82,17 @@ public class PermissionHelper {
      *
      * @param context Context
      */
-    public static void requestPermission(Context context, PermissionMsg msg) {
-
+    public static void requestPermission(Context context, final PermissionMsg msg) {
         PermissionActivity.start(context, msg);
+    }
+
+    /**
+     * 是否有此权限
+     */
+    private static boolean isGranted(Application app, String permission) {
+        return Build.VERSION.SDK_INT < Build.VERSION_CODES.M
+                || PackageManager.PERMISSION_GRANTED
+                == ContextCompat.checkSelfPermission(app, permission);
     }
 
     private static final SparseArray<PermissionMsg> mHelpers = new SparseArray<>();
@@ -98,7 +110,7 @@ public class PermissionHelper {
 
         public static void start(final Context context, final PermissionMsg mHelper) {
             Intent starter = new Intent(context, PermissionActivity.class);
-            int i = mHelper.hashCode();
+            final int i = mHelper.hashCode();
             mHelpers.put(i, mHelper);
             starter.putExtra("permissionMsg", i);
             starter.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

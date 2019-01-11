@@ -20,6 +20,8 @@ import cn.com.common.test.testUdp.FastMultiUdpActivity;
 import cn.com.common.test.testUdp.FastUdpActivity;
 import cn.com.swain.baselib.log.TFlog;
 import cn.com.swain.baselib.log.Tlog;
+import cn.com.swain.baselib.util.PermissionConstants;
+import cn.com.swain.baselib.util.PermissionHelper;
 import cn.com.swain.baselib.util.PermissionRequest;
 
 public class MainActivity extends AppCompatActivity {
@@ -98,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
                     testLog();
                 }
             }
-        }, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        }, Manifest.permission.WRITE_EXTERNAL_STORAGE,PermissionConstants.LOCATION);
 
         Tlog.v(" MainActivity onCreate ");
 

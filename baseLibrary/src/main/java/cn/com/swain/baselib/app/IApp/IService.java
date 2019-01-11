@@ -24,14 +24,15 @@ public interface IService {
     void onSPause();
 
     /**
-     * Activity onDestroy();
-     */
-    void onSDestroy();
-
-    /**
      * when call activity finish(),
      * callBack this method;
      */
     void onSFinish();
+
+    /**
+     * Activity onDestroy();
+     */
+    void onSDestroy();
+
 
 }

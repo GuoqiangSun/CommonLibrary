@@ -26,7 +26,7 @@ import cn.com.swain.baselib.log.Tlog;
  */
 public final class PermissionRequest {
 
-    private String TAG = "permissionRequest";
+    public static final String TAG = "permissionRequest";
 
     private WeakReference<Activity> mWr;
     private PermissionHandler mHandler;
@@ -288,8 +288,11 @@ public final class PermissionRequest {
         Tlog.v(TAG, " request permission " + permissionStr);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+
+            String[] permissions = PermissionConstants.getPermissions(permissionStr);
+
             ActivityCompat.requestPermissions(activity,
-                    new String[]{permissionStr},
+                    permissions,
                     requestCode);
         }
 
@@ -324,25 +327,27 @@ public final class PermissionRequest {
 
             if (grantResults.length > 0 && permissions.length > 0) {
 
-                boolean granted = (grantResults[0] == PackageManager.PERMISSION_GRANTED);
-                Tlog.e(TAG, permissions[0] + "INTERNAL PERMISSION_GRANTED?" + granted);
+                String permission = PermissionConstants.forPermission(permissions);
 
-                if (!granted) {
-                    needRationaleForPermission(permissions[0]);
-                }
+                boolean granted = (grantResults[0] == PackageManager.PERMISSION_GRANTED);
+                Tlog.e(TAG, " onRequestPermissionsResult " + permission + " granted:" + granted);
+
+//                if (!granted) {
+//                    needRationaleForPermission(permission);
+//                }
 
                 RequestPermissionMsg requestPermissionMsg;
                 if (requestCode == INTERNAL_PERMISSIONS_REQUEST_CODE) {
-                    requestPermissionMsg = mInternalPermissionQueueCache.get(permissions[0]);
-                    mInternalPermissionQueueCache.remove(permissions[0]);
+                    requestPermissionMsg = mInternalPermissionQueueCache.get(permission);
+                    mInternalPermissionQueueCache.remove(permission);
                 } else {
-                    requestPermissionMsg = mExternalPermissionQueueCache.get(permissions[0]);
-                    mExternalPermissionQueueCache.remove(permissions[0]);
+                    requestPermissionMsg = mExternalPermissionQueueCache.get(permission);
+                    mExternalPermissionQueueCache.remove(permission);
                 }
 
                 if (requestPermissionMsg != null) {
                     if (requestPermissionMsg.mResult != null) {
-                        requestPermissionMsg.mResult.onPermissionRequestResult(permissions[0], granted);
+                        requestPermissionMsg.mResult.onPermissionRequestResult(permission, granted);
                     }
                 }
 

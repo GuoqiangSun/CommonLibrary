@@ -1,5 +1,8 @@
 package cn.com.swain.baselib.file;
 
+import android.app.Application;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.system.Os;
 
@@ -21,6 +24,18 @@ import java.nio.channels.FileChannel;
  * desc :
  */
 public class FileUtil {
+
+
+    public static void notifySystemToScan(Application app, String filePath) {
+        Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+        File file = new File(filePath);
+
+        Uri uri = Uri.fromFile(file);
+        intent.setData(uri);
+        app.sendBroadcast(intent);
+    }
+
+
 
     public static String getFileContent(File msgFile) {
 
