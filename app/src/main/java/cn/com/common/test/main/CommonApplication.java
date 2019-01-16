@@ -25,8 +25,10 @@ public class CommonApplication extends BaseApplication {
         Tlog.setGlobalTag(TAG);
         
         FileManager.getInstance().init(this);
+
         Tlog.setLogRecordDebug(true);
-//        Tlog.setPrintStackDebug(true);
+        Tlog.setPrintStackDebug(true);
+
         LooperManager.getInstance().init(this);
 
         Tlog.i("CommonApplication onCreate(); pid:" + android.os.Process.myPid() + "; Build.VERSION.SDK_INT :" + Build.VERSION.SDK_INT);

@@ -289,7 +289,7 @@ public final class PermissionRequest {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
 
-            String[] permissions = PermissionConstants.getPermissions(permissionStr);
+            String[] permissions = PermissionGroup.getPermissions(permissionStr);
 
             ActivityCompat.requestPermissions(activity,
                     permissions,
@@ -327,7 +327,7 @@ public final class PermissionRequest {
 
             if (grantResults.length > 0 && permissions.length > 0) {
 
-                String permission = PermissionConstants.forPermission(permissions);
+                String permission = PermissionGroup.forPermission(permissions);
 
                 boolean granted = (grantResults[0] == PackageManager.PERMISSION_GRANTED);
                 Tlog.e(TAG, " onRequestPermissionsResult " + permission + " granted:" + granted);

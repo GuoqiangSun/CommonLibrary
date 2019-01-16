@@ -8,12 +8,8 @@ package cn.com.swain.baselib.jsInterface;
 public abstract class AbsJsInterface {
 
     public static final String TAG = "appJs";
-
+    
     private final String name;
-
-    public String getName() {
-        return name;
-    }
 
     public AbsJsInterface(String name) {
 
@@ -24,12 +20,32 @@ public abstract class AbsJsInterface {
         this.name = name;
     }
 
-    public void release() {
-
+    /**
+     * JS 域名
+     * <p>
+     * webview.addJavascriptInterface() 用到这个域名
+     */
+    public String getName() {
+        return name;
     }
 
+    /**
+     * JS 实例
+     * <p>
+     * webview.addJavascriptInterface() 用到这个实例
+     *
+     * @return {@link AbsJsInterface}
+     */
     public AbsJsInterface getJsInterface() {
         return this;
+    }
+
+
+    /**
+     * 释放资源
+     */
+    public void release() {
+
     }
 
 }

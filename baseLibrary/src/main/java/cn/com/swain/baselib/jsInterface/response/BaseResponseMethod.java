@@ -1,7 +1,4 @@
-package cn.com.swain.baselib.jsInterface.method;
-
-import cn.com.swain.baselib.jsInterface.base.CommonJsResponse;
-import cn.com.swain.baselib.jsInterface.bean.BaseCommonJsResponseBean;
+package cn.com.swain.baselib.jsInterface.response;
 
 /**
  * author: Guoqiang_Sun
@@ -12,7 +9,7 @@ public class BaseResponseMethod {
 
     protected final BaseCommonJsResponseBean mBean;
 
-    protected final CommonJsResponse mResponse;
+    protected final CommonJsResponseUtils mResponse;
 
     public BaseResponseMethod() {
         this(null);
@@ -20,7 +17,7 @@ public class BaseResponseMethod {
 
     public BaseResponseMethod(String msgType) {
         mBean = new BaseCommonJsResponseBean();
-        mResponse = new CommonJsResponse();
+        mResponse = new CommonJsResponseUtils();
         mBean.setMsgType(msgType);
     }
 
@@ -42,4 +39,8 @@ public class BaseResponseMethod {
         return responseJsMethod;
     }
 
+    @Override
+    public String toString() {
+        return toMethod();
+    }
 }

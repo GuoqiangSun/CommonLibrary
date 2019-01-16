@@ -1,4 +1,4 @@
-package cn.com.swain.baselib.jsInterface.method;
+package cn.com.swain.baselib.jsInterface.response;
 
 
 /**

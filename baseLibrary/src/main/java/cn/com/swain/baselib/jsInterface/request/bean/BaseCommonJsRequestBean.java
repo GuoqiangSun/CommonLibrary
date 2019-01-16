@@ -1,5 +1,6 @@
-package cn.com.swain.baselib.jsInterface.bean;
+package cn.com.swain.baselib.jsInterface.request.bean;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -51,6 +52,30 @@ public class BaseCommonJsRequestBean extends AbsBaseCommonJsRequestBean {
         if (jsonObj != null) {
             try {
                 return jsonObj.get(key);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public JSONArray getJSONArrayByRootJson(String key) {
+        if (jsonObj != null) {
+            try {
+                return jsonObj.getJSONArray(key);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public JSONObject getJSONObjectByRootJson(String key) {
+        if (jsonObj != null) {
+            try {
+                return jsonObj.getJSONObject(key);
             } catch (JSONException e) {
                 e.printStackTrace();
             }

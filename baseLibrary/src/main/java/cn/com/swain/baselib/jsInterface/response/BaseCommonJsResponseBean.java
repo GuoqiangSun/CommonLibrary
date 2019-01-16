@@ -1,9 +1,7 @@
-package cn.com.swain.baselib.jsInterface.bean;
+package cn.com.swain.baselib.jsInterface.response;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import cn.com.swain.baselib.jsInterface.method.BaseCommonJsUtils;
 
 
 /**

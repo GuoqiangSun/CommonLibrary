@@ -1,4 +1,4 @@
-package cn.com.swain.baselib.jsInterface.base;
+package cn.com.swain.baselib.jsInterface.request;
 
 import cn.com.swain.baselib.jsInterface.AbsJsInterface;
 

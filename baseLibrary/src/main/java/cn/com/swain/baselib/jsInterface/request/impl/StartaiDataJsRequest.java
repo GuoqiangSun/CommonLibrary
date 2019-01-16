@@ -1,9 +1,10 @@
-package cn.com.swain.baselib.jsInterface.base;
+package cn.com.swain.baselib.jsInterface.request.impl;
 
 import android.os.Looper;
 import android.os.Message;
 
 import cn.com.swain.baselib.jsInterface.AbsHandlerJsInterface;
+import cn.com.swain.baselib.jsInterface.request.IJSRequest;
 import cn.com.swain.baselib.log.Tlog;
 
 /**
@@ -11,13 +12,13 @@ import cn.com.swain.baselib.log.Tlog;
  * date : 2018/8/27 0027
  * desc :
  */
-public class BaseCommonJsRequest extends AbsHandlerJsInterface {
+public class StartaiDataJsRequest extends AbsHandlerJsInterface {
 
     private static final String NAME_JS = "Data";
 
     private final IJSRequest mCallBack;
 
-    public BaseCommonJsRequest(Looper mLooper, IJSRequest mCallBack) {
+    public StartaiDataJsRequest(Looper mLooper, IJSRequest mCallBack) {
         super(NAME_JS, mLooper);
         this.mCallBack = mCallBack;
     }
@@ -26,9 +27,11 @@ public class BaseCommonJsRequest extends AbsHandlerJsInterface {
     protected void handleMessage(Message msg) {
 
         if (mCallBack != null) {
+            // callback to AbsCommonJsInterfaceProxy
+
             mCallBack.handleJsRequest((String) msg.obj);
         } else {
-            Tlog.e(TAG, " CommonJsRequest handleMessage IJSRequest is null ");
+            Tlog.e(TAG, " StartaiDataJsRequest handleMessage IJSRequest is null ");
         }
 
     }

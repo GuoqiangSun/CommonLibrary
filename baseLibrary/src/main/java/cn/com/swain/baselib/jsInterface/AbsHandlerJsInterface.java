@@ -58,7 +58,7 @@ public abstract class AbsHandlerJsInterface extends AbsJsInterface {
             if (wr != null && (jm = wr.get()) != null) {
                 jm.handleMessage(msg);
             } else {
-                Tlog.e(TAG, " JsHandler AbsHandlerJsInterface==null");
+                Tlog.e(TAG, " AbsHandlerJsInterface.JsHandler AbsHandlerJsInterface==null");
             }
         }
     }

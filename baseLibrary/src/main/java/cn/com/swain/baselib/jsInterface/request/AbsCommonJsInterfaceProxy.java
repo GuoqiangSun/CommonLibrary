@@ -1,11 +1,11 @@
-package cn.com.swain.baselib.jsInterface.base;
+package cn.com.swain.baselib.jsInterface.request;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import cn.com.swain.baselib.jsInterface.AbsJsInterface;
-import cn.com.swain.baselib.jsInterface.bean.BaseCommonJsRequestBean;
-import cn.com.swain.baselib.jsInterface.method.BaseCommonJsUtils;
+import cn.com.swain.baselib.jsInterface.request.bean.BaseCommonJsRequestBean;
+import cn.com.swain.baselib.jsInterface.response.BaseCommonJsUtils;
 
 /**
  * author: Guoqiang_Sun
@@ -40,8 +40,8 @@ public abstract class AbsCommonJsInterfaceProxy
         }
         final BaseCommonJsRequestBean mData = new BaseCommonJsRequestBean();
         mData.setRootJsonObj(json);
-        mData.setMsgType(key);
         mData.setRootJsonStr(jsonData);
+        mData.setMsgType(key);
 
         switch (mData.getMsgType()) {
             case BaseCommonJsUtils.TYPE_REQUEST_BACK:

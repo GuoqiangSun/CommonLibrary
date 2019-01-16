@@ -1,5 +1,6 @@
-package cn.com.swain.baselib.jsInterface.bean;
+package cn.com.swain.baselib.jsInterface.request.bean;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**
@@ -48,6 +49,16 @@ public class BaseCommonJsRequestBeanWrapper extends AbsBaseCommonJsRequestBean {
     @Override
     public Object getByRootJson(String key) {
         return mBean.getByRootJson(key);
+    }
+
+    @Override
+    public JSONArray getJSONArrayByRootJson(String key) {
+        return mBean.getJSONArrayByRootJson(key);
+    }
+
+    @Override
+    public JSONObject getJSONObjectByRootJson(String key) {
+        return mBean.getJSONObjectByRootJson(key);
     }
 
     @Override

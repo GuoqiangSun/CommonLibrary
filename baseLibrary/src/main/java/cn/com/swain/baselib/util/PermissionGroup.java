@@ -15,7 +15,7 @@ import java.util.Arrays;
  * Desc:
  */
 @SuppressLint("InlinedApi")
-public class PermissionConstants {
+public class PermissionGroup {
 
     public static final String CALENDAR = Manifest.permission_group.CALENDAR;
     public static final String CAMERA = Manifest.permission_group.CAMERA;

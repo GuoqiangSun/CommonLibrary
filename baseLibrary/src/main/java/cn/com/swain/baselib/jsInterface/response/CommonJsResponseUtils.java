@@ -1,11 +1,11 @@
-package cn.com.swain.baselib.jsInterface.base;
+package cn.com.swain.baselib.jsInterface.response;
 
 /**
  * author: Guoqiang_Sun
  * date : 2018/8/27 0027
  * desc :
  */
-public class CommonJsResponse {
+public class CommonJsResponseUtils {
 
     private static final String METHOD_RESPONSE = "javascript:dataInteractionResponse('$data')";
 

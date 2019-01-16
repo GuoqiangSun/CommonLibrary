@@ -89,7 +89,7 @@ public class PermissionHelper {
     /**
      * 是否有此权限
      */
-    private static boolean isGranted(Application app, String permission) {
+    public static boolean isGranted(Application app, String permission) {
         return Build.VERSION.SDK_INT < Build.VERSION_CODES.M
                 || PackageManager.PERMISSION_GRANTED
                 == ContextCompat.checkSelfPermission(app, permission);

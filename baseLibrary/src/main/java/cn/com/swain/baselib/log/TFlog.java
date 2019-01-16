@@ -2,8 +2,8 @@ package cn.com.swain.baselib.log;
 
 import java.io.File;
 
+import cn.com.swain.baselib.log.impl.TFlogImpl;
 import cn.com.swain.baselib.log.logRecord.AbsLogRecord;
-import cn.com.swain.baselib.log.logRecord.impl.LogRecordManager;
 
 /**
  * author: Guoqiang_Sun
@@ -12,216 +12,130 @@ import cn.com.swain.baselib.log.logRecord.impl.LogRecordManager;
  */
 public class TFlog {
 
+    private static final TFlogImpl TFlogImpl = new TFlogImpl();
+
     private TFlog() {
     }
 
-    private static AbsLogRecord mRecordMsg;
-
-    public static synchronized boolean set(File logPath){
-        return set(new LogRecordManager(logPath));
+    // 设置录制实例
+    public static boolean set(File logPath) {
+        return TFlogImpl.set(logPath);
     }
 
-    /**
-     * when main Activity onCreate() ,need call {@link #startRecord()}
-     * <p>
-     * when main Activity onDestroy() ,if you need not record ,need call {@link #stopRecord()}.
-     *
-     * @param recordMsg you can use {@link LogRecordManager }
-     * @return true or false
-     */
-    public static synchronized boolean set(AbsLogRecord recordMsg) {
-
-        if (hasILogRecordImpl()) {
-            return false;
-        }
-        if (recordMsg != null && !recordMsg.isInit()) {
-            recordMsg.initLogFile();
-        }
-        mRecordMsg = recordMsg;
-        return true;
+    // 设置录制实例
+    public static boolean set(AbsLogRecord recordMsg) {
+        return TFlogImpl.set(recordMsg);
     }
 
-
-    public static synchronized boolean remove(AbsLogRecord recordMsg) {
-        AbsLogRecord mTmpRecordMsg = mRecordMsg;
-        if (mTmpRecordMsg == null) {
-            return true;
-        }
-        if (mTmpRecordMsg != recordMsg) {
-            return false;
-        }
-        mRecordMsg = null;
-        if (mTmpRecordMsg.isInit()) {
-            mTmpRecordMsg.releaseLogFile();
-        }
-        return true;
+    // 移除录制实例
+    public static boolean remove(AbsLogRecord recordMsg) {
+        return TFlogImpl.remove(recordMsg);
     }
 
-    public static synchronized boolean remove() {
-        return remove(mRecordMsg);
+    // 移除录制实例
+    public static boolean remove() {
+        return TFlogImpl.remove();
     }
 
+    // 是否有录制实例
     public static boolean hasILogRecordImpl() {
-        return mRecordMsg != null;
+        return TFlogImpl.hasILogRecordImpl();
     }
 
     // 是否正在录制log中
     public static boolean isRecording() {
-        if (mRecordMsg != null) {
-            return mRecordMsg.isRecording();
-        }
-        return false;
+        return TFlogImpl.isRecording();
     }
 
     // 开始录制
     public static void startRecord() {
-        synchronized (TFlog.class) {
-            record++;
-        }
-        if (record == 1) {
-            if (mRecordMsg != null) {
-                mRecordMsg.startRecord();
-            }
-        }
+        TFlogImpl.startRecord();
     }
 
-    /**
-     * when call {@link #startRecord()} , itself++
-     */
-    private static volatile int record = 0;
-
+    // 开启录制调用的次数
     public static int getStartTimes() {
-        return record;
+        return TFlogImpl.getStartTimes();
     }
 
     //同步数据到磁盘
     public static void syncRecordData() {
-        if (mRecordMsg != null) {
-            mRecordMsg.syncRecordData();
-        }
-
+        TFlogImpl.syncRecordData();
     }
 
     // 停止录制
     public static void stopRecord() {
-
-        synchronized (TFlog.class) {
-            record--;
-        }
-
-        if (record <= 0) {
-            record = 0;
-            if (mRecordMsg != null) {
-                mRecordMsg.stopRecord();
-            }
-        }
+        TFlogImpl.stopRecord();
     }
 
     public static void v(String TAG, String msg) {
-        if (mRecordMsg != null) {
-            mRecordMsg.recordMsgV(TAG, msg);
-        }
+        TFlogImpl.v(TAG, msg);
     }
 
     public static void v(String TAG, String msg, Throwable e) {
-        if (mRecordMsg != null) {
-            mRecordMsg.recordMsgV(TAG, msg, e);
-        }
+        TFlogImpl.v(TAG, msg, e);
     }
 
     public static void v(String TAG, Throwable e) {
-        if (mRecordMsg != null) {
-            mRecordMsg.recordMsgV(TAG, e);
-        }
+        TFlogImpl.v(TAG, e);
     }
 
     public static void d(String TAG, String msg) {
-        if (mRecordMsg != null) {
-            mRecordMsg.recordMsgD(TAG, msg);
-        }
+        TFlogImpl.d(TAG, msg);
     }
 
     public static void d(String TAG, String msg, Throwable e) {
-        if (mRecordMsg != null) {
-            mRecordMsg.recordMsgD(TAG, msg, e);
-        }
+        TFlogImpl.d(TAG, msg, e);
     }
 
     public static void d(String TAG, Throwable e) {
-        if (mRecordMsg != null) {
-            mRecordMsg.recordMsgD(TAG, e);
-        }
+        TFlogImpl.d(TAG, e);
     }
 
     public static void i(String TAG, String msg) {
-        if (mRecordMsg != null) {
-            mRecordMsg.recordMsgI(TAG, msg);
-        }
+        TFlogImpl.i(TAG, msg);
     }
 
     public static void i(String TAG, String msg, Throwable e) {
-        if (mRecordMsg != null) {
-            mRecordMsg.recordMsgI(TAG, msg, e);
-        }
+        TFlogImpl.i(TAG, msg, e);
     }
 
     public static void i(String TAG, Throwable e) {
-        if (mRecordMsg != null) {
-            mRecordMsg.recordMsgI(TAG, e);
-        }
+        TFlogImpl.i(TAG, e);
     }
 
     public static void w(String TAG, String msg) {
-        if (mRecordMsg != null) {
-            mRecordMsg.recordMsgW(TAG, msg);
-        }
+        TFlogImpl.w(TAG, msg);
     }
 
     public static void w(String TAG, String msg, Throwable e) {
-        if (mRecordMsg != null) {
-            mRecordMsg.recordMsgW(TAG, msg, e);
-        }
+        TFlogImpl.w(TAG, msg, e);
     }
 
     public static void w(String TAG, Throwable e) {
-        if (mRecordMsg != null) {
-            mRecordMsg.recordMsgW(TAG, e);
-        }
+        TFlogImpl.w(TAG, e);
     }
 
     public static void e(String TAG, String msg) {
-        if (mRecordMsg != null) {
-            mRecordMsg.recordMsgE(TAG, msg);
-        }
+        TFlogImpl.e(TAG, msg);
     }
 
     public static void e(String TAG, String msg, Throwable e) {
-        if (mRecordMsg != null) {
-            mRecordMsg.recordMsgE(TAG, msg, e);
-        }
+        TFlogImpl.e(TAG, msg, e);
     }
 
     public static void e(String TAG, Throwable e) {
-        if (mRecordMsg != null) {
-            mRecordMsg.recordMsgE(TAG, e);
-        }
+        TFlogImpl.e(TAG, e);
     }
 
     public static void a(String TAG, String msg) {
-        if (mRecordMsg != null) {
-            mRecordMsg.recordMsgA(TAG, msg);
-        }
+        TFlogImpl.a(TAG, msg);
     }
 
     public static void a(String TAG, Throwable e) {
-        if (mRecordMsg != null) {
-            mRecordMsg.recordMsgA(TAG, e);
-        }
+        TFlogImpl.a(TAG, e);
     }
 
     public static void a(String TAG, String msg, Throwable e) {
-        if (mRecordMsg != null) {
-            mRecordMsg.recordMsgA(TAG, msg, e);
-        }
+        TFlogImpl.a(TAG, msg, e);
     }
 }
