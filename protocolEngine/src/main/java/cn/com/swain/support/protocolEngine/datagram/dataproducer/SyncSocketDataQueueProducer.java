@@ -15,6 +15,10 @@ public class SyncSocketDataQueueProducer implements ISocketDataProducer {
         mSocketDataQueueProducer = new SocketDataQueueProducer(version);
     }
 
+    public SyncSocketDataQueueProducer(int version, int normalSize) {
+        mSocketDataQueueProducer = new SocketDataQueueProducer(version, normalSize);
+    }
+
     @Override
     public synchronized void create() {
         mSocketDataQueueProducer.create();

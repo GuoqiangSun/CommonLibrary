@@ -56,7 +56,7 @@ public class ProtocolMultiTaskProcessor extends AbsProtocolProcessor {
             throw new NullPointerException(" <ProtocolProcessor> ISocketDataProducer==null . ");
         }
 
-        this.mDataResolveQueue = new DataResolveQueue(protocolLooper,
+        this.mDataResolveQueue = new QxDataResolveQueue(protocolLooper,
                 new DataInspectorPool(new DataResolveInspector(mProtocolCallBack), callBackPoolSize),
                 mSocketDataProducer,
                 mLargerSocketDataProducer);

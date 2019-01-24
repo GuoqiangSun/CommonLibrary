@@ -11,26 +11,26 @@ import cn.com.swain.support.protocolEngine.datagram.escape.IEscapeDataArray;
  */
 public class ProtocolDataPackFactory {
 
-    public static AbsProtocolDataPack generalSecureDataPack(int version) {
+    public static AbsProtocolDataPack generalQXSecureDataPack(int version) {
 
         if (version <= ProtocolBuild.VERSION.VERSION_0) {
-            return generalNormalPack();
+            return generalQXNormalPack();
         } else if (version <= ProtocolBuild.VERSION.VERSION_SEQ) {
-            return generalSeqPack();
+            return generalQXSeqPack();
         } else {
-            return generalNormalPack();
+            return generalQXNormalPack();
         }
 
     }
 
-    public static AbsProtocolDataPack generalSecureDataPack(int version, IEscapeDataArray mComDataArray) {
+    public static AbsProtocolDataPack generalQXSecureDataPack(int version, IEscapeDataArray mComDataArray) {
 
         if (version <= ProtocolBuild.VERSION.VERSION_0) {
-            return generalNormalPack(mComDataArray);
+            return generalQXNormalPack(mComDataArray);
         } else if (version <= ProtocolBuild.VERSION.VERSION_SEQ) {
-            return generalSeqPack(mComDataArray);
+            return generalQXSeqPack(mComDataArray);
         } else {
-            return generalNormalPack(mComDataArray);
+            return generalQXNormalPack(mComDataArray);
         }
 
     }
@@ -40,8 +40,8 @@ public class ProtocolDataPackFactory {
      *
      * @return {@link AbsProtocolDataPack}
      */
-    public static AbsProtocolDataPack generalNormalPack() {
-        return generalNormalPack(null);
+    public static AbsProtocolDataPack generalQXNormalPack() {
+        return generalQXNormalPack(null);
     }
 
     /**
@@ -49,8 +49,8 @@ public class ProtocolDataPackFactory {
      *
      * @return {@link AbsProtocolDataPack}
      */
-    public static AbsProtocolDataPack generalSeqPack() {
-        return generalSeqPack(null);
+    public static AbsProtocolDataPack generalQXSeqPack() {
+        return generalQXSeqPack(null);
     }
 
     /**
@@ -58,8 +58,8 @@ public class ProtocolDataPackFactory {
      *
      * @return {@link AbsProtocolDataPack}
      */
-    public static AbsProtocolDataPack generalNormalPack(IEscapeDataArray mComDataArray) {
-        return new ProtocolComData(mComDataArray);
+    public static AbsProtocolDataPack generalQXNormalPack(IEscapeDataArray mComDataArray) {
+        return new QXProtocolComData(mComDataArray);
     }
 
     /**
@@ -67,7 +67,7 @@ public class ProtocolDataPackFactory {
      *
      * @return {@link AbsProtocolDataPack}
      */
-    public static AbsProtocolDataPack generalSeqPack(IEscapeDataArray mComDataArray) {
-        return new ProtocolComData2(mComDataArray);
+    public static AbsProtocolDataPack generalQXSeqPack(IEscapeDataArray mComDataArray) {
+        return new QXProtocolComData2(mComDataArray);
     }
 }

@@ -106,7 +106,7 @@ public abstract class FileTemplate implements IApp {
     public String saveProductDetectionLog(String msg) {
         File debugPath = getDebugPath();
         SimpleDateFormat mDateFormat = new SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault());
-        String child = mDateFormat.format(new Date(System.currentTimeMillis())) + ".cn.com.swain169.log";
+        String child = mDateFormat.format(new Date(System.currentTimeMillis())) + "_dec.log";
         File logPath = new File(debugPath, child);
 
         if (FileUtil.saveFileMsg(logPath, msg)) {

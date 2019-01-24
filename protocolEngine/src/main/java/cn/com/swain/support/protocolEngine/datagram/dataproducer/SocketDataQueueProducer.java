@@ -124,18 +124,22 @@ public class SocketDataQueueProducer implements ISocketDataProducer {
 
             mProduceSocketDataArray = getSocketDataArray();
             if (mProduceSocketDataArray == null) {
-                gc();
+
                 Tlog.e(TAG, name + " extend() CacheSocketData");
+
+                gc();
                 extend();
                 mProduceSocketDataArray = getSocketDataArray();
+
+                if (mProduceSocketDataArray == null) {
+                    Tlog.e(TAG, name + "produceSocketDataArrayFromBuf mProduceSocketDataArray == null ; new SocketDataArray() ");
+                    mProduceSocketDataArray = new SocketDataArray(version);
+                }
+
             }
 
         }
 
-        if (mProduceSocketDataArray == null) {
-            Tlog.e(TAG, name + "produceSocketDataArrayFromBuf mProduceSocketDataArray == null ; new SocketDataArray() ");
-            mProduceSocketDataArray = new SocketDataArray(version);
-        }
         mProduceSocketDataArray.setISUsed();
         return mProduceSocketDataArray;
     }

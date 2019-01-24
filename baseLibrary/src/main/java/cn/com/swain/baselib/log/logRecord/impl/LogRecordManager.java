@@ -62,7 +62,6 @@ public class LogRecordManager extends AbsLogRecord {
 
     /**
      * 检测是否在录制
-     * 如果没有录制则开启录制
      */
     public boolean isRecording() {
         if (!isInit()) {

@@ -134,7 +134,9 @@ public class LogRecordClient implements ILogRecord {
         if (mHandler != null) {
             mHandler.sendEmptyMessage(MSG_WHAT_CHECK_BUFFER_WRITE);
             // 开启同步
-            mHandler.sendEmptyMessageDelayed(MSG_WHAT_SYNC_CYCLE, MAX_WAIT_SYNC_TIME);
+            if (!mHandler.hasMessages(MSG_WHAT_SYNC_CYCLE)) {
+                mHandler.sendEmptyMessageDelayed(MSG_WHAT_SYNC_CYCLE, MAX_WAIT_SYNC_TIME);
+            }
         }
     }
 
@@ -183,7 +185,9 @@ public class LogRecordClient implements ILogRecord {
     // 重新创建
     private static final int MSG_WHAT_RE_GENERAL = 0x05;
 
-    // 周期同步
+    /**
+     * 周期同步 周期时长:{@link #MAX_WAIT_SYNC_TIME}
+     */
     private static final int MSG_WHAT_SYNC_CYCLE = 0x06;
 
 

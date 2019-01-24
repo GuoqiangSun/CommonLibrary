@@ -1,33 +1,19 @@
 package cn.com.swain.support.protocolEngine.datagram.escape;
 
+import cn.com.swain.baselib.log.Tlog;
 import cn.com.swain.baselib.util.StrUtil;
 import cn.com.swain.support.protocolEngine.ProtocolCode;
 import cn.com.swain.support.protocolEngine.resolve.AbsProtocolProcessor;
-import cn.com.swain.baselib.log.Tlog;
 
 /**
  * author: Guoqiang_Sun
  * date : 2018/3/30 0030
  * desc :
- * <p>
- * * 转义前	           转义后
- * STX （帧头）	    STX 转成 ESC 和 STX_ESC
- * ETX （帧尾）	    ETX 转成 ESC 和 ETX_ESC
- * ESC （转义符）    	ESC 转成 ESC 和 ESC_ESC
- * {@link ProtocolCode}
  */
 
-public class EscapeDataArray implements IEscapeDataArray {
+public abstract class EscapeDataArray implements IEscapeDataArray {
 
     private String TAG = AbsProtocolProcessor.TAG;
-
-    private static final byte STX = ProtocolCode.STX;
-    private static final byte ETX = ProtocolCode.ETX;
-    private static final byte ESC = ProtocolCode.ESC;
-
-    private static final byte STX_ESC = ProtocolCode.STX_ESC;
-    private static final byte ETX_ESC = ProtocolCode.ETX_ESC;
-    private static final byte ESC_ESC = ProtocolCode.ESC_ESC;
 
     /******************************/
 
@@ -146,101 +132,6 @@ public class EscapeDataArray implements IEscapeDataArray {
     }
 
 
-    private byte lastByte = EMPTY; // 记录上一个字节
-
-    @Override
-    public void onAddDataReverse(byte b) {
-
-        if (b != ESC) {
-
-            // 当前不是ESC
-            // 看上一个字节是否是 ESC
-
-            if (lastByte == ESC) {
-
-                switch (b) {
-                    case STX_ESC:
-
-                        // Tlog.e(TAG, "reverse " + STX_ESC);
-                        onDataAddNoER(STX);
-
-                        break;
-                    case ETX_ESC:
-
-                        // Tlog.e(TAG, "reverse " + ETX_ESC);
-                        onDataAddNoER(ETX);
-
-                        break;
-                    case ESC_ESC:
-
-                        // Tlog.e(TAG, "reverse " + ESC_ESC);
-                        onDataAddNoER(ESC);
-
-                        break;
-                    default:
-                        // 当前字节不是STX_ESC ETX_ESC ESC_ESC 记得把lastByte也加进来
-                        onDataAddNoER(lastByte);
-                        onDataAddNoER(b);
-                        break;
-                }
-            } else {
-                onDataAddNoER(b);
-            }
-
-        } else {
-
-            // 当前是ESC
-
-            // 看下一个字节
-
-            // 这里不加到集合里面去，等下一次判断再加
-
-        }
-
-        lastByte = b;
-
-    }
-
-    @Override
-    public void onAddDataEscape(byte b) {
-        // Tlog.v(TAG, "--- > escape b : " + b);
-
-        switch (b) {
-            case STX:
-
-                // Tlog.e(TAG, "escape STX ");
-
-                onDataAddNoER(ESC);
-                onDataAddNoER(STX_ESC);
-
-                break;
-
-            case ETX:
-
-                // Tlog.e(TAG, "escape ETX ");
-
-                onDataAddNoER(ESC);
-                onDataAddNoER(ETX_ESC);
-
-                break;
-            case ESC:
-
-                // Tlog.e(TAG, "escape ESC ");
-
-                onDataAddNoER(ESC);
-                onDataAddNoER(ESC_ESC);
-
-                break;
-
-            default:
-
-                onDataAddNoER(b);
-
-                break;
-        }
-
-    }
-
     @Override
     public void onAddPackageEscape(byte[] data) {
 
@@ -302,9 +193,9 @@ public class EscapeDataArray implements IEscapeDataArray {
     /**
      * 添加进来，不考虑转义问题，自动扩容
      *
-     * @param b
+     * @param b data
      */
-    private void onDataAddNoER(byte b) {
+    protected void onDataAddNoER(byte b) {
 
         // Tlog.v(TAG, " add b : " + b + " === point : " + point);
 
@@ -377,23 +268,21 @@ public class EscapeDataArray implements IEscapeDataArray {
     @Override
     public boolean copyArray(byte[] data) {
 
-        final byte[] mData = data;
-
-        if (mData == null) {
+        if (data == null) {
             if (Tlog.isDebug()) {
                 Tlog.e(TAG, " NullPointerException copyArray()" + StrUtil.toString(DATA));
             }
             throw new NullPointerException(" copyArray(byte[]) data == null ");
         }
 
-        if (mData.length < point) {
+        if (data.length < point) {
             if (Tlog.isDebug()) {
                 Tlog.e(TAG, " IndexOutOfBoundsException copyArray() " + StrUtil.toString(DATA));
             }
-            throw new IndexOutOfBoundsException(" copyArray(byte[]);data.length must more than point; data.length(" + mData.length + ")<point(" + point + ")");
+            throw new IndexOutOfBoundsException(" copyArray(byte[]);data.length must more than point; data.length(" + data.length + ")<point(" + point + ")");
         }
 
-        System.arraycopy(DATA, 0, mData, 0, point);
+        System.arraycopy(DATA, 0, data, 0, point);
         return true;
     }
 
@@ -415,8 +304,7 @@ public class EscapeDataArray implements IEscapeDataArray {
             throw new IndexOutOfBoundsException("copyArray(byte[] int int) srcPoint: " + srcPoint + " length: " + length + " point: " + point);
         }
 
-        final byte[] mData = data;
-        System.arraycopy(DATA, srcPoint, mData, 0, length);
+        System.arraycopy(DATA, srcPoint, data, 0, length);
         return true;
     }
 

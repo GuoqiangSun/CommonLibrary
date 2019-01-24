@@ -79,10 +79,49 @@ public class PhotoUtils {
         return intent;
     }
 
+
+    /**
+     * 裁剪头像
+     *
+     * @param inputUri 输入路径
+     * @param outUri   输出路径
+     * @return 系统裁剪的intent
+     */
+    public static Intent cropHeadpic(Uri inputUri, Uri outUri) {
+
+        Intent intent = new Intent("com.android.camera.action.CROP");
+
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        }
+
+        intent.setDataAndType(inputUri, "image/*");
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, outUri);
+
+        intent.putExtra("crop", "true");
+
+//        intent.putExtra("circleCrop", "false");// 圆形裁剪
+
+//        intent.putExtra("noFaceDetection", true);// 是否取消人脸识别功能
+
+        intent.putExtra("aspectX", 500); //X方向上的比例
+        intent.putExtra("aspectY", 500); //Y方向上的比例
+        intent.putExtra("outputX", 450); //裁剪区的宽
+        intent.putExtra("outputY", 450); //裁剪区的高
+
+        intent.putExtra("return-data", false);
+        //黑边
+        intent.putExtra("scale", true);
+        intent.putExtra("scaleUpIfNeeded", true);
+
+        return intent;
+    }
+
+
     /**
      * @param inputUri 输入路径
      * @param outUri   输出路径
-     * @return 系统压缩的intent
+     * @return 系统裁剪的intent
      */
     public static Intent cropImg(Uri inputUri, Uri outUri) {
 

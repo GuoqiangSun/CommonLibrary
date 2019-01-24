@@ -2,13 +2,12 @@ package cn.com.swain.support.protocolEngine.datagram;
 
 import cn.com.swain.baselib.log.Tlog;
 import cn.com.swain.support.protocolEngine.ProtocolBuild;
-import cn.com.swain.support.protocolEngine.ProtocolCode;
 import cn.com.swain.support.protocolEngine.datagram.ProtocolDatagram.AbsProtocolDataPack;
 import cn.com.swain.support.protocolEngine.datagram.ProtocolDatagram.ProtocolDataPackFactory;
 import cn.com.swain.support.protocolEngine.datagram.ProtocolException.DatagramStateException;
 import cn.com.swain.support.protocolEngine.datagram.ProtocolException.EscapeIOException;
-import cn.com.swain.support.protocolEngine.datagram.escape.EscapeDataArray;
 import cn.com.swain.support.protocolEngine.datagram.escape.IEscapeDataArray;
+import cn.com.swain.support.protocolEngine.datagram.escape.QXEscapeDataArray;
 import cn.com.swain.support.protocolEngine.pack.BaseModel;
 import cn.com.swain.support.protocolEngine.pack.ComModel;
 import cn.com.swain.support.protocolEngine.resolve.AbsProtocolProcessor;
@@ -31,8 +30,8 @@ public class SocketDataArray extends AbsProtocolDataPack implements Cloneable, I
 
         Tlog.v(TAG, " new SocketDataArray() version:" + version);
         int body = version <= ProtocolBuild.VERSION.VERSION_0 ? DATA_BODY : (DATA_BODY + DATA_BODY / 2);
-        this.mEscapeDataArray = new EscapeDataArray(body);
-        this.mAbsProtocolDataPack = ProtocolDataPackFactory.generalSecureDataPack(version, this.mEscapeDataArray);
+        this.mEscapeDataArray = new QXEscapeDataArray(body);
+        this.mAbsProtocolDataPack = ProtocolDataPackFactory.generalQXSecureDataPack(version, this.mEscapeDataArray);
     }
 
 
@@ -577,13 +576,13 @@ public class SocketDataArray extends AbsProtocolDataPack implements Cloneable, I
         mSocketDataArray.onAddPackageReverse(pkgData);
 
         if (!mSocketDataArray.hasProtocolHead()) {
-            throw new EscapeIOException(" not has head [" + Integer.toHexString(ProtocolCode.STX) + "]");
+            throw new EscapeIOException(" not has head [" + Integer.toHexString(ProtocolBuild.QX.STX) + "]");
         }
         if (!mSocketDataArray.checkProtocolCrc()) {
             throw new EscapeIOException(" crc error ");
         }
         if (!mSocketDataArray.hasProtocolTail()) {
-            throw new EscapeIOException(" not has tail [" + Integer.toHexString(ProtocolCode.ETX) + "]");
+            throw new EscapeIOException(" not has tail [" + Integer.toHexString(ProtocolBuild.QX.ETX) + "]");
         }
         return mSocketDataArray;
     }

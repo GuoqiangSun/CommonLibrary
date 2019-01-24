@@ -95,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
             public void onPermissionRequestResult(String permission, boolean granted) {
                 Tlog.v(" MainActivity requestPermissions " + permission + " " + granted);
                 if (granted) {
-                    Tlog.set(FileManager.getInstance().getLogPath());
+//                    Tlog.set(FileManager.getInstance().getLogPath());
                     testLog();
                 }
             }

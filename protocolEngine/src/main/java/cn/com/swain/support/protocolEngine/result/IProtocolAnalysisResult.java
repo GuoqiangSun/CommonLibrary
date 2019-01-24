@@ -52,6 +52,9 @@ public interface IProtocolAnalysisResult {
      */
     void onPackNoTailError(int errorCode, SocketDataArray mSocketDataArray);
 
+    /**
+     * 解析成功
+     */
     void onSuccess(SocketDataArray mSocketDataArray);
 
 }

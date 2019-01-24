@@ -8,11 +8,11 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import cn.com.swain.baselib.log.Tlog;
 import cn.com.swain.support.protocolEngine.ProtocolCode;
 import cn.com.swain.support.protocolEngine.datagram.SocketDataArray;
 import cn.com.swain.support.protocolEngine.datagram.dataproducer.ISocketDataProducer;
 import cn.com.swain.support.protocolEngine.pack.ReceivesData;
-import cn.com.swain.baselib.log.Tlog;
 
 /**
  * author: Guoqiang_Sun
@@ -20,12 +20,12 @@ import cn.com.swain.baselib.log.Tlog;
  * desc :
  */
 
-public class DataResolveQueue extends Handler {
+public abstract class DataResolveQueue extends Handler {
 
-    private String TAG = AbsProtocolProcessor.TAG;
+    protected String TAG = AbsProtocolProcessor.TAG;
     private final IDataResolveCallBack mCallBack;
-    private final ISocketDataProducer mSocketDataProducer;
-    private final ISocketDataProducer mLargerSocketDataProducer;
+    protected final ISocketDataProducer mSocketDataProducer;
+    protected final ISocketDataProducer mLargerSocketDataProducer;
     private final Map<String, ResolveData> mSocketArrayMap;
 
     public DataResolveQueue(Looper mLooper,
@@ -105,30 +105,23 @@ public class DataResolveQueue extends Handler {
 
     }
 
-    private void receiveDataIsNull() {
-        Message message = obtainMessage();
-        message.what = MSG_WHAT_CALLBACK;
-        message.arg1 = ProtocolCode.ERROR_CODE_INTERNAL_RECEIVE_NULL;
-        message.obj = null;
-        message.sendToTarget();
-    }
 
     /**
      * 一包数据最大多少，
      * 如果{@link #mLargerSocketDataProducer} ==null ,
      * 超过这个字节认为是错误的包
      */
-    private static final int MAX_COUNT = 1024;
+    protected static final int MAX_COUNT = 1024;
 
     /**
      * 一包数据最大多少，
      * 如果{@link #mLargerSocketDataProducer} !=null ,
      * 超过这个字节认为是错误的包
      */
-    private static final int LARGER_COUNT = MAX_COUNT * 16;
+    protected static final int LARGER_COUNT = MAX_COUNT * 16;
 
 
-    private boolean checkPkgIsLargerSize(final byte[] buf, final int length) {
+    protected boolean checkPkgIsLargerSize(final byte[] buf, final int length) {
         if (length >= 3) {
             int size = (buf[1] & 0xFF) << 8 | (buf[2] & 0xFF);
             return size > MAX_COUNT;
@@ -141,7 +134,7 @@ public class DataResolveQueue extends Handler {
 
         if (receiverData == null) {
             Tlog.w(TAG, " DataResolveQueue handleMessage mReceiverData==null ");
-            receiveDataIsNull();
+            resolveDataIsNull();
             return;
         }
 
@@ -149,7 +142,7 @@ public class DataResolveQueue extends Handler {
 
         if (buf == null) {
             Tlog.w(TAG, " DataResolveQueue handleMessage byte[]==null ");
-            receiveDataIsNull();
+            resolveDataIsNull();
             return;
         }
 
@@ -162,142 +155,53 @@ public class DataResolveQueue extends Handler {
             Tlog.w(TAG, " DataResolveQueue mSocketArrayMap put " + receiverData.fromID);
         }
 
-        SocketDataArray mTmpSocketDataArray = mResolveData.mLastSocketDataArray;
-
-        final int length = buf.length;
-
-        for (int i = 0; i < length; i++) {
-
-            switch (buf[i]) {
-                case ProtocolCode.STX:
-                    // 头字节
-
-                    mResolveData.hasHead = true;
-                    mResolveData.count = 0;
-
-                    if (mTmpSocketDataArray != null && !mTmpSocketDataArray.isCompletePkg()) {
-                        // 重新收到一包数据，判断上包数据是否是完整的包，不是完整的包设置可回收
-                        Tlog.e(TAG, "last SocketDataArray is not complete pkg ");
-                        mTmpSocketDataArray.setISUnUsed();
-
-                        Message message = obtainMessage();
-                        message.what = MSG_WHAT_CALLBACK;
-                        message.arg1 = ProtocolCode.ERROR_CODE_RESOLVE_HAS_HEAD_NO_TAIL;
-                        message.obj = null;
-                        message.sendToTarget();
-
-                    }
-
-
-                    if (checkPkgIsLargerSize(buf, length) && mLargerSocketDataProducer != null) {
-                        mResolveData.isLargerPkg = true;
-                        mTmpSocketDataArray = mLargerSocketDataProducer.produceSocketDataArray();
-                    } else {
-                        mResolveData.isLargerPkg = false;
-                        mTmpSocketDataArray = mSocketDataProducer.produceSocketDataArray();
-                    }
-
-                    mTmpSocketDataArray.resetIsCompletePkg();
-                    mTmpSocketDataArray.reset();
-                    mTmpSocketDataArray.setISUsed();
-                    mTmpSocketDataArray.setID(receiverData.fromID);
-                    mTmpSocketDataArray.setObj(receiverData.obj);
-                    mTmpSocketDataArray.setArg(receiverData.arg);
-                    mTmpSocketDataArray.setModel(receiverData.getReceiveModel());
-                    mTmpSocketDataArray.changeStateToReverse();
-                    mTmpSocketDataArray.onAddHead(buf[i]);
-
-                    mResolveData.mLastSocketDataArray = mTmpSocketDataArray;
-
-                    // Tlog.v("startCount", " count : " + ++time);
-
-                    break;
-                case ProtocolCode.ETX:
-                    // 尾字节
-
-                    if (mResolveData.hasHead) {
-
-                        if (mTmpSocketDataArray == null) {
-
-                            receiveDataIsNull();
-
-                        } else {
-
-                            mTmpSocketDataArray.onAddTail(buf[i]);
-                            mTmpSocketDataArray.setIsCompletePkg();
-
-                            Message message = obtainMessage();
-                            message.what = MSG_WHAT_CALLBACK;
-                            message.arg1 = ProtocolCode.SUCCESS_CODE_RESOLVE;
-                            message.obj = mTmpSocketDataArray;
-                            message.sendToTarget();
-                        }
-
-
-                    } else {
-
-                        // 解析到尾字节，但没解析到头部字节
-                        Tlog.e(TAG, " PARSE ERROR . Parsing to ETX, but no parsing to STX . ");
-
-                        Message message = obtainMessage();
-                        message.what = MSG_WHAT_CALLBACK;
-                        message.arg1 = ProtocolCode.ERROR_CODE_RESOLVE_HAS_TAIL_NO_HEAD;
-                        message.obj = null;
-                        message.sendToTarget();
-
-                    }
-
-                    mResolveData.hasHead = false;
-                    mResolveData.count = 0;
-
-                    break;
-
-                default:
-
-                    if (mResolveData.hasHead) {
-
-                        if (mTmpSocketDataArray == null) {
-
-                            receiveDataIsNull();
-
-                        } else {
-
-                            ++mResolveData.count;
-
-                            if (mResolveData.count < MAX_COUNT
-                                    || (mResolveData.isLargerPkg && mResolveData.count < LARGER_COUNT)) {
-
-                                mTmpSocketDataArray.onAddDataReverse(buf[i]);
-
-                            } else {
-                                // 解析内容太长
-                                mResolveData.hasHead = false;
-                                mTmpSocketDataArray.setISUnUsed();
-
-                                Message message = obtainMessage();
-                                message.what = MSG_WHAT_CALLBACK;
-                                message.arg1 = ProtocolCode.ERROR_CODE_RESOLVE_MORE_LENGTH;
-                                message.obj = null;
-                                message.sendToTarget();
-                                Tlog.e(TAG, " PARSE ERROR .Parsing data , but count("
-                                        + mResolveData.count + ")>=MAX_COUNT(" + MAX_COUNT + ")");
-                            }
-                        }
-
-
-                    } else {
-
-                        // 没有解析到头部字节
-                        Tlog.e(TAG, " PARSE ERROR . parse buf[" + i + "]("
-                                + Integer.toHexString(buf[i] & 0xFF) + ") , but no parsing to STX . ");
-                    }
-
-
-                    break;
-            }
-
-        }
-
+        resolveData(receiverData, buf, mResolveData);
     }
+
+    protected void resolveDataIsNull() {
+        Message message = obtainMessage();
+        message.what = MSG_WHAT_CALLBACK;
+        message.arg1 = ProtocolCode.ERROR_CODE_INTERNAL_RECEIVE_NULL;
+        message.obj = null;
+        message.sendToTarget();
+    }
+
+    // 解析的数据有头无尾
+    protected void resolveDataHasHeadNoTail() {
+        Message message = obtainMessage();
+        message.what = MSG_WHAT_CALLBACK;
+        message.arg1 = ProtocolCode.ERROR_CODE_RESOLVE_HAS_HEAD_NO_TAIL;
+        message.obj = null;
+        message.sendToTarget();
+    }
+
+    // 解析数据成功
+    protected void resolveDataSuccess(SocketDataArray mTmpSocketDataArray) {
+        Message message = obtainMessage();
+        message.what = MSG_WHAT_CALLBACK;
+        message.arg1 = ProtocolCode.SUCCESS_CODE_RESOLVE;
+        message.obj = mTmpSocketDataArray;
+        message.sendToTarget();
+    }
+
+    // 解析数据有尾无头
+    protected void resolveDataHasTailNoHead() {
+        Message message = obtainMessage();
+        message.what = MSG_WHAT_CALLBACK;
+        message.arg1 = ProtocolCode.ERROR_CODE_RESOLVE_HAS_TAIL_NO_HEAD;
+        message.obj = null;
+        message.sendToTarget();
+    }
+
+    // 解析数据太长
+    protected void resolveDataMoreLength() {
+        Message message = obtainMessage();
+        message.what = MSG_WHAT_CALLBACK;
+        message.arg1 = ProtocolCode.ERROR_CODE_RESOLVE_MORE_LENGTH;
+        message.obj = null;
+        message.sendToTarget();
+    }
+
+    protected abstract void resolveData(ReceivesData receiverData, byte[] buf, ResolveData mResolveData);
 
 }

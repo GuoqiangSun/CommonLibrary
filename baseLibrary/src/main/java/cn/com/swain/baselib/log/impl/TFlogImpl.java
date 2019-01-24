@@ -92,7 +92,7 @@ public class TFlogImpl {
         return mRecordMsg != null;
     }
 
-    // 是否正在录制log中 如果没有录制则开启录制
+    // 是否正在录制log中
     public boolean isRecording() {
         if (mRecordMsg != null) {
             return mRecordMsg.isRecording();

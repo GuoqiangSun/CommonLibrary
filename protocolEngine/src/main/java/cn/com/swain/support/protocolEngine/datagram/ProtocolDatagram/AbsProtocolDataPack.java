@@ -1,7 +1,5 @@
 package cn.com.swain.support.protocolEngine.datagram.ProtocolDatagram;
 
-import cn.com.swain.support.protocolEngine.ProtocolCode;
-
 /**
  * author: Guoqiang_Sun
  * date : 2018/8/1 0001
@@ -9,7 +7,7 @@ import cn.com.swain.support.protocolEngine.ProtocolCode;
  */
 public abstract class AbsProtocolDataPack implements IProtocolComData {
 
-    protected byte head = ProtocolCode.STX;
+    protected byte head;
 
     byte length_h;
     byte length_l;
@@ -28,7 +26,7 @@ public abstract class AbsProtocolDataPack implements IProtocolComData {
 
     byte crc;
 
-    protected byte tail = ProtocolCode.ETX;
+    protected byte tail;
 
     public byte getHead() {
         return this.head;

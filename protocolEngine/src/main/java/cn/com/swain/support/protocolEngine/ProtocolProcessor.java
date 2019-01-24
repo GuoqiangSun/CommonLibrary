@@ -9,6 +9,7 @@ import cn.com.swain.support.protocolEngine.datagram.dataproducer.SocketDataQueue
 import cn.com.swain.support.protocolEngine.pack.ReceivesData;
 import cn.com.swain.support.protocolEngine.resolve.AbsProtocolProcessor;
 import cn.com.swain.support.protocolEngine.resolve.DataResolveQueue;
+import cn.com.swain.support.protocolEngine.resolve.QxDataResolveQueue;
 import cn.com.swain.support.protocolEngine.result.IProtocolAnalysisResult;
 
 /**
@@ -52,7 +53,7 @@ public class ProtocolProcessor extends AbsProtocolProcessor {
             throw new NullPointerException(" <ProtocolProcessor> ISocketDataProducer==null . ");
         }
 
-        this.mDataResolveQueue = new DataResolveQueue(protocolLooper,
+        this.mDataResolveQueue = new QxDataResolveQueue(protocolLooper,
                 new DataInspectorPool(new DataResolveInspector(mProtocolCallBack), poolSize),
                 mSocketDataProducer);
     }

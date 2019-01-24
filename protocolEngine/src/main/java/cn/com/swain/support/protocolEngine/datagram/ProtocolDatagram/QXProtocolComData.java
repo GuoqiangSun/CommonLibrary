@@ -1,12 +1,11 @@
 package cn.com.swain.support.protocolEngine.datagram.ProtocolDatagram;
 
+import cn.com.swain.baselib.log.Tlog;
+import cn.com.swain.baselib.util.CrcUtil;
 import cn.com.swain.baselib.util.StrUtil;
 import cn.com.swain.support.protocolEngine.ProtocolBuild;
-import cn.com.swain.support.protocolEngine.ProtocolCode;
 import cn.com.swain.support.protocolEngine.datagram.escape.IEscapeDataArray;
 import cn.com.swain.support.protocolEngine.resolve.AbsProtocolProcessor;
-import cn.com.swain.support.protocolEngine.utils.CrcUtil;
-import cn.com.swain.baselib.log.Tlog;
 
 /**
  * author: Guoqiang_Sun
@@ -15,7 +14,7 @@ import cn.com.swain.baselib.log.Tlog;
  * <p>
  * <p>
  * *  startAI通信包协议格式
- * 0xff（帧头）(1) + 有效数据长度(2) + 保留(6)+ custom+product(2) + 命令（类型 + 命令）(2) + 参数（变长）+ 校验(CRC8)(1) + 0xee（帧尾）(1)
+ * 0xff（帧头）(1) + 有效数据长度(2) + 保留(2) + 命令（类型 + 命令）(2) + 参数（变长）+ 校验(CRC8)(1) + 0xee（帧尾）(1)
  * <p>
  * header(uint_8)
  * len_h（uint8_t）  	len_l（uint_8）
@@ -39,20 +38,20 @@ import cn.com.swain.baselib.log.Tlog;
  * ESC - 0x55（转义符）	ESC 转成 ESC 和 0x00
  */
 
-public class ProtocolComData2 extends AbsProtocolDataPack {
+public class QXProtocolComData extends AbsProtocolDataPack {
 
     private final IEscapeDataArray mComDataArray;
 
-    public ProtocolComData2() {
+    public QXProtocolComData() {
         this(null);
     }
 
-    public ProtocolComData2(IEscapeDataArray mComDataArray) {
+    public QXProtocolComData(IEscapeDataArray mComDataArray) {
         this.mComDataArray = mComDataArray;
-        this.version = ProtocolBuild.VERSION.VERSION_SEQ;
+        this.version = ProtocolBuild.VERSION.VERSION_0;
     }
 
-    public static final int LENGTH_BASE_VERSION = 15;
+    public static final int LENGTH_BASE_VERSION = 9;
 
     public static final int POINT_HEAD = 0;
 
@@ -61,26 +60,19 @@ public class ProtocolComData2 extends AbsProtocolDataPack {
 
     public static final int CRC_CHECK_START = 3;
 
-    public static final int POINT_VERSION = 3;
-    public static final int POINT_SEQUENCE = 4;
+    public static final int POINT_CUSTOM = 3;
+    public static final int POINT_PRODUCT = 4;
 
-    public static final int TOKEN_0 = 5;
-    public static final int TOKEN_1 = 6;
-    public static final int TOKEN_2 = 7;
-    public static final int TOKEN_3 = 8;
+    public static final int POINT_TYPE = 5;
+    public static final int POINT_CMD = 6;
 
-
-    public static final int POINT_CUSTOM = 9;
-    public static final int POINT_PRODUCT = 10;
-
-    public static final int POINT_TYPE = 11;
-    public static final int POINT_CMD = 12;
-
-    public static final int POINT_PARAMS_START = 13;
+    public static final int POINT_PARAMS_START = 7;
 
     private int getCrcPoint() {
 
-        return getCRCPoint(getProtocolParamsLength());
+        int paramsLength = getProtocolParamsLength();
+
+        return getCRCPoint(paramsLength);
     }
 
     private static int getCRCPoint(int paramsLength) {
@@ -101,85 +93,23 @@ public class ProtocolComData2 extends AbsProtocolDataPack {
     }
 
     @Override
-    public byte getProtocolTail() {
-        return mComDataArray.getByte(getTailPoint());
-    }
-
-    @Override
-    public byte[] organizeProtocolData() {
-
-        final int paramsLength = params != null ? params.length : 0;
-        final int allLength = LENGTH_BASE_VERSION + paramsLength;
-        final int effectiveLength = allLength - 5;
-        final byte[] buf = new byte[allLength];
-
-        buf[POINT_HEAD] = head;
-        buf[POINT_LENGTH_START] = this.length_h = (byte) ((effectiveLength >> 8) & 0xFF);
-        buf[POINT_LENGTH_END] = this.length_l = (byte) (effectiveLength & 0xFF);
-
-        buf[POINT_VERSION] = version;
-        buf[POINT_SEQUENCE] = seq;
-
-        buf[TOKEN_0] = (byte) ((token >> 24) & 0xFF);
-        buf[TOKEN_1] = (byte) ((token >> 16) & 0xFF);
-        buf[TOKEN_2] = (byte) ((token >> 8) & 0xFF);
-        buf[TOKEN_3] = (byte) (token & 0xFF);
-
-        buf[POINT_CUSTOM] = custom;
-        buf[POINT_PRODUCT] = product;
-
-        buf[POINT_TYPE] = type;
-        buf[POINT_CMD] = cmd;
-
-        if (paramsLength > 0) {
-            System.arraycopy(params, 0, buf, POINT_PARAMS_START, paramsLength);
-        }
-
-        final int crcPoint = ProtocolComData2.getCRCPoint(paramsLength);
-
-        //        final int crcPoint =allLength - 2;
-
-        buf[crcPoint] = this.crc = CrcUtil.CRC8(buf, CRC_CHECK_START, crcPoint);
-
-        final int tailPoint = ProtocolComData2.getTailPoint(crcPoint);
-        buf[tailPoint] = tail;
-
-        return buf;
-    }
-
-    @Override
     public int getProtocolVersion() {
-        return mComDataArray.getByte(POINT_VERSION) & 0xFF;
+        return Integer.MAX_VALUE;
     }
 
     @Override
     public int getProtocolSequence() {
-        return mComDataArray.getByte(POINT_SEQUENCE) & 0xFF;
+        return Integer.MAX_VALUE;
     }
 
     @Override
     public int getProtocolToken(int point) {
-        switch (point) {
-            case 0:
-                return mComDataArray.getByte(TOKEN_0);
-            case 1:
-                return mComDataArray.getByte(TOKEN_1);
-            case 2:
-                return mComDataArray.getByte(TOKEN_2);
-            case 3:
-                return mComDataArray.getByte(TOKEN_3);
-            default:
-                return getProtocolToken();
-        }
-
+        return 0;
     }
 
     @Override
     public int getProtocolToken() {
-        return (mComDataArray.getByte(TOKEN_0) & 0xFF) << 24
-                | (mComDataArray.getByte(TOKEN_1) & 0xFF) << 16
-                | (mComDataArray.getByte(TOKEN_2) & 0xFF) << 8
-                | (mComDataArray.getByte(TOKEN_3) & 0xFF);
+        return 0;
     }
 
     @Override
@@ -199,8 +129,9 @@ public class ProtocolComData2 extends AbsProtocolDataPack {
 
     @Override
     public int getProtocolParamsLength() {
-        return (getProtocolValidLength() - 10);
+        return (getProtocolValidLength() - 4);
     }
+
 
     @Override
     public byte getProtocolType() {
@@ -212,11 +143,10 @@ public class ProtocolComData2 extends AbsProtocolDataPack {
         return mComDataArray.getByte(POINT_CMD);
     }
 
+
     @Override
     public byte[] getProtocolNeedCheckData() {
-
         return mComDataArray.toArray(CRC_CHECK_START, getProtocolValidLength());
-
     }
 
     @Override
@@ -241,8 +171,53 @@ public class ProtocolComData2 extends AbsProtocolDataPack {
 
 
     @Override
+    public byte getProtocolTail() {
+        return mComDataArray.getByte(getTailPoint());
+    }
+
+    @Override
+    public byte[] organizeProtocolData() {
+
+        final int paramsLength = params != null ? params.length : 0;
+        final int allLength = LENGTH_BASE_VERSION + paramsLength;
+        final int effectiveLength = allLength - 5;
+        final byte[] buf = new byte[allLength];
+
+        head = ProtocolBuild.QX.STX;
+        buf[POINT_HEAD] = head;
+        buf[POINT_LENGTH_START] = this.length_h = (byte) ((effectiveLength >> 8) & 0xFF);
+        buf[POINT_LENGTH_END] = this.length_l = (byte) (effectiveLength & 0xFF);
+
+        buf[POINT_CUSTOM] = custom;
+        buf[POINT_PRODUCT] = product;
+
+        buf[POINT_TYPE] = type;
+        buf[POINT_CMD] = cmd;
+
+        if (paramsLength > 0) {
+            System.arraycopy(params, 0, buf, POINT_PARAMS_START, paramsLength);
+        }
+
+        final int crcPoint = QXProtocolComData.getCRCPoint(paramsLength);
+//        final int crcPoint2 = allLength - 2;
+//
+//        if (crcPoint != crcPoint2) {
+//            Tlog.e(ProtocolProcessor.TAG, " crcPoint:" + crcPoint + " " + crcPoint2);
+//        }
+
+        final byte crc = this.crc = CrcUtil.CRC8(buf, CRC_CHECK_START, crcPoint);
+        buf[crcPoint] = crc;
+
+        final int tailPoint = QXProtocolComData.getTailPoint(crcPoint);
+        tail = ProtocolBuild.QX.ETX;
+        buf[tailPoint] = tail;
+
+        return buf;
+    }
+
+    @Override
     public boolean hasProtocolHead() {
-        return (getProtocolHead() == ProtocolCode.STX);
+        return (getProtocolHead() == ProtocolBuild.QX.STX);
     }
 
     @Override
@@ -278,14 +253,15 @@ public class ProtocolComData2 extends AbsProtocolDataPack {
 
     @Override
     public boolean hasProtocolTail() {
-        return (getProtocolTail() == ProtocolCode.ETX);
+        return (getProtocolTail() == ProtocolBuild.QX.ETX);
     }
+
 
     @Override
     public String toString() {
 
         StringBuilder sb = new StringBuilder();
-        sb.append(" ProtocolComData:");
+        sb.append(" QXProtocolComData:");
         sb.append(" DATA_STATE : ").append(mComDataArray.getStateStr()).append(" , ");
         sb.append(" HEAD : ").append(Integer.toHexString(getProtocolHead() & 0xFF)).append(" , ");
         sb.append(" VALID_LENGTH : ").append(getProtocolValidLength()).append(" , ");
@@ -309,5 +285,6 @@ public class ProtocolComData2 extends AbsProtocolDataPack {
 
         return sb.toString();
     }
+
 
 }
