@@ -5,6 +5,7 @@ import java.util.Arrays;
 import cn.com.swain.baselib.log.Tlog;
 import cn.com.swain.support.protocolEngine.ProtocolProcessor;
 import cn.com.swain.support.protocolEngine.datagram.SocketDataArray;
+import cn.com.swain.support.protocolEngine.resolve.AbsProtocolProcessor;
 
 /**
  * author: Guoqiang_Sun
@@ -14,7 +15,7 @@ import cn.com.swain.support.protocolEngine.datagram.SocketDataArray;
 
 public class SocketDataQueueProducer implements ISocketDataProducer {
 
-    private String TAG = ProtocolProcessor.TAG;
+    private String TAG = AbsProtocolProcessor.TAG;
     private static final int EXTEND_SIZE = 10;
 
     private final int MAX_SIZE;

@@ -30,22 +30,42 @@ public class ProtocolBuild {
 
     public static final class VERSION {
 
+        public static boolean isQXVersion(int version) {
+            return version >>> 8 == QX.VERSION;
+        }
+
+        public static byte getSTX(int version) {
+            return isQXVersion(version) ? QX.STX : 0x00;
+        }
+
+        public static byte getETX(int version) {
+            return isQXVersion(version) ? QX.ETX : 0x00;
+        }
+
         // 亓行
 
         /**
-         * 第一版本协议
+         * QX第一版本协议,精简协议
          */
-        public static final int VERSION_0 = QX.VERSION << 8;
+        public static final int VERSION_0 = (QX.VERSION << 8) & 0xFF;
 
         /**
-         * 这个版本的协议增加了序列号
+         * QX第二版本协议,这个版本的协议增加了序列号,token码
          */
-        public static final int VERSION_SEQ = QX.VERSION << 8 | 0x01;
+        public static final int VERSION_SEQ = ((QX.VERSION << 8) & 0xFF) | 0x01;
     }
 
     public static void main(String[] args) {
         System.out.println(" QXVersion 0 :" + VERSION.VERSION_0);
         System.out.println(" QXVersion seq:" + VERSION.VERSION_SEQ);
+
+
+        System.out.println(" isQXVersion :" + VERSION.isQXVersion(VERSION.VERSION_SEQ));
+        System.out.println(" isQXVersion :" + VERSION.isQXVersion(VERSION.VERSION_0));
+        System.out.println(" isQXVersion :" + VERSION.isQXVersion(12345));
+        System.out.println(" isQXVersion :" + VERSION.isQXVersion(ProtocolBuild.VERSION.VERSION_SEQ + 123456789));
+
+
     }
 
 }

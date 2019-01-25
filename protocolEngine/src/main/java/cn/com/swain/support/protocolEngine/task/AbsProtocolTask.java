@@ -22,8 +22,8 @@ public abstract class AbsProtocolTask<param, result> {
     }
 
     /**
-     * @param mParam
-     * @return result
+     * @param mParam 参数
+     * @return result 结果
      */
     protected abstract result onBackgroundTask(param mParam);
 

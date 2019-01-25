@@ -25,4 +25,9 @@ public class SEQ {
     public synchronized void resetSeq() {
         this.SEQ = 0;
     }
+
+    @Override
+    public String toString() {
+        return " mac:" + mac + " seq:" + SEQ;
+    }
 }

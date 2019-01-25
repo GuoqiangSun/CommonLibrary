@@ -37,6 +37,8 @@ public class ProtocolWrapper implements IService, IDataProtocolOutput, IDataProt
     @Override
     public void onSDestroy() {
         Tlog.v(TAG, " ProtocolWrapper onSDestroy()");
+        mDataOutputBase = null;
+        mDataInputBase = null;
     }
 
     @Override

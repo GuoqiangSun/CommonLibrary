@@ -7,118 +7,118 @@ package cn.com.swain.support.protocolEngine.datagram.ProtocolDatagram;
  */
 public abstract class AbsProtocolDataPack implements IProtocolComData {
 
-    protected byte head;
+    protected byte absProtocol_head;
 
-    byte length_h;
-    byte length_l;
+    byte absProtocol_length_h;
+    byte absProtocol_length_l;
 
-    protected int token;
+    protected int absProtocol_token;
 
-    protected byte version;
-    protected byte seq;
+    protected byte absProtocol_version;
+    protected byte absProtocol_seq;
 
-    protected byte custom;
-    protected byte product;
-    protected byte type;
-    protected byte cmd;
+    protected byte absProtocol_custom;
+    protected byte absProtocol_product;
+    protected byte absProtocol_type;
+    protected byte absProtocol_cmd;
 
-    protected byte[] params;
+    protected byte[] absProtocol_params;
 
-    byte crc;
+    byte absProtocol_crc;
 
-    protected byte tail;
+    protected byte absProtocol_tail;
 
     public byte getHead() {
-        return this.head;
+        return this.absProtocol_head;
     }
 
     protected void setLength(int effectiveLength) {
-        this.length_h = (byte) ((effectiveLength >> 8) & 0xFF);
-        this.length_l = (byte) (effectiveLength & 0xFF);
+        this.absProtocol_length_h = (byte) ((effectiveLength >> 8) & 0xFF);
+        this.absProtocol_length_l = (byte) (effectiveLength & 0xFF);
     }
 
     public byte getLengthH() {
-        return this.length_h;
+        return this.absProtocol_length_h;
     }
 
     public byte getLengthL() {
-        return this.length_l;
+        return this.absProtocol_length_l;
     }
 
     public int getLength() {
-        return (length_h & 0xFF) << 8 | (length_l & 0xFF);
+        return (absProtocol_length_h & 0xFF) << 8 | (absProtocol_length_l & 0xFF);
     }
 
     public void setToken(int token) {
-        this.token = token;
+        this.absProtocol_token = token;
     }
 
     public int getToken() {
-        return token;
+        return absProtocol_token;
     }
 
     public void setVersion(byte version) {
-        this.version = version;
+        this.absProtocol_version = version;
     }
 
     public int getVersion() {
-        return this.version & 0xFF;
+        return this.absProtocol_version & 0xFF;
     }
 
     public void setSeq(byte seq) {
-        this.seq = seq;
+        this.absProtocol_seq = seq;
     }
 
     public int getSeq() {
-        return this.seq & 0xFF;
+        return this.absProtocol_seq & 0xFF;
     }
 
     public void setCustom(byte custom) {
-        this.custom = custom;
+        this.absProtocol_custom = custom;
     }
 
     public byte getCustom() {
-        return this.custom;
+        return this.absProtocol_custom;
     }
 
     public void setProduct(byte product) {
-        this.product = product;
+        this.absProtocol_product = product;
     }
 
     public byte getProduct() {
-        return this.product;
+        return this.absProtocol_product;
     }
 
     public void setType(byte type) {
-        this.type = type;
+        this.absProtocol_type = type;
     }
 
     public byte getType() {
-        return this.type;
+        return this.absProtocol_type;
     }
 
     public void setCmd(byte cmd) {
-        this.cmd = cmd;
+        this.absProtocol_cmd = cmd;
     }
 
     public byte getCmd() {
-        return this.cmd;
+        return this.absProtocol_cmd;
     }
 
     public void setParams(byte[] params) {
-        this.params = params;
+        this.absProtocol_params = params;
     }
 
     public byte[] getParams() {
-        return this.params;
+        return this.absProtocol_params;
     }
 
     public byte getCrc() {
-        return crc;
+        return absProtocol_crc;
     }
 
     public byte getTail() {
-        return this.tail;
+        return this.absProtocol_tail;
     }
 
     /**

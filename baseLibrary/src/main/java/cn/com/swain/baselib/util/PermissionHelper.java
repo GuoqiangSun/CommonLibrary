@@ -86,10 +86,51 @@ public class PermissionHelper {
         PermissionActivity.start(context, msg);
     }
 
+
+    /**
+     * 请求权限
+     *
+     * @param context     Context
+     * @param permissions 权限
+     */
+    public static void requestSinglePermission(Context context,
+                                               String permissions) {
+        requestSinglePermission(context, null, permissions);
+    }
+
+
+    /**
+     * @param context     Context
+     * @param mResult     单条权限结果回调
+     * @param permissions 权限
+     */
+    public static void requestSinglePermission(Context context,
+                                               PermissionRequest.OnPermissionResult mResult,
+                                               String permissions) {
+        final PermissionMsg msg = new PermissionMsg(mResult, permissions);
+        requestSinglePermission(context, msg);
+    }
+
+    /**
+     * 请求权限
+     *
+     * @param context Context
+     */
+    public static void requestSinglePermission(Context context, final PermissionMsg msg) {
+        if (isGranted( context, msg.permissions[0])) {
+            if (msg.mResult != null) {
+                msg.mResult.onPermissionRequestResult(msg.permissions[0], true);
+            }
+        } else {
+            requestPermission(context, msg);
+        }
+    }
+
+
     /**
      * 是否有此权限
      */
-    public static boolean isGranted(Application app, String permission) {
+    public static boolean isGranted(Context app, String permission) {
         return Build.VERSION.SDK_INT < Build.VERSION_CODES.M
                 || PackageManager.PERMISSION_GRANTED
                 == ContextCompat.checkSelfPermission(app, permission);

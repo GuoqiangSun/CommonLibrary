@@ -6,6 +6,7 @@ import cn.com.swain.support.protocolEngine.datagram.ProtocolDatagram.AbsProtocol
 import cn.com.swain.support.protocolEngine.datagram.ProtocolDatagram.ProtocolDataPackFactory;
 import cn.com.swain.support.protocolEngine.datagram.ProtocolException.DatagramStateException;
 import cn.com.swain.support.protocolEngine.datagram.ProtocolException.EscapeIOException;
+import cn.com.swain.support.protocolEngine.datagram.ProtocolException.UnknownVersionException;
 import cn.com.swain.support.protocolEngine.datagram.escape.IEscapeDataArray;
 import cn.com.swain.support.protocolEngine.datagram.escape.QXEscapeDataArray;
 import cn.com.swain.support.protocolEngine.pack.BaseModel;
@@ -26,12 +27,26 @@ public class SocketDataArray extends AbsProtocolDataPack implements Cloneable, I
 
     private static final int DATA_BODY = 12;
 
-    public SocketDataArray(int version) {
+    private final int initVersion;
 
+    /**
+     * 初始化version
+     */
+    public final int getConstructionVersion() {
+        return initVersion;
+    }
+
+    public SocketDataArray(int version) {
+        this.initVersion = version;
         Tlog.v(TAG, " new SocketDataArray() version:" + version);
-        int body = version <= ProtocolBuild.VERSION.VERSION_0 ? DATA_BODY : (DATA_BODY + DATA_BODY / 2);
-        this.mEscapeDataArray = new QXEscapeDataArray(body);
-        this.mAbsProtocolDataPack = ProtocolDataPackFactory.generalQXSecureDataPack(version, this.mEscapeDataArray);
+
+        if (ProtocolBuild.VERSION.isQXVersion(version)) {
+            int body = version <= ProtocolBuild.VERSION.VERSION_0 ? DATA_BODY : (DATA_BODY + DATA_BODY / 2);
+            this.mEscapeDataArray = new QXEscapeDataArray(body);
+            this.mAbsProtocolDataPack = ProtocolDataPackFactory.generalQXSecureDataPack(version, this.mEscapeDataArray);
+        } else {
+            throw new UnknownVersionException(" new SocketDataArray() version:" + version + " unknown.");
+        }
     }
 
 
@@ -218,6 +233,12 @@ public class SocketDataArray extends AbsProtocolDataPack implements Cloneable, I
     public byte[] getProtocolNeedCheckData() {
         checkStateIsReverse();
         return mAbsProtocolDataPack.getProtocolNeedCheckData();
+    }
+
+    @Override
+    public byte getNeedCheckDataCrc() {
+        checkStateIsReverse();
+        return mAbsProtocolDataPack.getNeedCheckDataCrc();
     }
 
     @Override
@@ -576,13 +597,16 @@ public class SocketDataArray extends AbsProtocolDataPack implements Cloneable, I
         mSocketDataArray.onAddPackageReverse(pkgData);
 
         if (!mSocketDataArray.hasProtocolHead()) {
-            throw new EscapeIOException(" not has head [" + Integer.toHexString(ProtocolBuild.QX.STX) + "]");
+            throw new EscapeIOException(" not has head ["
+                    + ProtocolBuild.VERSION.getSTX(mSocketDataArray.getConstructionVersion()) + "]");
         }
         if (!mSocketDataArray.checkProtocolCrc()) {
-            throw new EscapeIOException(" crc error ");
+            throw new EscapeIOException(" crc error my crc:["
+                    + mSocketDataArray.getNeedCheckDataCrc() + "] protocolCrc:" + mSocketDataArray.getProtocolCrc8());
         }
         if (!mSocketDataArray.hasProtocolTail()) {
-            throw new EscapeIOException(" not has tail [" + Integer.toHexString(ProtocolBuild.QX.ETX) + "]");
+            throw new EscapeIOException(" not has tail ["
+                    + ProtocolBuild.VERSION.getETX(mSocketDataArray.getConstructionVersion()) + "]");
         }
         return mSocketDataArray;
     }

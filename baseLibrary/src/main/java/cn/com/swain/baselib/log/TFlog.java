@@ -67,6 +67,11 @@ public class TFlog {
         TFlogImpl.stopRecord();
     }
 
+    // 强制停止录制
+    public static void forceStopRecord() {
+        TFlogImpl.forceStopRecord();
+    }
+
     public static void v(String TAG, String msg) {
         TFlogImpl.v(TAG, msg);
     }

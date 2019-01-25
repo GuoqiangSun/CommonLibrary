@@ -86,7 +86,7 @@ public class LogRecordClient implements ILogRecord {
     /**
      * 初始化写线程
      */
-    void initWriteThread() {
+    synchronized  void initWriteThread() {
 
         if (mHT == null) {
             synchronized (synObj) {
@@ -103,7 +103,7 @@ public class LogRecordClient implements ILogRecord {
     /**
      * 释放写线程
      */
-    void releaseWriteThread() {
+    synchronized void releaseWriteThread() {
         if (mHT != null) {
             synchronized (synObj) {
                 if (mHT != null) {
@@ -130,7 +130,7 @@ public class LogRecordClient implements ILogRecord {
      * 此操作属于线程安全操作
      * {@link #MSG_WHAT_CHECK_BUFFER_WRITE }
      */
-    void createBufferWriter() {
+    synchronized  void createBufferWriter() {
         if (mHandler != null) {
             mHandler.sendEmptyMessage(MSG_WHAT_CHECK_BUFFER_WRITE);
             // 开启同步
@@ -145,7 +145,7 @@ public class LogRecordClient implements ILogRecord {
      * 此操作属于线程安全操作
      * {@link #MSG_WHAT_RELEASE_BUFFER_WRITE }
      */
-    void releaseBufferWriter() {
+    synchronized void releaseBufferWriter() {
         if (mHandler != null) {
             mHandler.sendEmptyMessage(MSG_WHAT_RELEASE_BUFFER_WRITE);
             mHandler.removeMessages(MSG_WHAT_SYNC_CYCLE);
@@ -157,7 +157,7 @@ public class LogRecordClient implements ILogRecord {
      * 此操作属于线程安全操作
      * {@link #MSG_WHAT_RELEASE_BUFFER_WRITE }
      */
-    void syncBufferWriter() {
+    synchronized void syncBufferWriter() {
         if (mHandler != null) {
             mHandler.sendEmptyMessage(MSG_WHAT_SYNC);
         }

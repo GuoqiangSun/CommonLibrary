@@ -134,7 +134,15 @@ public interface IProtocolComData {
 
 
     /**
-     * 获取协议校验字节
+     * 需要校验的数据crc(自己校验的)
+     *
+     * @return int8 crc
+     */
+    byte getNeedCheckDataCrc();
+
+
+    /**
+     * 获取协议校验字节(对端校验的)
      *
      * @return int8 crc
      */

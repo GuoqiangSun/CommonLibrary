@@ -21,6 +21,7 @@ import cn.com.common.test.testUdp.FastUdpActivity;
 import cn.com.swain.baselib.log.TFlog;
 import cn.com.swain.baselib.log.Tlog;
 import cn.com.swain.baselib.util.PermissionGroup;
+import cn.com.swain.baselib.util.PermissionHelper;
 import cn.com.swain.baselib.util.PermissionRequest;
 
 public class MainActivity extends AppCompatActivity {
@@ -95,19 +96,22 @@ public class MainActivity extends AppCompatActivity {
             public void onPermissionRequestResult(String permission, boolean granted) {
                 Tlog.v(" MainActivity requestPermissions " + permission + " " + granted);
                 if (granted) {
-//                    Tlog.set(FileManager.getInstance().getLogPath());
+                    Tlog.setLogRecordDebug(true);
+                    Tlog.set(FileManager.getInstance().getLogPath());
                     testLog();
                 }
             }
-        }, Manifest.permission.WRITE_EXTERNAL_STORAGE,PermissionGroup.LOCATION);
+        }, Manifest.permission.WRITE_EXTERNAL_STORAGE, PermissionGroup.LOCATION);
 
         Tlog.v(" MainActivity onCreate ");
+
 
     }
 
     @Override
     protected void onDestroy() {
-        TFlog.stopRecord();
+        Tlog.v(" MainActivity onDestroy ");
+        Tlog.stopRecord();
         if (mPermissionRequest != null) {
             mPermissionRequest.release();
         }
@@ -161,4 +165,16 @@ public class MainActivity extends AppCompatActivity {
         startActivity(new Intent(this, ShakeActivity.class));
     }
 
+    public void requestPermission(View view) {
+
+        PermissionHelper.requestSinglePermission(this, new PermissionRequest.OnPermissionResult() {
+            @Override
+            public void onPermissionRequestResult(String permission, boolean granted) {
+
+                Tlog.d(permission + " granted: " + granted);
+
+            }
+        }, Manifest.permission.CAMERA);
+
+    }
 }

@@ -45,23 +45,23 @@ public class Tlog {
     }
 
     //注册录制实例
-    public static void set(AbsLogRecord recordMsg) {
-        TlogImpl.set(recordMsg);
+    public static boolean set(AbsLogRecord recordMsg) {
+        return TlogImpl.set(recordMsg);
     }
 
     //注册录制文件类
-    public static void set(File logPath) {
-        TlogImpl.set(logPath);
+    public static boolean set(File logPath) {
+        return TlogImpl.set(logPath);
     }
 
     //注销录制日志
-    public static void remove(AbsLogRecord recordMsg) {
-        TlogImpl.remove(recordMsg);
+    public static boolean remove(AbsLogRecord recordMsg) {
+        return TlogImpl.remove(recordMsg);
     }
 
     //注销录制日志
-    public static void remove() {
-        TlogImpl.remove();
+    public static boolean remove() {
+        return TlogImpl.remove();
     }
 
     //开始录制日志
@@ -72,6 +72,11 @@ public class Tlog {
     //停止录制日志
     public static void stopRecord() {
         TlogImpl.stopRecord();
+    }
+
+    // 强制停止录制
+    public static void forceStopRecord() {
+        TlogImpl.forceStopRecord();
     }
 
     //同步录制的日志到磁盘

@@ -2,13 +2,15 @@ package cn.com.swain.support.protocolEngine.resolve;
 
 import android.os.Looper;
 
+import cn.com.swain.baselib.log.Tlog;
 import cn.com.swain.support.protocolEngine.DataInspector.DataInspectorPool;
 import cn.com.swain.support.protocolEngine.DataInspector.DataResolveInspector;
+import cn.com.swain.support.protocolEngine.ProtocolBuild;
+import cn.com.swain.support.protocolEngine.datagram.ProtocolException.UnknownVersionException;
 import cn.com.swain.support.protocolEngine.datagram.dataproducer.ISocketDataProducer;
 import cn.com.swain.support.protocolEngine.datagram.dataproducer.SocketDataQueueProducer;
 import cn.com.swain.support.protocolEngine.pack.ReceivesData;
 import cn.com.swain.support.protocolEngine.result.IProtocolAnalysisResult;
-import cn.com.swain.baselib.log.Tlog;
 
 /**
  * author: Guoqiang_Sun
@@ -25,7 +27,7 @@ public class ProtocolMultiTaskProcessor extends AbsProtocolProcessor {
                                       int protocolVersion,
                                       int callBackPoolSize,
                                       boolean supportLargerPkg) {
-        this(protocolLooper, mProtocolCallBack,
+        this(protocolLooper, mProtocolCallBack, protocolVersion,
                 new SocketDataQueueProducer(protocolVersion),
                 supportLargerPkg ? new SocketDataQueueProducer(protocolVersion) : null,
                 callBackPoolSize);
@@ -40,26 +42,32 @@ public class ProtocolMultiTaskProcessor extends AbsProtocolProcessor {
      */
     public ProtocolMultiTaskProcessor(Looper protocolLooper,
                                       IProtocolAnalysisResult mProtocolCallBack,
+                                      int protocolVersion,
                                       ISocketDataProducer mSocketDataProducer,
                                       ISocketDataProducer mLargerSocketDataProducer,
                                       int callBackPoolSize) {
 
         if (mProtocolCallBack == null) {
-            throw new NullPointerException(" <ProtocolProcessor> IProtocolAnalysisResult==null . ");
+            throw new NullPointerException(" <ProtocolMultiTaskProcessor> IProtocolAnalysisResult==null . ");
         }
 
         if (protocolLooper == null) {
-            throw new NullPointerException(" <ProtocolProcessor> protocolLooper==null . ");
+            throw new NullPointerException(" <ProtocolMultiTaskProcessor> protocolLooper==null . ");
         }
 
         if (mSocketDataProducer == null) {
-            throw new NullPointerException(" <ProtocolProcessor> ISocketDataProducer==null . ");
+            throw new NullPointerException(" <ProtocolMultiTaskProcessor> ISocketDataProducer==null . ");
         }
 
-        this.mDataResolveQueue = new QxDataResolveQueue(protocolLooper,
-                new DataInspectorPool(new DataResolveInspector(mProtocolCallBack), callBackPoolSize),
-                mSocketDataProducer,
-                mLargerSocketDataProducer);
+
+        if (ProtocolBuild.VERSION.isQXVersion(protocolVersion)) {
+            this.mDataResolveQueue = new QxDataResolveQueue(protocolLooper,
+                    new DataInspectorPool(new DataResolveInspector(mProtocolCallBack), callBackPoolSize),
+                    mSocketDataProducer,
+                    mLargerSocketDataProducer);
+        } else {
+            throw new UnknownVersionException(" ProtocolMultiTaskProcessor unknown version:" + protocolVersion);
+        }
     }
 
     @Override

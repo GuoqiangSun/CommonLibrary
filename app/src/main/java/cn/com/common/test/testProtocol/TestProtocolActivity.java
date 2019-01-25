@@ -64,12 +64,12 @@ public class TestProtocolActivity extends AppCompatActivity {
                         mSocketDataArray.setISUnUsed();
 
                     }
-                }, ProtocolBuild.VERSION.VERSION_0, true);
+                }, ProtocolBuild.VERSION.VERSION_SEQ, true);
 
         ProtocolDataCache.BuildParams mParams = new ProtocolDataCache.BuildParams();
         mParams.mCustom = 0;
         mParams.mProduct = 0;
-        mParams.mProtocolVersion = ProtocolBuild.VERSION.VERSION_0;
+        mParams.mProtocolVersion = ProtocolBuild.VERSION.VERSION_SEQ;
         ProtocolDataCache.getInstance().init(mParams);
         ProtocolDataCache.getInstance().onSCreate();
 
@@ -129,7 +129,9 @@ public class TestProtocolActivity extends AppCompatActivity {
                 ReceivesData mReceiveData = new ReceivesData("00:00:00:00:00:00", buf);
                 absProtocolProcessor.onInputServerData(mReceiveData);
 
-                ResponseData electricityPrice = ProtocolDataCache.getElectricityPrice("00:00:00:00:00:00", 2);
+//                ResponseData electricityPrice = ProtocolDataCache.getElectricityPrice("00:00:00:00:00:00", 2);
+
+                ResponseData electricityPrice = ProtocolDataCache.getTempUnit("00:00:00:00:00:00", (byte)2);
 
                 ResponseData monetaryUnit = ProtocolDataCache.getMonetaryUnit("00:00:00:00:00:00", (byte) 0x03);
 

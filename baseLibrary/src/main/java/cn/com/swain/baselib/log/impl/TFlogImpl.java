@@ -152,6 +152,16 @@ public class TFlogImpl {
         }
     }
 
+    /**
+     * 强制停止录制日志
+     */
+    public void forceStopRecord() {
+        record = 0;
+        if (mRecordMsg != null) {
+            mRecordMsg.stopRecord();
+        }
+    }
+
     public void v(String TAG, String msg) {
         if (mRecordMsg != null) {
             mRecordMsg.recordMsgV(TAG, msg);

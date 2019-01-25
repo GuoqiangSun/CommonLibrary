@@ -48,7 +48,9 @@ public class QXProtocolComData extends AbsProtocolDataPack {
 
     public QXProtocolComData(IEscapeDataArray mComDataArray) {
         this.mComDataArray = mComDataArray;
-        this.version = ProtocolBuild.VERSION.VERSION_0;
+        this.absProtocol_version = ProtocolBuild.VERSION.VERSION_0;
+        this.absProtocol_head = ProtocolBuild.QX.STX;
+        this.absProtocol_tail = ProtocolBuild.QX.ETX;
     }
 
     public static final int LENGTH_BASE_VERSION = 9;
@@ -150,6 +152,26 @@ public class QXProtocolComData extends AbsProtocolDataPack {
     }
 
     @Override
+    public byte getNeedCheckDataCrc() {
+
+        byte[] checkField;
+        try {
+            checkField = getProtocolNeedCheckData();
+        } catch (Exception e) {
+
+            Tlog.e(AbsProtocolProcessor.TAG, " checkProtocolCrc() Exception:", e);
+
+            return 0x0;
+        }
+
+        if (checkField == null) {
+            return 0x0;
+        }
+
+        return CrcUtil.CRC8(checkField);
+    }
+
+    @Override
     public byte[] getProtocolParams() {
 
         int length = getProtocolParamsLength();
@@ -178,24 +200,23 @@ public class QXProtocolComData extends AbsProtocolDataPack {
     @Override
     public byte[] organizeProtocolData() {
 
-        final int paramsLength = params != null ? params.length : 0;
+        final int paramsLength = absProtocol_params != null ? absProtocol_params.length : 0;
         final int allLength = LENGTH_BASE_VERSION + paramsLength;
         final int effectiveLength = allLength - 5;
         final byte[] buf = new byte[allLength];
 
-        head = ProtocolBuild.QX.STX;
-        buf[POINT_HEAD] = head;
-        buf[POINT_LENGTH_START] = this.length_h = (byte) ((effectiveLength >> 8) & 0xFF);
-        buf[POINT_LENGTH_END] = this.length_l = (byte) (effectiveLength & 0xFF);
+        buf[POINT_HEAD] = absProtocol_head;
+        buf[POINT_LENGTH_START] = this.absProtocol_length_h = (byte) ((effectiveLength >> 8) & 0xFF);
+        buf[POINT_LENGTH_END] = this.absProtocol_length_l = (byte) (effectiveLength & 0xFF);
 
-        buf[POINT_CUSTOM] = custom;
-        buf[POINT_PRODUCT] = product;
+        buf[POINT_CUSTOM] = absProtocol_custom;
+        buf[POINT_PRODUCT] = absProtocol_product;
 
-        buf[POINT_TYPE] = type;
-        buf[POINT_CMD] = cmd;
+        buf[POINT_TYPE] = absProtocol_type;
+        buf[POINT_CMD] = absProtocol_cmd;
 
         if (paramsLength > 0) {
-            System.arraycopy(params, 0, buf, POINT_PARAMS_START, paramsLength);
+            System.arraycopy(absProtocol_params, 0, buf, POINT_PARAMS_START, paramsLength);
         }
 
         final int crcPoint = QXProtocolComData.getCRCPoint(paramsLength);
@@ -205,12 +226,11 @@ public class QXProtocolComData extends AbsProtocolDataPack {
 //            Tlog.e(ProtocolProcessor.TAG, " crcPoint:" + crcPoint + " " + crcPoint2);
 //        }
 
-        final byte crc = this.crc = CrcUtil.CRC8(buf, CRC_CHECK_START, crcPoint);
+        final byte crc = this.absProtocol_crc = CrcUtil.CRC8(buf, CRC_CHECK_START, crcPoint);
         buf[crcPoint] = crc;
 
         final int tailPoint = QXProtocolComData.getTailPoint(crcPoint);
-        tail = ProtocolBuild.QX.ETX;
-        buf[tailPoint] = tail;
+        buf[tailPoint] = absProtocol_tail;
 
         return buf;
     }

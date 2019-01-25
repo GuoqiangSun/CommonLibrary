@@ -5,9 +5,7 @@ import android.util.Log;
 import java.io.File;
 import java.util.Formatter;
 
-import cn.com.swain.baselib.log.TFlog;
 import cn.com.swain.baselib.log.logRecord.AbsLogRecord;
-import cn.com.swain.baselib.log.logRecord.impl.LogRecordManager;
 
 /**
  * author: Guoqiang_Sun
@@ -15,7 +13,7 @@ import cn.com.swain.baselib.log.logRecord.impl.LogRecordManager;
  * desc :
  */
 
-public class TlogImpl {
+public class TlogImpl extends TFlogImpl {
 
     public TlogImpl() {
     }
@@ -43,7 +41,6 @@ public class TlogImpl {
      *
      * @param flag if flag is true
      *             need call this method {@link #set(AbsLogRecord)}
-     *             or {@link TFlog#set(AbsLogRecord)}
      */
     public void setLogRecordDebug(boolean flag) {
         LOG_RECORD_DEBUG = flag;
@@ -56,70 +53,32 @@ public class TlogImpl {
         return LOG_RECORD_DEBUG;
     }
 
-
-    /**
-     * 注册录制实例
-     *
-     * @param recordMsg you can use {@link LogRecordManager }
-     */
-    public void set(AbsLogRecord recordMsg) {
-        TFlog.set(recordMsg);
+    @Override
+    public synchronized boolean set(File logPath) {
+        if (!LOG_RECORD_DEBUG) {
+            return false;
+        }
+        return super.set(logPath);
     }
 
-    /**
-     * 注册录制文件类
-     */
-    public void set(File logPath) {
-        TFlog.set(logPath);
+    @Override
+    public synchronized boolean set(AbsLogRecord recordMsg) {
+        if (!LOG_RECORD_DEBUG) {
+            return false;
+        }
+        return super.set(recordMsg);
     }
 
-    /**
-     * 注销录制日志
-     */
-    public void remove(AbsLogRecord recordMsg) {
-        TFlog.remove(recordMsg);
-    }
-
-    /**
-     * 注销录制日志
-     */
-    public void remove() {
-        TFlog.remove();
-    }
-
-    /**
-     * 开始录制日志
-     */
-    public void startRecord() {
-        TFlog.startRecord();
-    }
-
-    /**
-     * 停止录制日志
-     */
-    public void stopRecord() {
-        TFlog.stopRecord();
-    }
-
-    /**
-     * 同步录制的日志到磁盘
-     */
-    public void syncRecordData() {
-        TFlog.syncRecordData();
-    }
-
-    /**
-     * 是否有录制实例
-     */
-    public boolean hasILogRecordImpl() {
-        return TFlog.hasILogRecordImpl();
-    }
-
-    /**
-     * 是否正在录制日志
-     */
+    @Override
     public boolean isRecording() {
-        return TFlog.isRecording();
+        return LOG_RECORD_DEBUG && super.isRecording();
+    }
+
+    @Override
+    public void startRecord() {
+        if (LOG_RECORD_DEBUG) {
+            super.startRecord();
+        }
     }
 
     private boolean LOG_PRINT_STACK = false;
@@ -157,7 +116,7 @@ public class TlogImpl {
         if (DEBUG) {
             Log.v(TAG, reMsg(msg, l));
             if (LOG_RECORD_DEBUG) {
-                TFlog.v(TAG, msg);
+                super.v(TAG, msg);
             }
         }
     }
@@ -166,7 +125,7 @@ public class TlogImpl {
         if (DEBUG) {
             Log.v(TAG, msg, e);
             if (LOG_RECORD_DEBUG) {
-                TFlog.v(TAG, msg, e);
+                super.v(TAG, msg, e);
             }
         }
     }
@@ -175,7 +134,7 @@ public class TlogImpl {
         if (DEBUG) {
             Log.v(TAG, "Throwable : ", e);
             if (LOG_RECORD_DEBUG) {
-                TFlog.v(TAG, e);
+                super.v(TAG, e);
             }
         }
     }
@@ -188,7 +147,7 @@ public class TlogImpl {
         if (DEBUG) {
             Log.d(TAG, reMsg(msg, l));
             if (LOG_RECORD_DEBUG) {
-                TFlog.d(TAG, msg);
+                super.d(TAG, msg);
             }
         }
     }
@@ -197,7 +156,7 @@ public class TlogImpl {
         if (DEBUG) {
             Log.d(TAG, msg, e);
             if (LOG_RECORD_DEBUG) {
-                TFlog.d(TAG, msg, e);
+                super.d(TAG, msg, e);
             }
         }
     }
@@ -206,7 +165,7 @@ public class TlogImpl {
         if (DEBUG) {
             Log.d(TAG, "Throwable : ", e);
             if (LOG_RECORD_DEBUG) {
-                TFlog.d(TAG, e);
+                super.d(TAG, e);
             }
         }
     }
@@ -220,7 +179,7 @@ public class TlogImpl {
         if (DEBUG) {
             Log.i(TAG, reMsg(msg, l));
             if (LOG_RECORD_DEBUG) {
-                TFlog.i(TAG, msg);
+                super.i(TAG, msg);
             }
         }
     }
@@ -229,7 +188,7 @@ public class TlogImpl {
         if (DEBUG) {
             Log.i(TAG, msg, e);
             if (LOG_RECORD_DEBUG) {
-                TFlog.i(TAG, msg, e);
+                super.i(TAG, msg, e);
             }
         }
     }
@@ -238,7 +197,7 @@ public class TlogImpl {
         if (DEBUG) {
             Log.i(TAG, "Throwable : ", e);
             if (LOG_RECORD_DEBUG) {
-                TFlog.i(TAG, e);
+                super.i(TAG, e);
             }
         }
     }
@@ -252,7 +211,7 @@ public class TlogImpl {
         if (DEBUG) {
             Log.w(TAG, reMsg(msg, l));
             if (LOG_RECORD_DEBUG) {
-                TFlog.w(TAG, msg);
+                super.w(TAG, msg);
             }
         }
     }
@@ -261,7 +220,7 @@ public class TlogImpl {
         if (DEBUG) {
             Log.w(TAG, msg, e);
             if (LOG_RECORD_DEBUG) {
-                TFlog.w(TAG, msg, e);
+                super.w(TAG, msg, e);
             }
         }
     }
@@ -270,7 +229,7 @@ public class TlogImpl {
         if (DEBUG) {
             Log.w(TAG, "Throwable : ", e);
             if (LOG_RECORD_DEBUG) {
-                TFlog.w(TAG, e);
+                super.w(TAG, e);
             }
         }
     }
@@ -284,7 +243,7 @@ public class TlogImpl {
         if (DEBUG) {
             Log.e(TAG, reMsg(msg, l));
             if (LOG_RECORD_DEBUG) {
-                TFlog.e(TAG, msg);
+                super.e(TAG, msg);
             }
         }
     }
@@ -293,7 +252,7 @@ public class TlogImpl {
         if (DEBUG) {
             Log.e(TAG, msg, e);
             if (LOG_RECORD_DEBUG) {
-                TFlog.e(TAG, msg, e);
+                super.e(TAG, msg, e);
             }
         }
     }
@@ -302,7 +261,7 @@ public class TlogImpl {
         if (DEBUG) {
             Log.e(TAG, "Throwable : ", e);
             if (LOG_RECORD_DEBUG) {
-                TFlog.e(TAG, e);
+                super.e(TAG, e);
             }
         }
     }
@@ -316,7 +275,7 @@ public class TlogImpl {
         if (DEBUG) {
             Log.e(TAG, reMsg(msg, l));
             if (LOG_RECORD_DEBUG) {
-                TFlog.a(TAG, msg);
+                super.a(TAG, msg);
             }
         }
     }
@@ -326,7 +285,7 @@ public class TlogImpl {
         if (DEBUG) {
             Log.e(TAG, msg, e);
             if (LOG_RECORD_DEBUG) {
-                TFlog.a(TAG, msg, e);
+                super.a(TAG, msg, e);
             }
         }
     }
@@ -335,7 +294,7 @@ public class TlogImpl {
         if (DEBUG) {
             Log.e(TAG, "Throwable : ", e);
             if (LOG_RECORD_DEBUG) {
-                TFlog.a(TAG, e);
+                super.a(TAG, e);
             }
         }
     }
@@ -343,9 +302,9 @@ public class TlogImpl {
     public void pst(String TAG, String msg) {
         Throwable throwable = new Throwable();
         if (DEBUG) {
-            Log.e(TAG, msg, throwable);
+            Log.w(TAG, msg, throwable);
             if (LOG_RECORD_DEBUG) {
-                TFlog.a(TAG, msg, throwable);
+                super.w(TAG, msg, throwable);
             }
         }
     }

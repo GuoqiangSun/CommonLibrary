@@ -6,8 +6,8 @@ android {
     defaultConfig {
         minSdkVersion 17
         targetSdkVersion 27
-        versionCode 3201
-        versionName "3.2.01"
+        versionCode 3206
+        versionName "3.2.06"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
@@ -32,20 +32,20 @@ dependencies {
     implementation project(path: ':baseLibrary')
 }
 
-//apply plugin: 'com.novoda.bintray-release'
-//publish {
-//
-//    //bintray.com用户名
-//    userOrg = 'swain169'
-//    //自定义，别人引用时  groupId:artifactId:publishVersion
-//    groupId = 'cn.com.swain169'
-//    //项目名称
-//    artifactId = 'protocolEngine'
-//    //版本号
-//    publishVersion = '3.2.01'
-//    //描述，不重要
-//    desc = '移除loglib'
-//    //网站，不重要
-//    website = 'https://www.startai.com.cn'
-//
-//}
+apply plugin: 'com.novoda.bintray-release'
+publish {
+
+    //bintray.com用户名
+    userOrg = 'swain169'
+    //自定义，别人引用时  groupId:artifactId:publishVersion
+    groupId = 'cn.com.swain169'
+    //项目名称
+    artifactId = 'protocolEngine'
+    //版本号
+    publishVersion = '3.2.06'
+    //描述，不重要
+    desc = '优化protocolEngine结构'
+    //网站，不重要
+    website = 'https://www.startai.com.cn'
+
+}
