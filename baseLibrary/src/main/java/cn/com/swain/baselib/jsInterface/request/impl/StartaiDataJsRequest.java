@@ -10,8 +10,9 @@ import cn.com.swain.baselib.log.Tlog;
 /**
  * author: Guoqiang_Sun
  * date : 2018/8/27 0027
- * desc :
+ * desc : startai 和 js 通信的模板
  */
+@Deprecated
 public class StartaiDataJsRequest extends AbsHandlerJsInterface {
 
     private static final String NAME_JS = "Data";
@@ -26,12 +27,13 @@ public class StartaiDataJsRequest extends AbsHandlerJsInterface {
     @Override
     protected void handleMessage(Message msg) {
 
-        if (mCallBack != null) {
-            // callback to AbsCommonJsInterfaceProxy
-
-            mCallBack.handleJsRequest((String) msg.obj);
-        } else {
-            Tlog.e(TAG, " StartaiDataJsRequest handleMessage IJSRequest is null ");
+        if (msg.what == MSG_KEY) {
+            if (mCallBack != null) {
+                // callback to AbsCommonJsInterfaceProxy
+                mCallBack.handleJsRequest((String) msg.obj);
+            } else {
+                Tlog.e(TAG, " StartaiDataJsRequest handleMessage IJSRequest is null ");
+            }
         }
 
     }

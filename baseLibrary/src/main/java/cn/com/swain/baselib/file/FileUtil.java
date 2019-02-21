@@ -1,9 +1,12 @@
 package cn.com.swain.baselib.file;
 
 import android.app.Application;
+import android.content.Context;
 import android.content.Intent;
+import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Build;
+import android.support.v4.content.FileProvider;
 import android.system.Os;
 
 import java.io.BufferedReader;
@@ -25,18 +28,121 @@ import java.nio.channels.FileChannel;
  */
 public class FileUtil {
 
+    /**
+     * 扫描指定文件
+     * <p>
+     * can use {@link android.media.MediaScannerConnection#scanFile(Context, String[], String[], MediaScannerConnection.OnScanCompletedListener)}
+     *
+     * @param app      application
+     * @param filePath 文件路径
+     */
+    public static void scanFileAsync(Application app, String filePath) {
+        scanFileAsync(app, new File(filePath));
+    }
 
-    public static void notifySystemToScan(Application app, String filePath) {
+    /**
+     * 扫描指定文件
+     * <p>
+     * can use {@link android.media.MediaScannerConnection#scanFile(Context, String[], String[], MediaScannerConnection.OnScanCompletedListener)}
+     *
+     * @param app      application
+     * @param filePath 文件路径
+     */
+    public static void scanFileAsync(Application app, File filePath) {
         Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-        File file = new File(filePath);
-
-        Uri uri = Uri.fromFile(file);
+        Uri uri = Uri.fromFile(filePath);
         intent.setData(uri);
         app.sendBroadcast(intent);
     }
 
+    /**
+     * 扫描指定目录
+     *
+     * @param app application
+     * @param dir 目录路径
+     */
+    public static void scanDirAsync(Application app, String dir) {
+        scanDirAsync(app, new File(dir));
+    }
 
+    public static final String ACTION_MEDIA_SCANNER_SCAN_DIR = "android.intent.action.MEDIA_SCANNER_SCAN_DIR";
 
+    /**
+     * 扫描指定目录
+     *
+     * @param app application
+     * @param dir 目录路径
+     */
+    public static void scanDirAsync(Application app, File dir) {
+        Intent intent = new Intent(ACTION_MEDIA_SCANNER_SCAN_DIR);
+        Uri uri = fromFile(app, dir);
+        intent.setData(uri);
+        app.sendBroadcast(intent);
+    }
+
+    /**
+     * 路径转uri
+     *
+     * @param app  {@link Application}
+     * @param path 路径
+     * @return {@link Uri}
+     */
+    public static Uri fromFile(Application app, File path) {
+        Uri mUri;
+        if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
+            // 从文件中创建uri
+            mUri = Uri.fromFile(path);
+        } else {
+            String authority = app.getPackageName() + ".photo.provider";
+            mUri = FileProvider.getUriForFile(app, authority, path);
+        }
+        return mUri;
+    }
+
+    /**
+     * 扫描指定路径
+     *
+     * @param app  application
+     * @param path 路径
+     */
+    public static void notifySystemToScan(Application app, String path) {
+        notifySystemToScan(app, new File(path));
+    }
+
+    /**
+     * 扫描指定路径
+     *
+     * @param app  application
+     * @param path 路径
+     */
+    public static void notifySystemToScan(Application app, File path) {
+        if (path.exists()) {
+            if (path.isFile()) {
+                scanFileAsync(app, path);
+            } else if (path.isDirectory()) {
+                scanDirAsync(app, path);
+            } else {
+                File parentFile = path.getParentFile();
+                scanDirAsync(app, parentFile);
+            }
+        } else {
+            File parentFile = path.getParentFile();
+            if (parentFile.exists()) {
+                if (path.isFile()) {
+                    scanFileAsync(app, path);
+                } else if (path.isDirectory()) {
+                    scanDirAsync(app, path);
+                }
+            }
+        }
+    }
+
+    /**
+     * 获取文本内容
+     *
+     * @param msgFile 文件路径
+     * @return 文本
+     */
     public static String getFileContent(File msgFile) {
 
         if (msgFile == null || !msgFile.exists()) {
@@ -68,11 +174,23 @@ public class FileUtil {
         return "";
     }
 
+    /**
+     * 保存文本,没有则创建,有则追加
+     *
+     * @param logPath 文件路径
+     * @param msg     文本内容
+     * @return 是否保存成功
+     */
     public static boolean saveFileMsg(File logPath, String msg) {
         return saveFileMsg(logPath, msg, true);
     }
 
-
+    /**
+     * @param logPath 文件路径
+     * @param msg     文本内容
+     * @param append  是否追加
+     * @return 是否保存成功
+     */
     public static boolean saveFileMsg(File logPath, String msg, boolean append) {
         if (!createNullFile(logPath)) {
             return false;
@@ -105,6 +223,14 @@ public class FileUtil {
 
 
     public static boolean saveException(File logPath, String head, Throwable ex, boolean append) {
+        return saveException(logPath, head, null, ex, append);
+    }
+
+    public static boolean saveException(File logPath, String head, String msg, boolean append) {
+        return saveException(logPath, head, msg, null, append);
+    }
+
+    public static boolean saveException(File logPath, String head, String msg, Throwable ex, boolean append) {
         if (!createNullFile(logPath)) {
             return false;
         }
@@ -115,10 +241,11 @@ public class FileUtil {
             if (head != null) {
                 pw.println(head);
             }
+            if (msg != null) {
+                pw.println(msg);
+            }
             if (ex != null) {
                 ex.printStackTrace(pw);
-            } else {
-                pw.println(" Throwable is null ");
             }
 
         } catch (FileNotFoundException e) {
@@ -133,48 +260,12 @@ public class FileUtil {
         return true;
     }
 
-    public static boolean saveException(File logPath, String head, String msg, boolean append) {
-
-        if (!createNullFile(logPath)) {
-            return false;
-        }
-
-        FileWriter fw = null;
-        try {
-            fw = new FileWriter(logPath, append);
-            fw.write("\n");
-            if (head != null) {
-                fw.write(head);
-                fw.write("\n");
-            }
-            if (msg != null) {
-                fw.write(msg);
-            } else {
-                fw.write(" Throwable is null ");
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        } finally {
-            if (fw != null) {
-
-                try {
-                    fw.flush();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-                try {
-                    fw.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-
-        return true;
-    }
-
+    /**
+     * 创建空文件,上次目录没有的则也创建上级目录
+     *
+     * @param mPath 文件路径
+     * @return 是否创建成功
+     */
     public static boolean createNullFile(File mPath) {
         if (mPath == null) {
             return false;
@@ -197,7 +288,13 @@ public class FileUtil {
         return exit;
     }
 
-
+    /**
+     * 判断该文件是否超过指定大小
+     *
+     * @param mPath 文件路径
+     * @param M     兆
+     * @return 是否超过, 炒作指定大小则不可以追加.
+     */
     public static boolean isAppend(File mPath, int M) {
 
         boolean append = true;
@@ -212,6 +309,12 @@ public class FileUtil {
 
     }
 
+    /**
+     * 同步文件到磁盘
+     *
+     * @param fd 文件描述
+     * @return 是否同步成功
+     */
     public static boolean syncFile(FileDescriptor fd) {
         if (fd == null) {
             return false;
@@ -233,6 +336,12 @@ public class FileUtil {
         return false;
     }
 
+    /**
+     * 文件copy
+     *
+     * @param source 源文件
+     * @param dest   目标文件
+     */
     public static void copyFileUsingFileChannels(File source, File dest) {
         FileChannel inputChannel = null;
         FileChannel outputChannel = null;

@@ -18,11 +18,12 @@ public class Tlog {
     private Tlog() {
     }
 
-    //设置是否开启日志
+    //设置是否打印日志
     public static void setDebug(boolean flag) {
         TlogImpl.setDebug(flag);
     }
 
+    //是否打印日志
     public static boolean isDebug() {
         return TlogImpl.isDebug();
     }
@@ -116,6 +117,7 @@ public class Tlog {
         TlogImpl.v(TAG, e);
     }
 
+
     public static void d(String TAG, String msg) {
         TlogImpl.d(TAG, msg);
     }
@@ -183,6 +185,7 @@ public class Tlog {
         TlogImpl.e(TAG, e);
     }
 
+
     public static void a(String TAG, String msg) {
         TlogImpl.a(TAG, msg);
     }
@@ -199,8 +202,9 @@ public class Tlog {
         TlogImpl.a(TAG, e);
     }
 
-    public static void pst(String TAG, String msg) {
-        TlogImpl.pst(TAG, msg);
+
+    public static void p(String TAG, String msg) {
+        TlogImpl.p(TAG, msg);
     }
 
     /********/
@@ -249,7 +253,7 @@ public class Tlog {
         TlogImpl.e(e);
     }
 
-    public static void pst(String msg) {
-        TlogImpl.pst(msg);
+    public static void p(String msg) {
+        TlogImpl.p(msg);
     }
 }

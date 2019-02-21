@@ -19,9 +19,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import cn.com.common.test.R;
+import cn.com.swain.baselib.log.Tlog;
 import cn.com.swain.baselib.util.CpuUtil;
 import cn.com.swain.baselib.util.PermissionRequest;
-import cn.com.swain.baselib.log.Tlog;
 
 public class FunctionActivity extends AppCompatActivity {
 
@@ -114,10 +114,11 @@ public class FunctionActivity extends AppCompatActivity {
 
         request.requestPermission(new PermissionRequest.OnPermissionResult() {
             @Override
-            public void onPermissionRequestResult(String permission, boolean granted) {
+            public boolean onPermissionRequestResult(String permission, boolean granted) {
 
                 mWifiInfoTxt.setText(getWifiMacAddress());
 
+                return true;
             }
         }, Manifest.permission.ACCESS_COARSE_LOCATION);
 

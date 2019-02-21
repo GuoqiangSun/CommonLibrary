@@ -5,19 +5,20 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import java.io.IOException;
 import java.io.InputStream;
 
 import cn.com.common.test.R;
-import cn.com.swain.view.scrollview.AutoScrollMarqueeView;
+import cn.com.swain.baselib.view.scrollTxt.AutoScrollMarqueeView;
 
 public class ScrollViewActivity extends AppCompatActivity {
 
     ViewGroup rootView;
     AutoScrollMarqueeView marqueeView;
-    RelativeLayout.LayoutParams marqueeParams;
+    LinearLayout.LayoutParams marqueeParams;
     String originalStr;
     String showStr;
     String secondShowStr;
@@ -43,7 +44,7 @@ public class ScrollViewActivity extends AppCompatActivity {
         showStr = "给我一片蓝天 一轮初升的太阳,给我一";
         secondShowStr = "片绿草 绵延向远方，给我一只雄鹰 一个威武的汉子.";
 //                RelativeLayout.LayoutParams marqueeParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-        marqueeParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, 300);
+        marqueeParams = new LinearLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, 300);
         marqueeParams.setMargins(0, 100, 0, 0);
 
         marqueeView = new AutoScrollMarqueeView(getApplicationContext());

@@ -9,12 +9,14 @@ import android.view.View;
 
 import cn.com.common.test.R;
 import cn.com.common.test.global.FileManager;
+import cn.com.common.test.light.ColorLightActivity;
 import cn.com.common.test.p2p.p2pAndroid.P2pClientActivity;
 import cn.com.common.test.scanOR.ScanORCodeActivity;
 import cn.com.common.test.shake.ShakeActivity;
 import cn.com.common.test.testBle.BleScanActivity;
 import cn.com.common.test.testFun.FunctionActivity;
 import cn.com.common.test.testProtocol.TestProtocolActivity;
+import cn.com.common.test.testScrollView.LinearViewActivity;
 import cn.com.common.test.testScrollView.ScrollViewActivity;
 import cn.com.common.test.testUdp.FastMultiUdpActivity;
 import cn.com.common.test.testUdp.FastUdpActivity;
@@ -90,20 +92,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Tlog.startRecord();
 
-        mPermissionRequest = new PermissionRequest(this);
-        mPermissionRequest.requestPermissions(new PermissionRequest.OnPermissionResult() {
-            @Override
-            public void onPermissionRequestResult(String permission, boolean granted) {
-                Tlog.v(" MainActivity requestPermissions " + permission + " " + granted);
-                if (granted) {
-                    Tlog.setLogRecordDebug(true);
-                    Tlog.set(FileManager.getInstance().getLogPath());
-                    testLog();
-                }
-            }
-        }, Manifest.permission.WRITE_EXTERNAL_STORAGE, PermissionGroup.LOCATION);
-
         Tlog.v(" MainActivity onCreate ");
+
+        Tlog.p(" MainActivity onCreate p ");
 
 
     }
@@ -167,14 +158,46 @@ public class MainActivity extends AppCompatActivity {
 
     public void requestPermission(View view) {
 
-        PermissionHelper.requestSinglePermission(this, new PermissionRequest.OnPermissionResult() {
+        PermissionHelper.requestPermission(this, new PermissionRequest.OnPermissionResult() {
             @Override
-            public void onPermissionRequestResult(String permission, boolean granted) {
+            public boolean onPermissionRequestResult(String permission, boolean granted) {
 
                 Tlog.d(permission + " granted: " + granted);
 
-            }
-        }, Manifest.permission.CAMERA);
+                if (Manifest.permission.ACCESS_COARSE_LOCATION.equals(permission)) {
+                    return false;
+                }
 
+                return true;
+            }
+        }, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+
+    }
+
+    public void requestPermission1(View view) {
+
+        mPermissionRequest = new PermissionRequest(this);
+        mPermissionRequest.requestPermissions(new PermissionRequest.OnPermissionResult() {
+            @Override
+            public boolean onPermissionRequestResult(String permission, boolean granted) {
+                Tlog.v(" MainActivity requestPermissions " + permission + " " + granted);
+                if (granted) {
+                    Tlog.setLogRecordDebug(true);
+                    Tlog.set(FileManager.getInstance().getLogPath());
+                    testLog();
+                }
+                return true;
+            }
+        }, Manifest.permission.WRITE_EXTERNAL_STORAGE, PermissionGroup.LOCATION);
+
+    }
+
+
+    public void colorLight(View view) {
+        startActivity(new Intent(this, ColorLightActivity.class));
+    }
+
+    public void linearTxt(View view) {
+        startActivity(new Intent(this, LinearViewActivity.class));
     }
 }

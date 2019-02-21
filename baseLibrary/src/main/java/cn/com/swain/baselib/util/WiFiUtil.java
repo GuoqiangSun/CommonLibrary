@@ -18,6 +18,42 @@ import java.util.List;
 public class WiFiUtil {
 
     /**
+     * 判断是否连接着wifi
+     *
+     * @param applicationContext {@link Application}
+     * @return boolean
+     */
+    public static boolean isWiFiConnected(Application applicationContext) {
+        if (applicationContext == null) {
+            return false;
+        }
+        WifiManager mWiFiManager = (WifiManager) applicationContext.getSystemService(Context.WIFI_SERVICE);
+        return isWiFiConnected(mWiFiManager);
+    }
+
+    /**
+     * 判断是否连接着wifi
+     *
+     * @param mWiFiManager {@link WifiManager}
+     * @return boolean
+     */
+    public static boolean isWiFiConnected(WifiManager mWiFiManager) {
+        if (mWiFiManager == null) {
+            return false;
+        }
+        if (!mWiFiManager.isWifiEnabled()) {
+            return false;
+        }
+
+        WifiInfo connectionInfo = mWiFiManager.getConnectionInfo();
+//        String ssid = connectionInfo != null ? connectionInfo.getSSID() : null;
+        int conNetworkID = connectionInfo != null ? connectionInfo.getNetworkId() : -1;
+
+        return (conNetworkID != -1);
+    }
+
+
+    /**
      * 获取连接WiFi的SSID
      *
      * @param applicationContext {@link Application}

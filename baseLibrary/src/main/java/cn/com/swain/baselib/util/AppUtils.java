@@ -1,5 +1,6 @@
 package cn.com.swain.baselib.util;
 
+import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningServiceInfo;
 import android.content.ComponentName;
@@ -169,7 +170,7 @@ public class AppUtils {
 
         try {
 
-            PackageInfo packageInfo = packageManager.getPackageInfo(mContext.getPackageName(),
+            @SuppressLint("PackageManagerGetSignatures") PackageInfo packageInfo = packageManager.getPackageInfo(mContext.getPackageName(),
                     PackageManager.GET_SIGNATURES);
 
             Signature[] signatures = packageInfo.signatures;
@@ -195,7 +196,7 @@ public class AppUtils {
      */
     public static String generalSsl(Context mContext) {
         try {
-            PackageInfo info = mContext.getPackageManager().getPackageInfo(mContext.getPackageName(),
+            @SuppressLint("PackageManagerGetSignatures") PackageInfo info = mContext.getPackageManager().getPackageInfo(mContext.getPackageName(),
                     PackageManager.GET_SIGNATURES);
             MessageDigest md = MessageDigest.getInstance("SHA");
             md.update(info.signatures[0].toByteArray());

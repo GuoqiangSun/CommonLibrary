@@ -299,7 +299,7 @@ public class TlogImpl extends TFlogImpl {
         }
     }
 
-    public void pst(String TAG, String msg) {
+    public void p(String TAG, String msg) {
         Throwable throwable = new Throwable();
         if (DEBUG) {
             Log.w(TAG, msg, throwable);
@@ -312,7 +312,7 @@ public class TlogImpl extends TFlogImpl {
     private String getStackTrace(int l) {
         Throwable throwable = new Throwable();
         final StackTraceElement[] stackTrace = throwable.getStackTrace();
-        if (l >= stackTrace.length) {
+        if (l >= stackTrace.length || l < 0) {
             return Log.getStackTraceString(throwable);
         }
         StackTraceElement targetElement = stackTrace[l];
@@ -398,7 +398,7 @@ public class TlogImpl extends TFlogImpl {
         e(TAG_GLOBAL, "Throwable : ", e);
     }
 
-    public void pst(String msg) {
-        pst(TAG_GLOBAL, msg);
+    public void p(String msg) {
+        p(TAG_GLOBAL, msg);
     }
 }

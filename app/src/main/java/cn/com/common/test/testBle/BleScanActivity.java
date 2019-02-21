@@ -121,7 +121,7 @@ public class BleScanActivity extends AppCompatActivity {
 //        }, permissionArray[1]);
 
 
-//        mPermissionRequest.requestAllPermission(new PermissionRequest.OnAllPermissionFinish() {
+//        mPermissionRequest.requestAllPermission(new PermissionRequest.OnPermissionFinish() {
 //            @Override
 //            public void onAllPermissionRequestFinish() {
 //                Tlog.d(TAG, "HomeActivity  onAllPermissionRequestFinish() ");
@@ -137,11 +137,12 @@ public class BleScanActivity extends AppCompatActivity {
         PermissionHelper.requestPermission(this,
                 new PermissionRequest.OnPermissionResult() {
                     @Override
-                    public void onPermissionRequestResult(String permission, boolean granted) {
+                    public boolean onPermissionRequestResult(String permission, boolean granted) {
                         Tlog.v(TAG, "HomeActivity  onPermissionRequestResult() " + permission + " " + granted);
+                        return true;
                     }
                 },
-                new PermissionRequest.OnAllPermissionFinish() {
+                new PermissionRequest.OnPermissionFinish() {
                     @Override
                     public void onAllPermissionRequestFinish() {
                         Tlog.d(TAG, "HomeActivity  onAllPermissionRequestFinish() ");

@@ -21,6 +21,10 @@ public class BaseResponseMethod {
         mBean.setMsgType(msgType);
     }
 
+    public void setMsgType(String msgType) {
+        mBean.setMsgType(msgType);
+    }
+
     public void releaseCache() {
         mData = null;
         responseJsMethod = null;
@@ -33,7 +37,7 @@ public class BaseResponseMethod {
         if (mData == null) {
             mData = mBean.toJsonStr();
         }
-        if (responseJsMethod == null && mData != null) {
+        if (responseJsMethod == null) {
             responseJsMethod = mResponse.getResponseJsMethod(mData);
         }
         return responseJsMethod;

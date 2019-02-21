@@ -69,11 +69,11 @@ public final class PermissionRequest {
     /**
      * 请求所有的权限
      *
-     * @param mAllFinish      所有权限请求完毕回调
+     * @param mFinish         所有权限请求完毕回调
      * @param permissionArray 权限
      */
-    public void requestPermissions(OnAllPermissionFinish mAllFinish, String... permissionArray) {
-        requestPermissions(mAllFinish, null, permissionArray);
+    public void requestPermissions(OnPermissionFinish mFinish, String... permissionArray) {
+        requestPermissions(mFinish, null, permissionArray);
     }
 
 
@@ -96,11 +96,11 @@ public final class PermissionRequest {
     /**
      * 请求所有的权限
      *
-     * @param mAllFinish      所有权限请求完毕回调
+     * @param mFinish         所有权限请求完毕回调
      * @param mResult         单个权限请求结果
      * @param permissionArray 权限
      */
-    public void requestPermissions(OnAllPermissionFinish mAllFinish, OnPermissionResult mResult, String... permissionArray) {
+    public void requestPermissions(OnPermissionFinish mFinish, OnPermissionResult mResult, String... permissionArray) {
 
         final int size = mInternalPermissionQueue.size();
         int offer = 0;
@@ -114,8 +114,8 @@ public final class PermissionRequest {
             }
         }
 
-        if (mAllFinish != null) {
-            RequestPermissionMsg mMsg = new RequestPermissionMsg(null, null, mAllFinish);
+        if (mFinish != null) {
+            RequestPermissionMsg mMsg = new RequestPermissionMsg(null, null, mFinish);
             mInternalPermissionQueue.offer(mMsg);
             offer++;
         }
@@ -192,8 +192,8 @@ public final class PermissionRequest {
 
                 RequestPermissionMsg internalPermissionMsgFinish = (RequestPermissionMsg) msg.obj;
 
-                if (internalPermissionMsgFinish != null && internalPermissionMsgFinish.mAllFinish != null) {
-                    internalPermissionMsgFinish.mAllFinish.onAllPermissionRequestFinish();
+                if (internalPermissionMsgFinish != null && internalPermissionMsgFinish.mFinish != null) {
+                    internalPermissionMsgFinish.mFinish.onAllPermissionRequestFinish();
                 }
 
                 break;
@@ -213,6 +213,7 @@ public final class PermissionRequest {
                     if (internalPermissionMsg.mResult != null) {
                         internalPermissionMsg.mResult.onPermissionRequestResult(
                                 internalPermissionMsg.permission, true);
+
                     }
                     if (mHandler != null) {
                         mHandler.sendEmptyMessage(INTERNAL_PERMISSIONS_REQUEST_CODE);
@@ -391,18 +392,18 @@ public final class PermissionRequest {
     }
 
     private final class RequestPermissionMsg {
-        private RequestPermissionMsg(OnPermissionResult mResult, String permission, OnAllPermissionFinish mAllFinish) {
+        private RequestPermissionMsg(OnPermissionResult mResult, String permission, OnPermissionFinish mFinish) {
             this.permission = permission;
             this.mResult = mResult;
-            this.mAllFinish = mAllFinish;
+            this.mFinish = mFinish;
         }
 
-        private OnAllPermissionFinish mAllFinish;
+        private OnPermissionFinish mFinish;
         private String permission;
         private OnPermissionResult mResult;
     }
 
-    public interface OnAllPermissionFinish {
+    public interface OnPermissionFinish {
 
         /**
          * 权限请求完毕
@@ -417,8 +418,9 @@ public final class PermissionRequest {
          *
          * @param permission 权限名称
          * @param granted    是否授予
+         *                   @return 是否继续请求权限
          */
-        void onPermissionRequestResult(String permission, boolean granted);
+        boolean onPermissionRequestResult(String permission, boolean granted);
     }
 
 }

@@ -1,7 +1,6 @@
 package cn.com.swain.baselib.util;
 
 import android.app.Activity;
-import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -58,7 +57,7 @@ public class PermissionHelper {
      * @param permissions 权限
      */
     public static void requestPermission(Context context,
-                                         PermissionRequest.OnAllPermissionFinish mFinish,
+                                         PermissionRequest.OnPermissionFinish mFinish,
                                          String... permissions) {
         requestPermission(context, null, mFinish, permissions);
     }
@@ -66,14 +65,14 @@ public class PermissionHelper {
     /**
      * @param context     Context
      * @param mResult     单条权限结果回调
-     * @param mAFinish    所有权限请求完毕
+     * @param mFinish     所有权限请求完毕
      * @param permissions 权限
      */
     public static void requestPermission(Context context,
                                          PermissionRequest.OnPermissionResult mResult,
-                                         PermissionRequest.OnAllPermissionFinish mAFinish,
+                                         PermissionRequest.OnPermissionFinish mFinish,
                                          String... permissions) {
-        final PermissionMsg msg = new PermissionMsg(mResult, mAFinish, permissions);
+        final PermissionMsg msg = new PermissionMsg(mResult, mFinish, permissions);
         requestPermission(context, msg);
     }
 
@@ -116,8 +115,8 @@ public class PermissionHelper {
      *
      * @param context Context
      */
-    public static void requestSinglePermission(Context context, final PermissionMsg msg) {
-        if (isGranted( context, msg.permissions[0])) {
+    public static void requestSinglePermission(Context context, PermissionMsg msg) {
+        if (isGranted(context, msg.permissions[0])) {
             if (msg.mResult != null) {
                 msg.mResult.onPermissionRequestResult(msg.permissions[0], true);
             }
@@ -146,7 +145,8 @@ public class PermissionHelper {
     }
 
 
-    public static class PermissionActivity extends Activity implements PermissionRequest.OnAllPermissionFinish {
+    public static class PermissionActivity extends Activity
+            implements PermissionRequest.OnPermissionFinish, PermissionRequest.OnPermissionResult {
 
 
         public static void start(final Context context, final PermissionMsg mHelper) {
@@ -198,7 +198,7 @@ public class PermissionHelper {
 
             mRequest = new PermissionRequest(this);
 
-            mRequest.requestPermissions(this, this.permissionMsg.mResult, this.permissionMsg.permissions);
+            mRequest.requestPermissions(this, this, this.permissionMsg.permissions);
 
         }
 
@@ -242,12 +242,25 @@ public class PermissionHelper {
         public void onAllPermissionRequestFinish() {
 
             Tlog.w(TAG, " PermissionActivity rec onAllPermissionRequestFinish ");
-
             if (permissionMsg != null && permissionMsg.mFinish != null) {
                 permissionMsg.mFinish.onAllPermissionRequestFinish();
             }
 
             finish();
+        }
+
+        @Override
+        public boolean onPermissionRequestResult(String permission, boolean granted) {
+
+            if (permissionMsg != null && permissionMsg.mResult != null) {
+                boolean next = permissionMsg.mResult.onPermissionRequestResult(permission, granted);
+                if (!next) {
+                    Tlog.w(TAG, " PermissionActivity onPermissionRequestResult abort request ");
+                    finish();
+                }
+            }
+
+            return true;
         }
     }
 
@@ -256,7 +269,7 @@ public class PermissionHelper {
 
         private String[] permissions;
         private PermissionRequest.OnPermissionResult mResult;
-        private PermissionRequest.OnAllPermissionFinish mFinish;
+        private PermissionRequest.OnPermissionFinish mFinish;
 
         public PermissionMsg() {
 
@@ -281,7 +294,7 @@ public class PermissionHelper {
          * @param mFinish    所有权限请求完毕
          * @param permission 权限
          */
-        public PermissionMsg(PermissionRequest.OnAllPermissionFinish mFinish, String... permission) {
+        public PermissionMsg(PermissionRequest.OnPermissionFinish mFinish, String... permission) {
             this(null, mFinish, permission);
         }
 
@@ -291,7 +304,7 @@ public class PermissionHelper {
          * @param permission 权限
          */
         public PermissionMsg(PermissionRequest.OnPermissionResult mResult,
-                             PermissionRequest.OnAllPermissionFinish mFinish,
+                             PermissionRequest.OnPermissionFinish mFinish,
                              String... permission) {
             regPermissionFinishCallBack(mFinish);
             regPermissionResultCallBack(mResult);
@@ -327,7 +340,7 @@ public class PermissionHelper {
          *
          * @param mFinish 所有权限请求完毕
          */
-        public PermissionMsg regPermissionFinishCallBack(PermissionRequest.OnAllPermissionFinish mFinish) {
+        public PermissionMsg regPermissionFinishCallBack(PermissionRequest.OnPermissionFinish mFinish) {
             this.mFinish = mFinish;
             return this;
         }

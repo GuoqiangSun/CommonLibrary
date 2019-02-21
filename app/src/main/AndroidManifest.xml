@@ -100,6 +100,8 @@
             android:name=".shake.ShakeActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait" />
+        <activity android:name=".light.ColorLightActivity" />
+        <activity android:name=".testScrollView.LinearViewActivity" />
 
     </application>
 

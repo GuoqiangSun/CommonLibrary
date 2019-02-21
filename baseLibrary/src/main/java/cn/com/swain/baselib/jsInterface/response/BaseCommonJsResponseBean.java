@@ -11,6 +11,9 @@ import org.json.JSONObject;
  */
 public class BaseCommonJsResponseBean {
 
+    public BaseCommonJsResponseBean() {
+    }
+
     public String getMsgType() {
         return msgType;
     }

@@ -22,17 +22,14 @@ public class AbsCommonJsInterfaceWrapper extends AbsJsInterface {
 
     protected void attachAbsJsInterface(AbsJsInterface mJsInterface) {
         if (this.mJsInterface != null) {
-            throw new IllegalArgumentException(" mJsInterface is not null ");
+            throw new IllegalArgumentException(" mJsInterface is already set ");
         }
         this.mJsInterface = mJsInterface;
     }
 
     @Override
     public String getName() {
-        if (mJsInterface == null) {
-            return null;
-        }
-        return mJsInterface.getName();
+        return mJsInterface != null ? mJsInterface.getName() : super.getName();
     }
 
     @Override
@@ -40,14 +37,12 @@ public class AbsCommonJsInterfaceWrapper extends AbsJsInterface {
         if (mJsInterface != null) {
             mJsInterface.release();
         }
+        super.release();
     }
 
     @Override
     public AbsJsInterface getJsInterface() {
-        if (mJsInterface == null) {
-            return null;
-        }
-        return mJsInterface.getJsInterface();
+        return mJsInterface != null ? mJsInterface.getJsInterface() : super.getJsInterface();
     }
 
 }

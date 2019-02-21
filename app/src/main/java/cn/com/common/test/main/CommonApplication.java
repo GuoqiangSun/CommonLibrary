@@ -1,7 +1,9 @@
 package cn.com.common.test.main;
 
+import android.app.Activity;
 import android.content.res.Configuration;
 import android.os.Build;
+import android.os.Bundle;
 
 import cn.com.common.test.global.FileManager;
 import cn.com.common.test.global.LooperManager;
@@ -23,15 +25,54 @@ public class CommonApplication extends BaseApplication {
         super.onCreate();
 
         Tlog.setGlobalTag(TAG);
-        
+
         FileManager.getInstance().init(this);
 
-        Tlog.setLogRecordDebug(true);
+//        Tlog.setLogRecordDebug(true);
         Tlog.setPrintStackDebug(true);
 
         LooperManager.getInstance().init(this);
 
         Tlog.i("CommonApplication onCreate(); pid:" + android.os.Process.myPid() + "; Build.VERSION.SDK_INT :" + Build.VERSION.SDK_INT);
+
+        registerActivityLifecycleCallbacks(new ActivityLifecycleCallbacks() {
+            @Override
+            public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
+                Tlog.d(" ActivityLifecycleCallbacks onActivityCreated " + activity.getLocalClassName());
+            }
+
+            @Override
+            public void onActivityStarted(Activity activity) {
+                Tlog.d(" ActivityLifecycleCallbacks onActivityStarted " + activity.getLocalClassName());
+            }
+
+            @Override
+            public void onActivityResumed(Activity activity) {
+                Tlog.d(" ActivityLifecycleCallbacks onActivityResumed " + activity.getLocalClassName());
+            }
+
+            @Override
+            public void onActivityPaused(Activity activity) {
+                Tlog.d(" ActivityLifecycleCallbacks onActivityPaused " + activity.getLocalClassName());
+            }
+
+            @Override
+            public void onActivityStopped(Activity activity) {
+                Tlog.d(" ActivityLifecycleCallbacks onActivityStopped " + activity.getLocalClassName());
+            }
+
+            @Override
+            public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
+                Tlog.d(" ActivityLifecycleCallbacks onActivitySaveInstanceState " + activity.getLocalClassName());
+            }
+
+            @Override
+            public void onActivityDestroyed(Activity activity) {
+                Tlog.d(" ActivityLifecycleCallbacks onActivityDestroyed " + activity.getLocalClassName());
+            }
+        });
+
+
     }
 
     @Override

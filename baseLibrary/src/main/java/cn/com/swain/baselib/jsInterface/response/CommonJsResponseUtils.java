@@ -7,6 +7,10 @@ package cn.com.swain.baselib.jsInterface.response;
  */
 public class CommonJsResponseUtils {
 
+
+    public CommonJsResponseUtils() {
+    }
+
     private static final String METHOD_RESPONSE = "javascript:dataInteractionResponse('$data')";
 
     public String getResponseJsMethod(String data) {
@@ -14,10 +18,7 @@ public class CommonJsResponseUtils {
     }
 
     private static String checkData(String data) {
-        if (data == null) {
-            return "{}";
-        }
-        return data;
+        return data != null ? data : "{}";
     }
 
 }

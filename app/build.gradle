@@ -33,11 +33,11 @@ dependencies {
     implementation project(':baseLibrary')
     implementation project(':fastBle')
     implementation project(':protocolEngine')
-    implementation 'pub.devrel:easypermissions:1.1.0'
-    implementation project(':Tlog')
-    implementation project(':scrollTxt')
+//    implementation project(':Tlog')
+//    implementation project(':scrollTxt')
     implementation project(':fastudp')
 
+    implementation 'pub.devrel:easypermissions:1.1.0'
     //zxing二维码识别 基础包
     implementation 'com.google.zxing:core:3.3.0'
     //二维码扫描 ui 库
@@ -46,5 +46,5 @@ dependencies {
     //    compile(name: 'startai-zxing-scanner-1.0.1', ext: 'aar')
     implementation 'cn.com.startai:scansdk:1.1.4'
     //android 工具库
-    implementation 'com.blankj:utilcode:1.19.3'
+    implementation 'com.blankj:utilcode:1.22.1'
 }

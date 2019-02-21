@@ -56,6 +56,15 @@
             android:text="shake"
             android:textAllCaps="false" />
 
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:onClick="colorLight"
+            android:text="colorLight"
+            android:textAllCaps="false" />
+
     </LinearLayout>
 
     <LinearLayout
@@ -63,6 +72,14 @@
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:orientation="vertical">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:onClick="linearTxt"
+            android:text="linearTxt"
+            android:textAllCaps="false" />
 
         <Button
             android:layout_width="wrap_content"
@@ -102,6 +119,14 @@
             android:layout_gravity="center_horizontal"
             android:onClick="requestPermission"
             android:text="requestPermission"
+            android:textAllCaps="false" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:onClick="requestPermission1"
+            android:text="requestPermission1"
             android:textAllCaps="false" />
 
     </LinearLayout>

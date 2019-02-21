@@ -1,18 +1,16 @@
 package cn.com.swain.baselib.file;
 
 import android.app.Application;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Environment;
 
 import java.io.File;
-import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
 import cn.com.swain.baselib.app.IApp.IApp;
 import cn.com.swain.baselib.log.Tlog;
+import cn.com.swain.baselib.util.AppUtils;
 
 /**
  * author: Guoqiang_Sun
@@ -26,7 +24,7 @@ public abstract class FileTemplate implements IApp {
 
     protected boolean exit = false;
 
-    private WeakReference<Application> wr;
+    private Application mApplication;
     private String TAG = "FileTemplate";
 
     @Override
@@ -36,7 +34,7 @@ public abstract class FileTemplate implements IApp {
             return;
         }
 
-        wr = new WeakReference<>(app);
+        this.mApplication = app;
 
         exit = mkdirs(getAppRootPath());
 
@@ -119,9 +117,16 @@ public abstract class FileTemplate implements IApp {
      * 保存H5错误日志
      */
     public void saveH5Exception(String msg) {
+        saveH5Exception(msg, null);
+    }
+
+    /**
+     * 保存H5错误日志
+     */
+    public void saveH5Exception(String msg, Throwable ex) {
         File debugPath = getDebugPath();
         File logPath = new File(debugPath, "H5Error.log");
-        FileUtil.saveException(logPath, generalHeadMsg(null).toString(), msg, FileUtil.isAppend(logPath, 60));
+        FileUtil.saveException(logPath, generalHeadMsg(null).toString(), msg, ex, FileUtil.isAppend(logPath, 60));
     }
 
     /**
@@ -145,20 +150,31 @@ public abstract class FileTemplate implements IApp {
     private StringBuilder generalHeadMsg(Thread t) {
         SimpleDateFormat mDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
         StringBuilder head = new StringBuilder(10);
+        //time
         head.append("---Application catch Exception on ");
         head.append(mDateFormat.format(new Date(System.currentTimeMillis())));
+        //thread
         head.append(";\n*** In [");
         head.append((t != null ? t.getName() : "null"));
         head.append("] Thread ;");
+        //pid
         head.append(" pid:");
         head.append(String.valueOf(android.os.Process.myPid()));
+        //pkgName
         head.append(" ; packageName:");
         String pkgName = null;
-        Application app;
-        if (wr != null && (app = wr.get()) != null) {
-            pkgName = app.getPackageName();
+        if (mApplication != null) {
+            pkgName = mApplication.getPackageName();
         }
         head.append(String.valueOf(pkgName));
+        //version
+        head.append(" ; versionName:");
+        String appVersionStr = null;
+        if (mApplication != null) {
+            appVersionStr = AppUtils.getAppVersionStr(mApplication.getApplicationContext());
+        }
+        head.append(String.valueOf(appVersionStr));
+
         head.append(" ***");
         return head;
     }

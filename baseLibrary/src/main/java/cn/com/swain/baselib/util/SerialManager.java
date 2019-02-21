@@ -12,7 +12,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.StreamCorruptedException;
+import java.io.Serializable;
 
 /**
  * author: Guoqiang_Sun
@@ -38,7 +38,7 @@ public class SerialManager {
     // 反序列化String字符串为对象
 
     public static Object readObject(String object)
-            throws StreamCorruptedException, IOException, ClassNotFoundException {
+            throws IOException, ClassNotFoundException {
         // ByteArrayInputStream bis = new ByteArrayInputStream(new
         // BASE64Decoder().decodeBuffer(object));
         ByteArrayInputStream bis = new ByteArrayInputStream(object.getBytes("ISO-8859-1"));
@@ -47,6 +47,7 @@ public class SerialManager {
         try {
             o = ois.readObject();
         } catch (EOFException e) {
+            e.printStackTrace();
         }
         bis.close();
         ois.close();
@@ -61,11 +62,6 @@ public class SerialManager {
 
     }
 
-    public static Object getObj(Context mContext) {
-
-        return getObj(mContext, OBJ_PATH);
-
-    }
 
     public static void saveObj(Context mContext, Object o, String path) {
 
@@ -73,15 +69,6 @@ public class SerialManager {
         File serialDir = new File(cacheDir, path);
 
         saveObj(o, serialDir);
-
-    }
-
-    public static Object getObj(Context mContext, String path) {
-
-        File cacheDir = mContext.getCacheDir();
-        File serialDir = new File(cacheDir, path);
-
-        return getObj(serialDir);
 
     }
 
@@ -128,6 +115,23 @@ public class SerialManager {
 
         return false;
     }
+
+
+    public static Object getObj(Context mContext) {
+
+        return getObj(mContext, OBJ_PATH);
+
+    }
+
+    public static Object getObj(Context mContext, String path) {
+
+        File cacheDir = mContext.getCacheDir();
+        File serialDir = new File(cacheDir, path);
+
+        return getObj(serialDir);
+
+    }
+
 
     public static Object getObj(String path) {
 
@@ -176,6 +180,101 @@ public class SerialManager {
 
         return null;
 
+    }
+
+    /****************TEST*******************/
+
+    public static void main(String[] args) {
+
+        String s = "123";
+        writeObjReadObj(s);
+
+        Integer sI = 123;
+        writeObjReadObj(sI);
+
+        int si = 123;
+        writeObjReadObj(si);
+
+        People p = new People("xiaosan", 23);
+        writeObjReadObj(p);
+
+        Singleton singleton = Singleton.getSingleton();
+        singleton.setName("swain");
+        writeObjReadObj(singleton);
+
+    }
+
+    private static void writeObjReadObj(Object o) {
+        try {
+            System.out.println();
+            System.out.println(" before serial : " + String.valueOf(o));
+            String s1 = writeObject(o);
+            Object o1 = readObject(s1);
+            System.out.println(" after  serial : " + String.valueOf(o1));
+
+            System.out.println(" before serial Object == after serial Object ? " + (o == o1));
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static class People implements Serializable {
+        public People() {
+        }
+
+        public People(String name, int age) {
+            this.name = name;
+            this.age = age;
+        }
+
+        public String name;
+        public int age;
+
+        @Override
+        public String toString() {
+            return "people--name:" + name + " age:" + age;
+        }
+    }
+
+    // 单例序列化
+    private static class Singleton implements Serializable {
+
+        /**
+         * 去掉以后,只有反序列化又会生成一个实例
+         */
+        private Object readResolve() {
+            return singleton;
+        }
+
+        private volatile static Singleton singleton;
+
+        private Singleton() {
+        }
+
+        private static Singleton getSingleton() {
+            if (singleton == null) {
+                synchronized (Singleton.class) {
+                    if (singleton == null) {
+                        singleton = new Singleton();
+                    }
+                }
+            }
+            return singleton;
+        }
+
+        private String name;
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        @Override
+        public String toString() {
+            return "Singleton--name:" + name;
+        }
     }
 
 }
