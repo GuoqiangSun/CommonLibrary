@@ -116,12 +116,30 @@ public class PermissionHelper {
      * @param context Context
      */
     public static void requestSinglePermission(Context context, PermissionMsg msg) {
-        if (isGranted(context, msg.permissions[0])) {
-            if (msg.mResult != null) {
-                msg.mResult.onPermissionRequestResult(msg.permissions[0], true);
+        String[] permissions = PermissionGroup.getPermissions(msg.permissions[0]);
+        if (permissions.length > 1) {
+            boolean needRequest = false;
+            for (String permission : permissions) {
+                if (!isGranted(context, permission)) {
+                    needRequest = true;
+                    break;
+                }
+            }
+            if (needRequest) {
+                requestPermission(context, msg);
+            } else {
+                if (msg.mResult != null) {
+                    msg.mResult.onPermissionRequestResult(msg.permissions[0], true);
+                }
             }
         } else {
-            requestPermission(context, msg);
+            if (isGranted(context, msg.permissions[0])) {
+                if (msg.mResult != null) {
+                    msg.mResult.onPermissionRequestResult(msg.permissions[0], true);
+                }
+            } else {
+                requestPermission(context, msg);
+            }
         }
     }
 

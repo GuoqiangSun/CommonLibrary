@@ -3,6 +3,7 @@ package cn.com.swain.baselib.util;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.os.Build;
+import android.support.annotation.NonNull;
 import android.support.annotation.StringDef;
 
 import java.lang.annotation.Retention;
@@ -95,39 +96,37 @@ public class PermissionGroup {
         return new String[]{permission};
     }
 
-    public static String forPermission(final String[] permission) {
+    public static String forPermission(@NonNull final String[] permission) {
 
-        if (permission != null && permission.length == 1) {
+        if (permission.length == 1) {
             if (Arrays.equals(GROUP_SENSORS, permission)) {
                 return SENSORS;
+            } else if (Arrays.equals(GROUP_CAMERA, permission)) {
+                return CAMERA;
+            } else if (Arrays.equals(GROUP_MICROPHONE, permission)) {
+                return MICROPHONE;
             } else {
                 return permission[0];
             }
         }
 
-        if (Arrays.equals(GROUP_CALENDAR, permission)) {
-            return CALENDAR;
-        } else if (Arrays.equals(GROUP_CAMERA, permission)) {
-            return CAMERA;
-        } else if (Arrays.equals(GROUP_CONTACTS, permission)) {
-            return CONTACTS;
+        if (Arrays.equals(GROUP_STORAGE, permission)) {
+            return STORAGE;
         } else if (Arrays.equals(GROUP_LOCATION, permission)) {
             return LOCATION;
-        } else if (Arrays.equals(GROUP_MICROPHONE, permission)) {
-            return MICROPHONE;
-        } else if (Arrays.equals(GROUP_PHONE_BELOW_O, permission)) {
-            return PHONE;
         } else if (Arrays.equals(GROUP_PHONE, permission)) {
             return PHONE;
-        } else if (Arrays.equals(GROUP_SENSORS, permission)) {
-            return SENSORS;
         } else if (Arrays.equals(GROUP_SMS, permission)) {
             return SMS;
-        } else if (Arrays.equals(GROUP_STORAGE, permission)) {
-            return STORAGE;
+        } else if (Arrays.equals(GROUP_CONTACTS, permission)) {
+            return CONTACTS;
+        } else if (Arrays.equals(GROUP_PHONE_BELOW_O, permission)) {
+            return PHONE;
+        } else if (Arrays.equals(GROUP_CALENDAR, permission)) {
+            return CALENDAR;
         }
 
-        return (permission == null || permission.length <= 0) ? "" : permission[0];
+        return (permission.length <= 0) ? "" : permission[0];
     }
 
 }

@@ -92,6 +92,20 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Tlog.startRecord();
 
+        mPermissionRequest = new PermissionRequest(this);
+        mPermissionRequest.requestPermissions(new PermissionRequest.OnPermissionResult() {
+            @Override
+            public boolean onPermissionRequestResult(String permission, boolean granted) {
+                Tlog.v(" MainActivity requestPermissions " + permission + " " + granted);
+                if (granted) {
+                    Tlog.setLogRecordDebug(true);
+                    Tlog.set(FileManager.getInstance().getLogPath());
+                    testLog();
+                }
+                return true;
+            }
+        }, Manifest.permission.WRITE_EXTERNAL_STORAGE, PermissionGroup.LOCATION);
+
         Tlog.v(" MainActivity onCreate ");
 
         Tlog.p(" MainActivity onCreate p ");
@@ -165,30 +179,26 @@ public class MainActivity extends AppCompatActivity {
                 Tlog.d(permission + " granted: " + granted);
 
                 if (Manifest.permission.ACCESS_COARSE_LOCATION.equals(permission)) {
-                    return false;
+                    return true;
                 }
 
                 return true;
             }
-        }, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        }, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION);
 
+        boolean granted = PermissionHelper.isGranted(this, PermissionGroup.LOCATION);
+        Tlog.d("PermissionGroup.LOCATION granted: " + granted);
     }
 
     public void requestPermission1(View view) {
 
-        mPermissionRequest = new PermissionRequest(this);
-        mPermissionRequest.requestPermissions(new PermissionRequest.OnPermissionResult() {
+        PermissionHelper.requestSinglePermission(this, new PermissionRequest.OnPermissionResult() {
             @Override
             public boolean onPermissionRequestResult(String permission, boolean granted) {
-                Tlog.v(" MainActivity requestPermissions " + permission + " " + granted);
-                if (granted) {
-                    Tlog.setLogRecordDebug(true);
-                    Tlog.set(FileManager.getInstance().getLogPath());
-                    testLog();
-                }
-                return true;
+                Tlog.d(permission + " granted: " + granted);
+                return false;
             }
-        }, Manifest.permission.WRITE_EXTERNAL_STORAGE, PermissionGroup.LOCATION);
+        }, PermissionGroup.LOCATION);
 
     }
 

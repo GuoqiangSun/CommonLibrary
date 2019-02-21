@@ -321,7 +321,23 @@ public final class PermissionRequest {
         return false;
     }
 
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    private boolean forGrantResults(@NonNull int[] grantResults) {
+        boolean granted;
+        if (grantResults.length == 1) {
+            granted = (grantResults[0] == PackageManager.PERMISSION_GRANTED);
+        } else {
+            granted = true;
+            for (int i : grantResults) {
+                if (i == PackageManager.PERMISSION_DENIED) {
+                    granted = false;
+                    break;
+                }
+            }
+        }
+        return granted;
+    }
+
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, @NonNull int[] grantResults) {
 
         if (requestCode == INTERNAL_PERMISSIONS_REQUEST_CODE
                 || requestCode == EXTERNAL_PERMISSIONS_REQUEST_CODE) {
@@ -329,8 +345,8 @@ public final class PermissionRequest {
             if (grantResults.length > 0 && permissions.length > 0) {
 
                 String permission = PermissionGroup.forPermission(permissions);
+                boolean granted = forGrantResults(grantResults);
 
-                boolean granted = (grantResults[0] == PackageManager.PERMISSION_GRANTED);
                 Tlog.e(TAG, " onRequestPermissionsResult " + permission + " granted:" + granted);
 
 //                if (!granted) {
@@ -418,7 +434,7 @@ public final class PermissionRequest {
          *
          * @param permission 权限名称
          * @param granted    是否授予
-         *                   @return 是否继续请求权限
+         * @return 是否继续请求权限
          */
         boolean onPermissionRequestResult(String permission, boolean granted);
     }
