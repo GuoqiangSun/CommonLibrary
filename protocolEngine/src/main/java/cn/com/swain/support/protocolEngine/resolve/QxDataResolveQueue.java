@@ -52,13 +52,15 @@ public class QxDataResolveQueue extends DataResolveQueue {
 
                     }
 
+                    if (checkPkgIsLargerSize(buf, length)) {
+                        mTmpSocketDataArray = produceLargerSocketDataArray();
+                    }
 
-                    if (checkPkgIsLargerSize(buf, length) && mLargerSocketDataProducer != null) {
+                    if (mTmpSocketDataArray != null) {
                         mResolveData.isLargerPkg = true;
-                        mTmpSocketDataArray = mLargerSocketDataProducer.produceSocketDataArray();
                     } else {
                         mResolveData.isLargerPkg = false;
-                        mTmpSocketDataArray = mSocketDataProducer.produceSocketDataArray();
+                        mTmpSocketDataArray = produceSocketDataArray();
                     }
 
                     mTmpSocketDataArray.resetIsCompletePkg();

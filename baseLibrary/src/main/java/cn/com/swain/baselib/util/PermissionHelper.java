@@ -274,6 +274,12 @@ public class PermissionHelper {
                 boolean next = permissionMsg.mResult.onPermissionRequestResult(permission, granted);
                 if (!next) {
                     Tlog.w(TAG, " PermissionActivity onPermissionRequestResult abort request ");
+
+                    if (mRequest != null) {
+                        mRequest.release();
+                        mRequest = null;
+                    }
+
                     finish();
                 }
             }

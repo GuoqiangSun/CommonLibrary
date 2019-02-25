@@ -10,6 +10,9 @@ public class ProtocolBuild {
 
     public static final class QX {
 
+        /**
+         * int32 ,前三位表示公司,后一位表示协议版本号
+         */
         public static final int VERSION = 0x000000;
 
         /**
@@ -30,6 +33,10 @@ public class ProtocolBuild {
 
     public static final class VERSION {
 
+        public static byte getVersion(int version) {
+            return (byte) (version << 8);
+        }
+
         public static boolean isQXVersion(int version) {
             return version >>> 8 == QX.VERSION;
         }
@@ -45,12 +52,12 @@ public class ProtocolBuild {
         // 亓行
 
         /**
-         * QX第一版本协议,精简协议
+         * 第一版本协议,精简协议
          */
         public static final int VERSION_0 = (QX.VERSION << 8) & 0xFF;
 
         /**
-         * QX第二版本协议,这个版本的协议增加了序列号,token码
+         * 第二版本协议,这个版本的协议增加了序列号,token码
          */
         public static final int VERSION_SEQ = ((QX.VERSION << 8) & 0xFF) | 0x01;
     }

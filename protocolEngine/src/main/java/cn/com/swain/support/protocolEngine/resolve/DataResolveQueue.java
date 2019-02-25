@@ -24,8 +24,8 @@ public abstract class DataResolveQueue extends Handler {
 
     protected String TAG = AbsProtocolProcessor.TAG;
     private final IDataResolveCallBack mCallBack;
-    protected final ISocketDataProducer mSocketDataProducer;
-    protected final ISocketDataProducer mLargerSocketDataProducer;
+    private final ISocketDataProducer mSocketDataProducer;
+    private final ISocketDataProducer mLargerSocketDataProducer;
     private final Map<String, ResolveData> mSocketArrayMap;
 
     public DataResolveQueue(Looper mLooper,
@@ -129,6 +129,19 @@ public abstract class DataResolveQueue extends Handler {
         return false;
     }
 
+    /**
+     * new一个超大buf包 包大小超过{@link #MAX_COUNT}不超过{@link #LARGER_COUNT}
+     */
+    protected SocketDataArray produceLargerSocketDataArray() {
+        return mLargerSocketDataProducer != null ? mLargerSocketDataProducer.produceSocketDataArray() : null;
+    }
+
+    /**
+     * new 一个普通buf包 包大小不超过{@link #MAX_COUNT}
+     */
+    protected SocketDataArray produceSocketDataArray() {
+        return mLargerSocketDataProducer != null ? mLargerSocketDataProducer.produceSocketDataArray() : null;
+    }
 
     private void resolveData(ReceivesData receiverData) {
 

@@ -366,6 +366,8 @@ public final class PermissionRequest {
                     if (requestPermissionMsg.mResult != null) {
                         requestPermissionMsg.mResult.onPermissionRequestResult(permission, granted);
                     }
+                } else {
+                    Tlog.v(TAG, " unknown requestPermissionMsg ");
                 }
 
             }
