@@ -3,13 +3,13 @@ package cn.com.swain.support.protocolEngine;
 import android.os.Looper;
 
 import cn.com.swain.support.protocolEngine.DataInspector.DataInspectorPool;
-import cn.com.swain.support.protocolEngine.DataInspector.DataResolveInspector;
+import cn.com.swain.support.protocolEngine.DataInspector.DataInspector;
 import cn.com.swain.support.protocolEngine.datagram.dataproducer.ISocketDataProducer;
 import cn.com.swain.support.protocolEngine.datagram.dataproducer.SocketDataQueueProducer;
 import cn.com.swain.support.protocolEngine.pack.ReceivesData;
 import cn.com.swain.support.protocolEngine.resolve.AbsProtocolProcessor;
 import cn.com.swain.support.protocolEngine.resolve.DataResolveQueue;
-import cn.com.swain.support.protocolEngine.resolve.QxDataResolveQueue;
+import cn.com.swain.support.protocolEngine.resolve.QX.QxDataResolveQueue;
 import cn.com.swain.support.protocolEngine.result.IProtocolAnalysisResult;
 
 /**
@@ -54,7 +54,7 @@ public class ProtocolProcessor extends AbsProtocolProcessor {
         }
 
         this.mDataResolveQueue = new QxDataResolveQueue(protocolLooper,
-                new DataInspectorPool(new DataResolveInspector(mProtocolCallBack), poolSize),
+                new DataInspectorPool(new DataInspector(mProtocolCallBack), poolSize),
                 mSocketDataProducer);
     }
 

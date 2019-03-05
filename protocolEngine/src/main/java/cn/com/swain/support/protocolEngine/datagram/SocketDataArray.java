@@ -3,12 +3,13 @@ package cn.com.swain.support.protocolEngine.datagram;
 import cn.com.swain.baselib.log.Tlog;
 import cn.com.swain.support.protocolEngine.ProtocolBuild;
 import cn.com.swain.support.protocolEngine.datagram.ProtocolDatagram.AbsProtocolDataPack;
-import cn.com.swain.support.protocolEngine.datagram.ProtocolDatagram.ProtocolDataPackFactory;
+import cn.com.swain.support.protocolEngine.datagram.ProtocolDatagram.QX.QXProtocolComData;
+import cn.com.swain.support.protocolEngine.datagram.ProtocolDatagram.QX.QXProtocolComData2;
 import cn.com.swain.support.protocolEngine.datagram.ProtocolException.DatagramStateException;
 import cn.com.swain.support.protocolEngine.datagram.ProtocolException.EscapeIOException;
 import cn.com.swain.support.protocolEngine.datagram.ProtocolException.UnknownVersionException;
 import cn.com.swain.support.protocolEngine.datagram.escape.IEscapeDataArray;
-import cn.com.swain.support.protocolEngine.datagram.escape.QXEscapeDataArray;
+import cn.com.swain.support.protocolEngine.datagram.escape.QX.QXEscapeDataArray;
 import cn.com.swain.support.protocolEngine.pack.BaseModel;
 import cn.com.swain.support.protocolEngine.pack.ComModel;
 import cn.com.swain.support.protocolEngine.resolve.AbsProtocolProcessor;
@@ -38,14 +39,27 @@ public class SocketDataArray extends AbsProtocolDataPack implements Cloneable, I
 
     public SocketDataArray(int version) {
         this.initVersion = version;
-        Tlog.v(TAG, " new SocketDataArray() version:" + version);
+        Tlog.v(TAG, " new SocketDataArray() version:" + version + " - 0x" + Integer.toHexString(version));
+
+        int body = ProtocolBuild.VERSION.getVersion(version) <= ProtocolBuild.VERSION.VERSION_0
+                ? DATA_BODY : (DATA_BODY + DATA_BODY / 2);
 
         if (ProtocolBuild.VERSION.isQXVersion(version)) {
-            int body = version <= ProtocolBuild.VERSION.VERSION_0 ? DATA_BODY : (DATA_BODY + DATA_BODY / 2);
+
             this.mEscapeDataArray = new QXEscapeDataArray(body);
-            this.mAbsProtocolDataPack = ProtocolDataPackFactory.generalQXSecureDataPack(version, this.mEscapeDataArray);
+
+            int realVersion = ProtocolBuild.VERSION.removeHighVersion(version);
+
+            if (realVersion == ProtocolBuild.VERSION.VERSION_0) {
+                this.mAbsProtocolDataPack = new QXProtocolComData(this.mEscapeDataArray);
+            } else if (realVersion == ProtocolBuild.VERSION.VERSION_SEQ) {
+                this.mAbsProtocolDataPack = new QXProtocolComData2(this.mEscapeDataArray);
+            } else {
+                throw new UnknownVersionException(" new SocketDataArray() unknown company version:" + version);
+            }
+
         } else {
-            throw new UnknownVersionException(" new SocketDataArray() version:" + version + " unknown.");
+            throw new UnknownVersionException(" new SocketDataArray() unknown version:" + version);
         }
     }
 
@@ -282,8 +296,18 @@ public class SocketDataArray extends AbsProtocolDataPack implements Cloneable, I
     }
 
     @Override
+    public void setHead(byte head) {
+        mAbsProtocolDataPack.setHead(head);
+    }
+
+    @Override
     public byte getHead() {
         return mAbsProtocolDataPack.getHead();
+    }
+
+    @Override
+    public void setLengthH(byte lengthH) {
+        mAbsProtocolDataPack.setLengthH(lengthH);
     }
 
     @Override
@@ -292,8 +316,18 @@ public class SocketDataArray extends AbsProtocolDataPack implements Cloneable, I
     }
 
     @Override
+    public void setLengthL(byte lengthL) {
+        mAbsProtocolDataPack.setLengthL(lengthL);
+    }
+
+    @Override
     public byte getLengthL() {
         return mAbsProtocolDataPack.getLengthL();
+    }
+
+    @Override
+    public void setLength(int effectiveLength) {
+        mAbsProtocolDataPack.setLength(effectiveLength);
     }
 
     @Override
@@ -317,7 +351,7 @@ public class SocketDataArray extends AbsProtocolDataPack implements Cloneable, I
     }
 
     @Override
-    public int getVersion() {
+    public byte getVersion() {
         return mAbsProtocolDataPack.getVersion();
     }
 
@@ -327,7 +361,7 @@ public class SocketDataArray extends AbsProtocolDataPack implements Cloneable, I
     }
 
     @Override
-    public int getSeq() {
+    public byte getSeq() {
         return mAbsProtocolDataPack.getSeq();
     }
 
@@ -382,8 +416,18 @@ public class SocketDataArray extends AbsProtocolDataPack implements Cloneable, I
     }
 
     @Override
+    public void setCrc(byte crc) {
+        mAbsProtocolDataPack.setCrc(crc);
+    }
+
+    @Override
     public byte getCrc() {
         return mAbsProtocolDataPack.getCrc();
+    }
+
+    @Override
+    public void setTail(byte tail) {
+        mAbsProtocolDataPack.setTail(tail);
     }
 
     @Override
@@ -406,9 +450,24 @@ public class SocketDataArray extends AbsProtocolDataPack implements Cloneable, I
     }
 
     @Override
+    public boolean isHeadByte(byte b) {
+        return mEscapeDataArray.isHeadByte(b);
+    }
+
+    @Override
     public void onAddTail(byte b) {
 
         mEscapeDataArray.onAddTail(b);
+    }
+
+    @Override
+    public boolean isTailByte(byte b) {
+        return mEscapeDataArray.isTailByte(b);
+    }
+
+    @Override
+    public boolean isEscapeByte(byte b) {
+        return mEscapeDataArray.isEscapeByte(b);
     }
 
     @Override
@@ -441,6 +500,11 @@ public class SocketDataArray extends AbsProtocolDataPack implements Cloneable, I
         }
         changeStateToEscape();
         mEscapeDataArray.onAddPackageEscape(data);
+    }
+
+    @Override
+    public boolean checkIsSpecialByte(byte b) {
+        return mEscapeDataArray.checkIsSpecialByte(b);
     }
 
     /****************/

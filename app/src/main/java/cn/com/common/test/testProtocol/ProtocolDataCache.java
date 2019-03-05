@@ -57,7 +57,7 @@ public class ProtocolDataCache implements IService {
         return ClassHolder.CACHE;
     }
 
-    private static int protocolVersion = ProtocolBuild.VERSION.VERSION_0;
+    private static int protocolVersion = ProtocolBuild.QX.QX_VERSION_0;
 
     private static byte custom;
     private static byte product;

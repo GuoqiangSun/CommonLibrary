@@ -2,7 +2,6 @@ package cn.com.swain.support.protocolEngine.datagram.escape;
 
 import cn.com.swain.baselib.log.Tlog;
 import cn.com.swain.baselib.util.StrUtil;
-import cn.com.swain.support.protocolEngine.ProtocolCode;
 import cn.com.swain.support.protocolEngine.resolve.AbsProtocolProcessor;
 
 /**
@@ -149,7 +148,7 @@ public abstract class EscapeDataArray implements IEscapeDataArray {
         int end = length - 1;
 
         for (int i = 0; i < length; i++) {
-            if (i == 0 || i == end) {
+            if ((i == 0 || i == end) && (isHeadByte(data[i]) || isTailByte(data[i]))) {
 
                 onDataAddNoER(data[i]);
 
@@ -177,7 +176,7 @@ public abstract class EscapeDataArray implements IEscapeDataArray {
         int end = length - 1;
 
         for (int i = 0; i < length; i++) {
-            if (i == 0 || i == end) {
+            if ((i == 0 || i == end) && (isHeadByte(data[i]) || isTailByte(data[i]))) {
 
                 onDataAddNoER(data[i]);
 
@@ -188,7 +187,6 @@ public abstract class EscapeDataArray implements IEscapeDataArray {
             }
         }
     }
-
 
     /**
      * 添加进来，不考虑转义问题，自动扩容

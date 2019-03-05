@@ -7,34 +7,42 @@ package cn.com.swain.support.protocolEngine.datagram.ProtocolDatagram;
  */
 public abstract class AbsProtocolDataPack implements IProtocolComData {
 
-    protected byte absProtocol_head;
+    private byte absProtocol_head;
 
-    byte absProtocol_length_h;
-    byte absProtocol_length_l;
+    private int absProtocol_length;
+    private byte absProtocol_length_h;
+    private byte absProtocol_length_l;
 
-    protected int absProtocol_token;
+    private byte absProtocol_version;
+    private byte absProtocol_seq;
 
-    protected byte absProtocol_version;
-    protected byte absProtocol_seq;
+    private int absProtocol_token;
 
-    protected byte absProtocol_custom;
-    protected byte absProtocol_product;
-    protected byte absProtocol_type;
-    protected byte absProtocol_cmd;
+    private byte absProtocol_custom;
+    private byte absProtocol_product;
+    private byte absProtocol_type;
+    private byte absProtocol_cmd;
 
-    protected byte[] absProtocol_params;
+    private byte[] absProtocol_params;
 
-    byte absProtocol_crc;
+    private byte absProtocol_crc;
 
-    protected byte absProtocol_tail;
+    private byte absProtocol_tail;
+
+    public void setHead(byte head) {
+        this.absProtocol_head = head;
+    }
 
     public byte getHead() {
         return this.absProtocol_head;
     }
 
-    protected void setLength(int effectiveLength) {
-        this.absProtocol_length_h = (byte) ((effectiveLength >> 8) & 0xFF);
-        this.absProtocol_length_l = (byte) (effectiveLength & 0xFF);
+    public void setLengthH(byte lengthH) {
+        this.absProtocol_length_h = lengthH;
+    }
+
+    public void setLengthL(byte lengthL) {
+        this.absProtocol_length_l = lengthL;
     }
 
     public byte getLengthH() {
@@ -45,8 +53,12 @@ public abstract class AbsProtocolDataPack implements IProtocolComData {
         return this.absProtocol_length_l;
     }
 
+    public void setLength(int effectiveLength) {
+        this.absProtocol_length = effectiveLength;
+    }
+
     public int getLength() {
-        return (absProtocol_length_h & 0xFF) << 8 | (absProtocol_length_l & 0xFF);
+        return this.absProtocol_length;
     }
 
     public void setToken(int token) {
@@ -61,16 +73,16 @@ public abstract class AbsProtocolDataPack implements IProtocolComData {
         this.absProtocol_version = version;
     }
 
-    public int getVersion() {
-        return this.absProtocol_version & 0xFF;
+    public byte getVersion() {
+        return this.absProtocol_version;
     }
 
     public void setSeq(byte seq) {
         this.absProtocol_seq = seq;
     }
 
-    public int getSeq() {
-        return this.absProtocol_seq & 0xFF;
+    public byte getSeq() {
+        return this.absProtocol_seq;
     }
 
     public void setCustom(byte custom) {
@@ -113,8 +125,16 @@ public abstract class AbsProtocolDataPack implements IProtocolComData {
         return this.absProtocol_params;
     }
 
+    public void setCrc(byte crc) {
+        this.absProtocol_crc = crc;
+    }
+
     public byte getCrc() {
         return absProtocol_crc;
+    }
+
+    public void setTail(byte tail) {
+        this.absProtocol_tail = tail;
     }
 
     public byte getTail() {

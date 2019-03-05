@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import cn.com.swain.baselib.log.Tlog;
+import cn.com.swain.support.protocolEngine.DataInspector.IDataInspector;
 import cn.com.swain.support.protocolEngine.ProtocolCode;
 import cn.com.swain.support.protocolEngine.datagram.SocketDataArray;
 import cn.com.swain.support.protocolEngine.datagram.dataproducer.ISocketDataProducer;
@@ -23,36 +24,36 @@ import cn.com.swain.support.protocolEngine.pack.ReceivesData;
 public abstract class DataResolveQueue extends Handler {
 
     protected String TAG = AbsProtocolProcessor.TAG;
-    private final IDataResolveCallBack mCallBack;
+    private final IDataInspector mDataInspector;
     private final ISocketDataProducer mSocketDataProducer;
     private final ISocketDataProducer mLargerSocketDataProducer;
     private final Map<String, ResolveData> mSocketArrayMap;
 
     public DataResolveQueue(Looper mLooper,
-                            IDataResolveCallBack mCallBack,
+                            IDataInspector mDataInspector,
                             ISocketDataProducer mSocketDataProducer) {
-        this(mLooper, mCallBack, mSocketDataProducer, null);
+        this(mLooper, mDataInspector, mSocketDataProducer, null);
     }
 
     /**
      * @param mLooper                   解析线程
-     * @param mCallBack                 回调
+     * @param mDataInspector            数据质检
      * @param mSocketDataProducer       一般包
      * @param mLargerSocketDataProducer 如果要支持超大包,就传这个参数进来
      */
     public DataResolveQueue(Looper mLooper,
-                            IDataResolveCallBack mCallBack,
+                            IDataInspector mDataInspector,
                             ISocketDataProducer mSocketDataProducer,
                             ISocketDataProducer mLargerSocketDataProducer) {
         super(mLooper);
-        if (mCallBack == null) {
-            throw new NullPointerException(" <DataResolveQueue> ; IDataResolveCallBack==null . ");
+        if (mDataInspector == null) {
+            throw new NullPointerException(" <DataResolveQueue> ; IDataInspector==null . ");
         }
         if (mSocketDataProducer == null) {
             throw new NullPointerException(" <DataResolveQueue> ; mSocketDataFactory==null . ");
         }
         this.mSocketArrayMap = Collections.synchronizedMap(new HashMap<String, ResolveData>());
-        this.mCallBack = mCallBack;
+        this.mDataInspector = mDataInspector;
         this.mSocketDataProducer = mSocketDataProducer;
         this.mLargerSocketDataProducer = mLargerSocketDataProducer;
     }
@@ -68,8 +69,8 @@ public abstract class DataResolveQueue extends Handler {
             mLargerSocketDataProducer.clear();
         }
 
-        if (mCallBack != null) {
-            mCallBack.release();
+        if (mDataInspector != null) {
+            mDataInspector.release();
         }
 
         if (mSocketArrayMap != null) {
@@ -97,7 +98,7 @@ public abstract class DataResolveQueue extends Handler {
 
             case MSG_WHAT_CALLBACK:
 
-                mCallBack.onOutDataResolve(msg.arg1, (SocketDataArray) msg.obj);
+                mDataInspector.inspectData(msg.arg1, (SocketDataArray) msg.obj);
 
                 break;
 
@@ -171,6 +172,7 @@ public abstract class DataResolveQueue extends Handler {
         resolveData(receiverData, buf, mResolveData);
     }
 
+    //接收数据为null
     protected void resolveDataIsNull() {
         Message message = obtainMessage();
         message.what = MSG_WHAT_CALLBACK;

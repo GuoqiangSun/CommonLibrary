@@ -20,6 +20,7 @@ import cn.com.common.test.testScrollView.LinearViewActivity;
 import cn.com.common.test.testScrollView.ScrollViewActivity;
 import cn.com.common.test.testUdp.FastMultiUdpActivity;
 import cn.com.common.test.testUdp.FastUdpActivity;
+import cn.com.common.test.testscreen.OrientationActivity;
 import cn.com.swain.baselib.log.TFlog;
 import cn.com.swain.baselib.log.Tlog;
 import cn.com.swain.baselib.util.PermissionGroup;
@@ -96,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
         mPermissionRequest.requestPermissions(new PermissionRequest.OnPermissionResult() {
             @Override
             public boolean onPermissionRequestResult(String permission, boolean granted) {
-                Tlog.v(" MainActivity requestPermissions " + permission + " " + granted);
+                Tlog.v(" OrientationActivity requestPermissions " + permission + " " + granted);
                 if (granted) {
                     Tlog.setLogRecordDebug(true);
                     Tlog.set(FileManager.getInstance().getLogPath());
@@ -106,16 +107,16 @@ public class MainActivity extends AppCompatActivity {
             }
         }, Manifest.permission.WRITE_EXTERNAL_STORAGE, PermissionGroup.LOCATION);
 
-        Tlog.v(" MainActivity onCreate ");
+        Tlog.v(" OrientationActivity onCreate ");
 
-        Tlog.p(" MainActivity onCreate p ");
+        Tlog.p(" OrientationActivity onCreate p ");
 
 
     }
 
     @Override
     protected void onDestroy() {
-        Tlog.v(" MainActivity onDestroy ");
+        Tlog.v(" OrientationActivity onDestroy ");
         Tlog.stopRecord();
         if (mPermissionRequest != null) {
             mPermissionRequest.release();
@@ -209,5 +210,9 @@ public class MainActivity extends AppCompatActivity {
 
     public void linearTxt(View view) {
         startActivity(new Intent(this, LinearViewActivity.class));
+    }
+
+    public void screenRate(View view) {
+        startActivity(new Intent(this, OrientationActivity.class));
     }
 }

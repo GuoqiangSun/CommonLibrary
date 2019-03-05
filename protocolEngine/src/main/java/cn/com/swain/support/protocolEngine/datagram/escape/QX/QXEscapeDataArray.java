@@ -1,7 +1,8 @@
-package cn.com.swain.support.protocolEngine.datagram.escape;
+package cn.com.swain.support.protocolEngine.datagram.escape.QX;
 
 import cn.com.swain.support.protocolEngine.ProtocolBuild;
 import cn.com.swain.support.protocolEngine.ProtocolCode;
+import cn.com.swain.support.protocolEngine.datagram.escape.EscapeDataArray;
 
 /**
  * author: Guoqiang_Sun
@@ -31,18 +32,37 @@ public class QXEscapeDataArray extends EscapeDataArray {
         super(size);
     }
 
+    @Override
+    public boolean checkIsSpecialByte(byte b) {
+        return b == STX || b == ETX || b == ESC;
+    }
+
+    @Override
+    public boolean isHeadByte(byte b) {
+        return b == STX;
+    }
+
+    @Override
+    public boolean isTailByte(byte b) {
+        return b == ETX;
+    }
+
+    @Override
+    public boolean isEscapeByte(byte b) {
+        return b == ESC;
+    }
 
     private byte lastByte = EMPTY; // 记录上一个字节
 
     @Override
     public void onAddDataReverse(byte b) {
 
-        if (b != ESC) {
+        if (!isEscapeByte(b)) {
 
             // 当前不是ESC
             // 看上一个字节是否是 ESC
 
-            if (lastByte == ESC) {
+            if (isEscapeByte(lastByte)) {
 
                 switch (b) {
                     case STX_ESC:
@@ -128,6 +148,5 @@ public class QXEscapeDataArray extends EscapeDataArray {
         }
 
     }
-
 
 }

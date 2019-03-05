@@ -6,9 +6,9 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import cn.com.swain.baselib.log.Tlog;
 import cn.com.swain.support.protocolEngine.datagram.SocketDataArray;
 import cn.com.swain.support.protocolEngine.resolve.AbsProtocolProcessor;
-import cn.com.swain.baselib.log.Tlog;
 
 /**
  * author: Guoqiang_Sun
@@ -62,18 +62,21 @@ public class DataInspectorPool extends AbsDataInspector {
             }
             mPoolMap.clear();
         }
+        if (mCallBack != null) {
+            mCallBack.release();
+        }
     }
 
 
     @Override
-    public void onOutDataResolve(int code, SocketDataArray mSocketDataArray) {
+    public void inspectData(int code, SocketDataArray mSocketDataArray) {
 
         String id = mSocketDataArray != null ? mSocketDataArray.getID() : null;
         ExecutorService pool = getPool(id);
         if (pool != null) {
             pool.execute(new DataResolveRun(mCallBack, code, mSocketDataArray));
         } else {
-            Tlog.e(AbsProtocolProcessor.TAG, " DataInspectorPool onOutDataResolve pool=null");
+            Tlog.e(AbsProtocolProcessor.TAG, " DataInspectorPool inspectData pool=null");
         }
     }
 
@@ -91,7 +94,7 @@ public class DataInspectorPool extends AbsDataInspector {
 
         @Override
         public void run() {
-            mCallBack.onOutDataResolve(code, mSocketDataArray);
+            mCallBack.inspectData(code, mSocketDataArray);
         }
     }
 

@@ -65,6 +65,15 @@
             android:text="colorLight"
             android:textAllCaps="false" />
 
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:onClick="screenRate"
+            android:text="screenRate"
+            android:textAllCaps="false" />
+
     </LinearLayout>
 
     <LinearLayout

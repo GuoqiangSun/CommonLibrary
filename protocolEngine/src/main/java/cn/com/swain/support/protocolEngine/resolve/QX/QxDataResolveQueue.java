@@ -1,12 +1,15 @@
-package cn.com.swain.support.protocolEngine.resolve;
+package cn.com.swain.support.protocolEngine.resolve.QX;
 
 import android.os.Looper;
 
 import cn.com.swain.baselib.log.Tlog;
+import cn.com.swain.support.protocolEngine.DataInspector.IDataInspector;
 import cn.com.swain.support.protocolEngine.ProtocolBuild;
 import cn.com.swain.support.protocolEngine.datagram.SocketDataArray;
 import cn.com.swain.support.protocolEngine.datagram.dataproducer.ISocketDataProducer;
 import cn.com.swain.support.protocolEngine.pack.ReceivesData;
+import cn.com.swain.support.protocolEngine.resolve.DataResolveQueue;
+import cn.com.swain.support.protocolEngine.resolve.ResolveData;
 
 /**
  * author: Guoqiang_Sun
@@ -18,13 +21,13 @@ public class QxDataResolveQueue extends DataResolveQueue {
     private static final byte STX = ProtocolBuild.QX.STX;
     private static final byte ETX = ProtocolBuild.QX.ETX;
 
-    public QxDataResolveQueue(Looper mLooper, IDataResolveCallBack mCallBack,
+    public QxDataResolveQueue(Looper mLooper, IDataInspector mDataInspector,
                               ISocketDataProducer mSocketDataProducer, ISocketDataProducer mLargerSocketDataProducer) {
-        super(mLooper, mCallBack, mSocketDataProducer, mLargerSocketDataProducer);
+        super(mLooper, mDataInspector, mSocketDataProducer, mLargerSocketDataProducer);
     }
 
-    public QxDataResolveQueue(Looper mLooper, IDataResolveCallBack mCallBack, ISocketDataProducer mSocketDataProducer) {
-        super(mLooper, mCallBack, mSocketDataProducer);
+    public QxDataResolveQueue(Looper mLooper, IDataInspector mDataInspector, ISocketDataProducer mSocketDataProducer) {
+        super(mLooper, mDataInspector, mSocketDataProducer);
     }
 
     @Override

@@ -1,9 +1,10 @@
-package cn.com.swain.support.protocolEngine.datagram.ProtocolDatagram;
+package cn.com.swain.support.protocolEngine.datagram.ProtocolDatagram.QX;
 
 import cn.com.swain.baselib.log.Tlog;
 import cn.com.swain.baselib.util.CrcUtil;
 import cn.com.swain.baselib.util.StrUtil;
 import cn.com.swain.support.protocolEngine.ProtocolBuild;
+import cn.com.swain.support.protocolEngine.datagram.ProtocolDatagram.AbsProtocolDataPack;
 import cn.com.swain.support.protocolEngine.datagram.escape.IEscapeDataArray;
 import cn.com.swain.support.protocolEngine.resolve.AbsProtocolProcessor;
 
@@ -14,7 +15,7 @@ import cn.com.swain.support.protocolEngine.resolve.AbsProtocolProcessor;
  * <p>
  * <p>
  * *  startAI通信包协议格式
- * 0xff（帧头）(1) + 有效数据长度(2) + 保留(2) + 命令（类型 + 命令）(2) + 参数（变长）+ 校验(CRC8)(1) + 0xee（帧尾）(1)
+ * 0xff（帧头）(1) + 有效数据长度(2) + + custom(1)+product(1) + 命令（类型 + 命令）(2) + 参数（变长）+ 校验(CRC8)(1) + 0xee（帧尾）(1)
  * <p>
  * header(uint_8)
  * len_h（uint8_t）  	len_l（uint_8）
@@ -42,15 +43,11 @@ public class QXProtocolComData extends AbsProtocolDataPack {
 
     private final IEscapeDataArray mComDataArray;
 
-    public QXProtocolComData() {
-        this(null);
-    }
-
     public QXProtocolComData(IEscapeDataArray mComDataArray) {
         this.mComDataArray = mComDataArray;
-        this.absProtocol_version = ProtocolBuild.VERSION.VERSION_0;
-        this.absProtocol_head = ProtocolBuild.QX.STX;
-        this.absProtocol_tail = ProtocolBuild.QX.ETX;
+        setVersion((byte) ProtocolBuild.QX.QX_VERSION_0);
+        setHead(ProtocolBuild.QX.STX);
+        setTail(ProtocolBuild.QX.ETX);
     }
 
     public static final int LENGTH_BASE_VERSION = 9;
@@ -200,23 +197,25 @@ public class QXProtocolComData extends AbsProtocolDataPack {
     @Override
     public byte[] organizeProtocolData() {
 
-        final int paramsLength = absProtocol_params != null ? absProtocol_params.length : 0;
+        byte[] params = getParams();
+        final int paramsLength = params != null ? params.length : 0;
         final int allLength = LENGTH_BASE_VERSION + paramsLength;
         final int effectiveLength = allLength - 5;
         final byte[] buf = new byte[allLength];
 
-        buf[POINT_HEAD] = absProtocol_head;
-        buf[POINT_LENGTH_START] = this.absProtocol_length_h = (byte) ((effectiveLength >> 8) & 0xFF);
-        buf[POINT_LENGTH_END] = this.absProtocol_length_l = (byte) (effectiveLength & 0xFF);
+        buf[POINT_HEAD] = getHead();
+        buf[POINT_LENGTH_START] = (byte) ((effectiveLength >> 8) & 0xFF);
+        buf[POINT_LENGTH_END] = (byte) (effectiveLength & 0xFF);
+        setLength(effectiveLength);
 
-        buf[POINT_CUSTOM] = absProtocol_custom;
-        buf[POINT_PRODUCT] = absProtocol_product;
+        buf[POINT_CUSTOM] = getCustom();
+        buf[POINT_PRODUCT] = getProduct();
 
-        buf[POINT_TYPE] = absProtocol_type;
-        buf[POINT_CMD] = absProtocol_cmd;
+        buf[POINT_TYPE] = getType();
+        buf[POINT_CMD] = getCmd();
 
         if (paramsLength > 0) {
-            System.arraycopy(absProtocol_params, 0, buf, POINT_PARAMS_START, paramsLength);
+            System.arraycopy(params, 0, buf, POINT_PARAMS_START, paramsLength);
         }
 
         final int crcPoint = QXProtocolComData.getCRCPoint(paramsLength);
@@ -226,11 +225,12 @@ public class QXProtocolComData extends AbsProtocolDataPack {
 //            Tlog.e(ProtocolProcessor.TAG, " crcPoint:" + crcPoint + " " + crcPoint2);
 //        }
 
-        final byte crc = this.absProtocol_crc = CrcUtil.CRC8(buf, CRC_CHECK_START, crcPoint);
+        final byte crc = CrcUtil.CRC8(buf, CRC_CHECK_START, crcPoint);
         buf[crcPoint] = crc;
+        setCrc(crc);
 
         final int tailPoint = QXProtocolComData.getTailPoint(crcPoint);
-        buf[tailPoint] = absProtocol_tail;
+        buf[tailPoint] = getTail();
 
         return buf;
     }

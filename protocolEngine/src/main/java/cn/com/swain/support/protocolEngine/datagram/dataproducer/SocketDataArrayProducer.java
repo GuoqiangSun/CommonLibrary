@@ -2,9 +2,9 @@ package cn.com.swain.support.protocolEngine.datagram.dataproducer;
 
 import java.util.ArrayList;
 
-import cn.com.swain.support.protocolEngine.ProtocolProcessor;
-import cn.com.swain.support.protocolEngine.datagram.SocketDataArray;
 import cn.com.swain.baselib.log.Tlog;
+import cn.com.swain.support.protocolEngine.datagram.SocketDataArray;
+import cn.com.swain.support.protocolEngine.resolve.AbsProtocolProcessor;
 
 /**
  * author: Guoqiang_Sun
@@ -14,7 +14,7 @@ import cn.com.swain.baselib.log.Tlog;
 
 public class SocketDataArrayProducer implements ISocketDataProducer {
 
-    private String TAG = ProtocolProcessor.TAG;
+    private String TAG = AbsProtocolProcessor.TAG;
 
     private final int version;
 
@@ -23,9 +23,10 @@ public class SocketDataArrayProducer implements ISocketDataProducer {
     }
 
     @Override
-    public void create(){
+    public void create() {
 
     }
+
     @Override
     public void clear() {
         mCache.clear();

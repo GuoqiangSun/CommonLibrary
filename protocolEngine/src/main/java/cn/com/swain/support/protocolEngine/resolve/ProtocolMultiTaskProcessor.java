@@ -4,12 +4,13 @@ import android.os.Looper;
 
 import cn.com.swain.baselib.log.Tlog;
 import cn.com.swain.support.protocolEngine.DataInspector.DataInspectorPool;
-import cn.com.swain.support.protocolEngine.DataInspector.DataResolveInspector;
+import cn.com.swain.support.protocolEngine.DataInspector.DataInspector;
 import cn.com.swain.support.protocolEngine.ProtocolBuild;
 import cn.com.swain.support.protocolEngine.datagram.ProtocolException.UnknownVersionException;
 import cn.com.swain.support.protocolEngine.datagram.dataproducer.ISocketDataProducer;
 import cn.com.swain.support.protocolEngine.datagram.dataproducer.SocketDataQueueProducer;
 import cn.com.swain.support.protocolEngine.pack.ReceivesData;
+import cn.com.swain.support.protocolEngine.resolve.QX.QxDataResolveQueue;
 import cn.com.swain.support.protocolEngine.result.IProtocolAnalysisResult;
 
 /**
@@ -21,17 +22,6 @@ import cn.com.swain.support.protocolEngine.result.IProtocolAnalysisResult;
 public class ProtocolMultiTaskProcessor extends AbsProtocolProcessor {
 
     private DataResolveQueue mDataResolveQueue;
-
-    public ProtocolMultiTaskProcessor(Looper protocolLooper,
-                                      IProtocolAnalysisResult mProtocolCallBack,
-                                      int protocolVersion,
-                                      int callBackPoolSize,
-                                      boolean supportLargerPkg) {
-        this(protocolLooper, mProtocolCallBack, protocolVersion,
-                new SocketDataQueueProducer(protocolVersion),
-                supportLargerPkg ? new SocketDataQueueProducer(protocolVersion) : null,
-                callBackPoolSize);
-    }
 
     /**
      * @param protocolLooper            解析线程
@@ -62,7 +52,7 @@ public class ProtocolMultiTaskProcessor extends AbsProtocolProcessor {
 
         if (ProtocolBuild.VERSION.isQXVersion(protocolVersion)) {
             this.mDataResolveQueue = new QxDataResolveQueue(protocolLooper,
-                    new DataInspectorPool(new DataResolveInspector(mProtocolCallBack), callBackPoolSize),
+                    new DataInspectorPool(new DataInspector(mProtocolCallBack), callBackPoolSize),
                     mSocketDataProducer,
                     mLargerSocketDataProducer);
         } else {

@@ -7,13 +7,25 @@ package cn.com.swain.support.protocolEngine;
  */
 public class ProtocolBuild {
 
-
+    /**
+     * 亓行智能科技有限公司
+     */
     public static final class QX {
 
         /**
          * int32 ,前三位表示公司,后一位表示协议版本号
          */
-        public static final int VERSION = 0x000000;
+        public static final int QX_VERSION = 0x00000000;
+
+        /**
+         * 第一版本协议,精简协议
+         */
+        public static final int QX_VERSION_0 = (QX.QX_VERSION & 0xFFFFFF00) | ProtocolBuild.VERSION.VERSION_0;
+
+        /**
+         * 第二版本协议,这个版本的协议增加了序列号,token码
+         */
+        public static final int QX_VERSION_SEQ = (QX.QX_VERSION & 0xFFFFFF00) | ProtocolBuild.VERSION.VERSION_SEQ;
 
         /**
          * 转义前	           转义后
@@ -33,12 +45,29 @@ public class ProtocolBuild {
 
     public static final class VERSION {
 
+        /**
+         * 去除前三位,得到最后一个字节表示版本
+         */
         public static byte getVersion(int version) {
-            return (byte) (version << 8);
+            return (byte) version;
+        }
+
+        /**
+         * 去除前三位后，得到真实的版本号
+         */
+        public static int removeHighVersion(int version) {
+            return (version & 0x000000FF);
+        }
+
+        /**
+         * 去除最后一位,得到前三个字节表示公司
+         */
+        public static int getCompany(int version) {
+            return (version & 0xFFFFFF00);
         }
 
         public static boolean isQXVersion(int version) {
-            return version >>> 8 == QX.VERSION;
+            return getCompany(version) == QX.QX_VERSION;
         }
 
         public static byte getSTX(int version) {
@@ -49,29 +78,29 @@ public class ProtocolBuild {
             return isQXVersion(version) ? QX.ETX : 0x00;
         }
 
-        // 亓行
-
         /**
          * 第一版本协议,精简协议
          */
-        public static final int VERSION_0 = (QX.VERSION << 8) & 0xFF;
+        public static final int VERSION_0 = 0x00000000;
 
         /**
          * 第二版本协议,这个版本的协议增加了序列号,token码
          */
-        public static final int VERSION_SEQ = ((QX.VERSION << 8) & 0xFF) | 0x01;
+        public static final int VERSION_SEQ = 0x00000001;
     }
 
     public static void main(String[] args) {
         System.out.println(" QXVersion 0 :" + VERSION.VERSION_0);
         System.out.println(" QXVersion seq:" + VERSION.VERSION_SEQ);
 
-
         System.out.println(" isQXVersion :" + VERSION.isQXVersion(VERSION.VERSION_SEQ));
         System.out.println(" isQXVersion :" + VERSION.isQXVersion(VERSION.VERSION_0));
         System.out.println(" isQXVersion :" + VERSION.isQXVersion(12345));
         System.out.println(" isQXVersion :" + VERSION.isQXVersion(ProtocolBuild.VERSION.VERSION_SEQ + 123456789));
 
+        int i = 0xFFFFFF20;
+
+        System.out.println(Integer.toHexString(i & 0xFFFFFF00));
 
     }
 

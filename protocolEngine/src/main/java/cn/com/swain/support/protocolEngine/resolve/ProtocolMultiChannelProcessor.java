@@ -3,10 +3,11 @@ package cn.com.swain.support.protocolEngine.resolve;
 import android.os.Looper;
 import android.util.SparseArray;
 
+import cn.com.swain.baselib.log.Tlog;
 import cn.com.swain.support.protocolEngine.ProtocolProcessorFactory;
+import cn.com.swain.support.protocolEngine.datagram.dataproducer.ISocketDataProducer;
 import cn.com.swain.support.protocolEngine.pack.ReceivesData;
 import cn.com.swain.support.protocolEngine.result.IProtocolAnalysisResult;
-import cn.com.swain.baselib.log.Tlog;
 
 /**
  * author: Guoqiang_Sun
@@ -21,30 +22,43 @@ public class ProtocolMultiChannelProcessor extends AbsProtocolProcessor {
 
     private final int protocolVersion;
     private final Looper protocolLooper;
-    private final boolean supportLargerPkg;
     private final IProtocolAnalysisResult mProtocolCallBack;
     private final int callBackPoolSize;
+    private final ISocketDataProducer mSocketDataProducer;
+    private final ISocketDataProducer mLargerSocketDataProducer;
 
+    /**
+     * @param protocolLooper            解析线程
+     * @param mProtocolCallBack         回调
+     * @param mSocketDataProducer       一般包的生产者
+     * @param mLargerSocketDataProducer 超大包的生产者
+     * @param callBackPoolSize          回调线程池的大小
+     */
     public ProtocolMultiChannelProcessor(Looper protocolLooper,
                                          IProtocolAnalysisResult mProtocolCallBack,
                                          int protocolVersion,
-                                         int callBackPoolSize,
-                                         boolean supportLargerPkg) {
+                                         ISocketDataProducer mSocketDataProducer,
+                                         ISocketDataProducer mLargerSocketDataProducer,
+                                         int callBackPoolSize) {
 
         if (mProtocolCallBack == null) {
-            throw new NullPointerException(" <ProtocolProcessor> IProtocolAnalysisResult==null . ");
+            throw new NullPointerException(" <ProtocolMultiChannelProcessor> IProtocolAnalysisResult==null . ");
         }
 
         if (protocolLooper == null) {
-            throw new NullPointerException(" <ProtocolProcessor> protocolLooper==null . ");
+            throw new NullPointerException(" <ProtocolMultiChannelProcessor> protocolLooper==null . ");
         }
-
+        if (mSocketDataProducer == null) {
+            throw new NullPointerException(" <ProtocolMultiChannelProcessor> ISocketDataProducer==null . ");
+        }
         this.protocolLooper = protocolLooper;
         this.protocolVersion = protocolVersion;
         this.callBackPoolSize = callBackPoolSize;
+        this.mSocketDataProducer = mSocketDataProducer;
+        this.mLargerSocketDataProducer = mLargerSocketDataProducer;
         this.mProtocolCallBack = mProtocolCallBack;
-        this.supportLargerPkg = supportLargerPkg;
     }
+
 
     @Override
     public void release() {
@@ -90,8 +104,9 @@ public class ProtocolMultiChannelProcessor extends AbsProtocolProcessor {
                     dataResolveQueue = ProtocolProcessorFactory.newSingleChannelMultiTask(protocolLooper,
                             mProtocolCallBack,
                             protocolVersion,
-                            callBackPoolSize,
-                            supportLargerPkg);
+                            mSocketDataProducer,
+                            mLargerSocketDataProducer,
+                            callBackPoolSize);
 
                     mSingChannelMap.put(channel, dataResolveQueue);
                 }
