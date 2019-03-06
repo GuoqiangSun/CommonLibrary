@@ -1,4 +1,4 @@
-package cn.com.swain.support.protocolEngine.datagram.escape.QX;
+package cn.com.swain.support.protocolEngine.datagram.escape.XX;
 
 import cn.com.swain.support.protocolEngine.ProtocolBuild;
 import cn.com.swain.support.protocolEngine.ProtocolCode;
@@ -9,26 +9,24 @@ import cn.com.swain.support.protocolEngine.datagram.escape.EscapeDataArray;
  * date: 2019/1/24 0024
  * Desc:
  * <p>
- * * <p>
  * * * 转义前	           转义后
- * * STX （帧头）	    STX 转成 ESC 和 STX_ESC
- * * ETX （帧尾）	    ETX 转成 ESC 和 ETX_ESC
- * * ESC （转义符）    	ESC 转成 ESC 和 ESC_ESC
- * * {@link ProtocolCode}
+ * STX - {@link ProtocolBuild.XX#STX}（帧头） 	STX 转成 ESC 和 STX_ESC{@link ProtocolBuild.XX#STX_ESC}
+ * ETX - {@link ProtocolBuild.XX#ETX}（帧尾）	ETX 转成 ESC 和 ETX_ESC{@link ProtocolBuild.XX#ETX_ESC}
+ * ESC - {@link ProtocolBuild.XX#ESC}（转义符）	ESC 转成 ESC 和 ESC_ESC{@link ProtocolBuild.XX#ESC_ESC}
  */
-public class QXEscapeDataArray extends EscapeDataArray {
+public class XXEscapeDataArray extends EscapeDataArray {
 
 
-    private static final byte STX = ProtocolBuild.QX.STX;
-    private static final byte ETX = ProtocolBuild.QX.ETX;
-    private static final byte ESC = ProtocolBuild.QX.ESC;
+    private static final byte STX = ProtocolBuild.XX.STX;
+    private static final byte ETX = ProtocolBuild.XX.ETX;
+    private static final byte ESC = ProtocolBuild.XX.ESC;
 
-    private static final byte STX_ESC = ProtocolBuild.QX.STX_ESC;
-    private static final byte ETX_ESC = ProtocolBuild.QX.ETX_ESC;
-    private static final byte ESC_ESC = ProtocolBuild.QX.ESC_ESC;
+    private static final byte STX_ESC = ProtocolBuild.XX.STX_ESC;
+    private static final byte ETX_ESC = ProtocolBuild.XX.ETX_ESC;
+    private static final byte ESC_ESC = ProtocolBuild.XX.ESC_ESC;
 
 
-    public QXEscapeDataArray(int size) {
+    public XXEscapeDataArray(int size) {
         super(size);
     }
 

@@ -24,10 +24,10 @@ import cn.com.swain.support.protocolEngine.pack.ReceivesData;
 public abstract class DataResolveQueue extends Handler {
 
     protected String TAG = AbsProtocolProcessor.TAG;
-    private final IDataInspector mDataInspector;
-    private final ISocketDataProducer mSocketDataProducer;
-    private final ISocketDataProducer mLargerSocketDataProducer;
-    private final Map<String, ResolveData> mSocketArrayMap;
+    private IDataInspector mDataInspector;
+    private ISocketDataProducer mSocketDataProducer;
+    private ISocketDataProducer mLargerSocketDataProducer;
+    private Map<String, ResolveData> mSocketArrayMap;
 
     public DataResolveQueue(Looper mLooper,
                             IDataInspector mDataInspector,
@@ -63,18 +63,23 @@ public abstract class DataResolveQueue extends Handler {
 
         if (mSocketDataProducer != null) {
             mSocketDataProducer.clear();
+            mSocketDataProducer = null;
         }
 
         if (mLargerSocketDataProducer != null) {
             mLargerSocketDataProducer.clear();
+            mSocketDataProducer = null;
         }
 
         if (mDataInspector != null) {
             mDataInspector.release();
+            mDataInspector = null;
         }
 
-        if (mSocketArrayMap != null) {
-            mSocketArrayMap.clear();
+        Map<String, ResolveData> socketArrayMap = this.mSocketArrayMap;
+        this.mSocketArrayMap = null;
+        if (socketArrayMap != null) {
+            socketArrayMap.clear();
         }
 
     }
@@ -98,7 +103,11 @@ public abstract class DataResolveQueue extends Handler {
 
             case MSG_WHAT_CALLBACK:
 
-                mDataInspector.inspectData(msg.arg1, (SocketDataArray) msg.obj);
+                if (mDataInspector != null) {
+                    mDataInspector.inspectData(msg.arg1, (SocketDataArray) msg.obj);
+                } else {
+                    Tlog.w(TAG, " handleMessage inspect data ,but mDataInspector=null ");
+                }
 
                 break;
 
@@ -160,16 +169,22 @@ public abstract class DataResolveQueue extends Handler {
             return;
         }
 
-        ResolveData mResolveData = mSocketArrayMap.get(receiverData.fromID);
+        if (mSocketArrayMap != null) {
+            ResolveData mResolveData = mSocketArrayMap.get(receiverData.fromID);
 
-        if (mResolveData == null) {
-            mResolveData = new ResolveData();
-            mResolveData.device = receiverData.fromID;
-            mSocketArrayMap.put(receiverData.fromID, mResolveData);
-            Tlog.w(TAG, " DataResolveQueue mSocketArrayMap put " + receiverData.fromID);
+            if (mResolveData == null) {
+                mResolveData = new ResolveData();
+                mResolveData.device = receiverData.fromID;
+                mSocketArrayMap.put(receiverData.fromID, mResolveData);
+                Tlog.w(TAG, " DataResolveQueue mSocketArrayMap put " + receiverData.fromID);
+            }
+
+            resolveData(receiverData, buf, mResolveData);
+
+        } else {
+            Tlog.w(TAG, " resolveData but mSocketArrayMap=null ");
         }
 
-        resolveData(receiverData, buf, mResolveData);
     }
 
     //接收数据为null

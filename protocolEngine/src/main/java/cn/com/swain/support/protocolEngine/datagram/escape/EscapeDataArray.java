@@ -26,7 +26,7 @@ public abstract class EscapeDataArray implements IEscapeDataArray {
     /**
      * 状态 ，转义，反转义
      */
-    private int state = STATE_UNKNOWN;
+    private volatile int state = STATE_UNKNOWN;
 
     /**
      * empty byte
@@ -100,7 +100,6 @@ public abstract class EscapeDataArray implements IEscapeDataArray {
     @Override
     public final void reset() {
         this.point = 0;
-        this.state = STATE_UNKNOWN;
     }
 
     @Override

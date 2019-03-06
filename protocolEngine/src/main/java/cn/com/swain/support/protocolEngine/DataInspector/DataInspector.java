@@ -90,6 +90,9 @@ public class DataInspector extends AbsDataInspector {
             return;
         }
 
+        if(Tlog.isDebug()){
+            Tlog.i(TAG, " <ProtocolProcessor> inspectData SUCCESS");
+        }
         if (mProtocolCallBack != null) {
             mProtocolCallBack.onSuccess(mSocketDataArray);
         }

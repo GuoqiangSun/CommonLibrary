@@ -8,24 +8,29 @@ package cn.com.swain.support.protocolEngine;
 public class ProtocolBuild {
 
     /**
-     * 亓行智能科技有限公司
+     * xx有限公司
      */
-    public static final class QX {
+    public static final class XX {
 
         /**
          * int32 ,前三位表示公司,后一位表示协议版本号
          */
-        public static final int QX_VERSION = 0x00000000;
+        public static final int XX_VERSION = 0x00000000;
 
         /**
          * 第一版本协议,精简协议
+         * <p>
+         * （帧头）(1) + 有效数据长度(2) + + custom(1)+product(1) + 命令（类型 + 命令）(2) + 参数（变长）+ 校验(CRC8)(1) + （帧尾）(1)
          */
-        public static final int QX_VERSION_0 = (QX.QX_VERSION & 0xFFFFFF00) | ProtocolBuild.VERSION.VERSION_0;
+        public static final int XX_VERSION_0 = (XX_VERSION & 0xFFFFFF00) | ProtocolBuild.VERSION.VERSION_0;
 
         /**
          * 第二版本协议,这个版本的协议增加了序列号,token码
+         * <p>
+         * （帧头）(1) + 有效数据长度(2) + 版本(1)+序号（1）+token(4)
+         * + custom(1)+product(1) + 命令（类型 + 命令）(2) + 参数（变长）+ 校验(CRC8)(1) + （帧尾）(1)
          */
-        public static final int QX_VERSION_SEQ = (QX.QX_VERSION & 0xFFFFFF00) | ProtocolBuild.VERSION.VERSION_SEQ;
+        public static final int XX_VERSION_SEQ = (XX_VERSION & 0xFFFFFF00) | ProtocolBuild.VERSION.VERSION_SEQ;
 
         /**
          * 转义前	           转义后
@@ -66,16 +71,16 @@ public class ProtocolBuild {
             return (version & 0xFFFFFF00);
         }
 
-        public static boolean isQXVersion(int version) {
-            return getCompany(version) == QX.QX_VERSION;
+        public static boolean isXXVersion(int version) {
+            return getCompany(version) == XX.XX_VERSION;
         }
 
         public static byte getSTX(int version) {
-            return isQXVersion(version) ? QX.STX : 0x00;
+            return isXXVersion(version) ? XX.STX : 0x00;
         }
 
         public static byte getETX(int version) {
-            return isQXVersion(version) ? QX.ETX : 0x00;
+            return isXXVersion(version) ? XX.ETX : 0x00;
         }
 
         /**
@@ -93,10 +98,10 @@ public class ProtocolBuild {
         System.out.println(" QXVersion 0 :" + VERSION.VERSION_0);
         System.out.println(" QXVersion seq:" + VERSION.VERSION_SEQ);
 
-        System.out.println(" isQXVersion :" + VERSION.isQXVersion(VERSION.VERSION_SEQ));
-        System.out.println(" isQXVersion :" + VERSION.isQXVersion(VERSION.VERSION_0));
-        System.out.println(" isQXVersion :" + VERSION.isQXVersion(12345));
-        System.out.println(" isQXVersion :" + VERSION.isQXVersion(ProtocolBuild.VERSION.VERSION_SEQ + 123456789));
+        System.out.println(" isXXVersion :" + VERSION.isXXVersion(VERSION.VERSION_SEQ));
+        System.out.println(" isXXVersion :" + VERSION.isXXVersion(VERSION.VERSION_0));
+        System.out.println(" isXXVersion :" + VERSION.isXXVersion(12345));
+        System.out.println(" isXXVersion :" + VERSION.isXXVersion(ProtocolBuild.VERSION.VERSION_SEQ + 123456789));
 
         int i = 0xFFFFFF20;
 

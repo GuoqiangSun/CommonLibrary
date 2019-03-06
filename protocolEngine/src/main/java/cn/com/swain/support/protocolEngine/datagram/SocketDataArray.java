@@ -3,13 +3,13 @@ package cn.com.swain.support.protocolEngine.datagram;
 import cn.com.swain.baselib.log.Tlog;
 import cn.com.swain.support.protocolEngine.ProtocolBuild;
 import cn.com.swain.support.protocolEngine.datagram.ProtocolDatagram.AbsProtocolDataPack;
-import cn.com.swain.support.protocolEngine.datagram.ProtocolDatagram.QX.QXProtocolComData;
-import cn.com.swain.support.protocolEngine.datagram.ProtocolDatagram.QX.QXProtocolComData2;
+import cn.com.swain.support.protocolEngine.datagram.ProtocolDatagram.XX.XXProtocolComData;
+import cn.com.swain.support.protocolEngine.datagram.ProtocolDatagram.XX.XXProtocolComData2;
 import cn.com.swain.support.protocolEngine.datagram.ProtocolException.DatagramStateException;
 import cn.com.swain.support.protocolEngine.datagram.ProtocolException.EscapeIOException;
 import cn.com.swain.support.protocolEngine.datagram.ProtocolException.UnknownVersionException;
 import cn.com.swain.support.protocolEngine.datagram.escape.IEscapeDataArray;
-import cn.com.swain.support.protocolEngine.datagram.escape.QX.QXEscapeDataArray;
+import cn.com.swain.support.protocolEngine.datagram.escape.XX.XXEscapeDataArray;
 import cn.com.swain.support.protocolEngine.pack.BaseModel;
 import cn.com.swain.support.protocolEngine.pack.ComModel;
 import cn.com.swain.support.protocolEngine.resolve.AbsProtocolProcessor;
@@ -44,22 +44,22 @@ public class SocketDataArray extends AbsProtocolDataPack implements Cloneable, I
         int body = ProtocolBuild.VERSION.getVersion(version) <= ProtocolBuild.VERSION.VERSION_0
                 ? DATA_BODY : (DATA_BODY + DATA_BODY / 2);
 
-        if (ProtocolBuild.VERSION.isQXVersion(version)) {
+        if (ProtocolBuild.VERSION.isXXVersion(version)) {
 
-            this.mEscapeDataArray = new QXEscapeDataArray(body);
+            this.mEscapeDataArray = new XXEscapeDataArray(body);
 
             int realVersion = ProtocolBuild.VERSION.removeHighVersion(version);
 
             if (realVersion == ProtocolBuild.VERSION.VERSION_0) {
-                this.mAbsProtocolDataPack = new QXProtocolComData(this.mEscapeDataArray);
+                this.mAbsProtocolDataPack = new XXProtocolComData(this.mEscapeDataArray);
             } else if (realVersion == ProtocolBuild.VERSION.VERSION_SEQ) {
-                this.mAbsProtocolDataPack = new QXProtocolComData2(this.mEscapeDataArray);
+                this.mAbsProtocolDataPack = new XXProtocolComData2(this.mEscapeDataArray);
             } else {
-                throw new UnknownVersionException(" new SocketDataArray() unknown company version:" + version);
+                throw new UnknownVersionException(" new SocketDataArray() unknown version:" + version);
             }
 
         } else {
-            throw new UnknownVersionException(" new SocketDataArray() unknown version:" + version);
+            throw new UnknownVersionException(" new SocketDataArray() unknown company version:" + version);
         }
     }
 
@@ -603,13 +603,14 @@ public class SocketDataArray extends AbsProtocolDataPack implements Cloneable, I
     @Override
     public void reset() {
         this.mEscapeDataArray.reset();
-        this.mAbsProtocolDataPack.setParams(null);
+        setParams(null);
         clearModel();
     }
 
     @Override
     public void release() {
         this.mEscapeDataArray.release();
+        setParams(null);
         this.obj = null;
         this.mModel = null;
     }

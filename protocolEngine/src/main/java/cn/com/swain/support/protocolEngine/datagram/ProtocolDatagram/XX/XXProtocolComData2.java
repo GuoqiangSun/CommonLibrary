@@ -1,4 +1,4 @@
-package cn.com.swain.support.protocolEngine.datagram.ProtocolDatagram.QX;
+package cn.com.swain.support.protocolEngine.datagram.ProtocolDatagram.XX;
 
 import cn.com.swain.baselib.log.Tlog;
 import cn.com.swain.baselib.util.CrcUtil;
@@ -13,42 +13,30 @@ import cn.com.swain.support.protocolEngine.resolve.AbsProtocolProcessor;
  * date : 2018/3/30 0030
  * desc :
  * <p>
- * <p>
  * *  startAI通信包协议格式
  * 0xff（帧头）(1) + 有效数据长度(2) + 版本(1)+序号（1）+token(4)
  * + custom(1)+product(1) + 命令（类型 + 命令）(2) + 参数（变长）+ 校验(CRC8)(1) + 0xee（帧尾）(1)
  * <p>
- * header(uint_8)
- * len_h（uint8_t）  	len_l（uint_8）
- * reserve_h（uint_8）	reserve_l（uint_8）
- * type(uint_8)	       cmd(uint_8)
- * data[...]（uint_8）
- * CRC8(uint_8)
- * tail(uint_8)
- * <p>
- * <p>
- * <p>
- * 有效数据 : 包括保留字段、命令字段、参数字段
- * 保留字段 : 后续蓝牙、socket等通信需要再定义，串口默认为0
+ * 有效数据 : 版本、序号、token、custom、product、命令字段、参数字段
  * 命令字段 : 主动发送方命令字段为奇数，回复方命令字节+1
  * 参数字段 : 由uint_8类型数组组成，当数据包为回复类型时，data[0]表示ack结果，为0表示成功，>0 表示出错类型
- * 校验字段 : 有效字段[ 保留 + 命令（类型 + 命令） + 参数（变长）]作CRC8校验
+ * 校验字段 : 有效字段[ 版本 +序号+ token+custom+product+命令（类型 + 命令） + 参数（变长）]作CRC8校验
  * <p>
  * <p>
- * STX - 0xff（帧头）	STX 转成 ESC 和 0xaa
- * ETX - 0xee（帧尾）	 ETX 转成 ESC 和 0x99
- * ESC - 0x55（转义符）	ESC 转成 ESC 和 0x00
+ * STX - {@link ProtocolBuild.XX#STX}（帧头） 	STX 转成 ESC 和 STX_ESC{@link ProtocolBuild.XX#STX_ESC}
+ * ETX - {@link ProtocolBuild.XX#ETX}（帧尾）	ETX 转成 ESC 和 ETX_ESC{@link ProtocolBuild.XX#ETX_ESC}
+ * ESC - {@link ProtocolBuild.XX#ESC}（转义符）	ESC 转成 ESC 和 ESC_ESC{@link ProtocolBuild.XX#ESC_ESC}
  */
 
-public class QXProtocolComData2 extends AbsProtocolDataPack {
+public class XXProtocolComData2 extends AbsProtocolDataPack {
 
     private final IEscapeDataArray mComDataArray;
 
-    public QXProtocolComData2(IEscapeDataArray mComDataArray) {
+    public XXProtocolComData2(IEscapeDataArray mComDataArray) {
         this.mComDataArray = mComDataArray;
-        setVersion((byte) ProtocolBuild.QX.QX_VERSION_SEQ);
-        setHead(ProtocolBuild.QX.STX);
-        setTail(ProtocolBuild.QX.ETX);
+        setVersion((byte) ProtocolBuild.XX.XX_VERSION_SEQ);
+        setHead(ProtocolBuild.XX.STX);
+        setTail(ProtocolBuild.XX.ETX);
     }
 
     public static final int LENGTH_BASE_VERSION = 15;
@@ -136,7 +124,7 @@ public class QXProtocolComData2 extends AbsProtocolDataPack {
             System.arraycopy(params, 0, buf, POINT_PARAMS_START, paramsLength);
         }
 
-        final int crcPoint = QXProtocolComData2.getCRCPoint(paramsLength);
+        final int crcPoint = XXProtocolComData2.getCRCPoint(paramsLength);
 
         //        final int crcPoint =allLength - 2;
 
@@ -144,7 +132,7 @@ public class QXProtocolComData2 extends AbsProtocolDataPack {
         buf[crcPoint] = crc;
         setCrc(crc);
 
-        final int tailPoint = QXProtocolComData2.getTailPoint(crcPoint);
+        final int tailPoint = XXProtocolComData2.getTailPoint(crcPoint);
         buf[tailPoint] = getTail();
 
         return buf;
@@ -266,7 +254,7 @@ public class QXProtocolComData2 extends AbsProtocolDataPack {
 
     @Override
     public boolean hasProtocolHead() {
-        return (getProtocolHead() == ProtocolBuild.QX.STX);
+        return (getProtocolHead() == ProtocolBuild.XX.STX);
     }
 
     @Override
@@ -302,14 +290,14 @@ public class QXProtocolComData2 extends AbsProtocolDataPack {
 
     @Override
     public boolean hasProtocolTail() {
-        return (getProtocolTail() == ProtocolBuild.QX.ETX);
+        return (getProtocolTail() == ProtocolBuild.XX.ETX);
     }
 
     @Override
     public String toString() {
 
         StringBuilder sb = new StringBuilder();
-        sb.append(" QXProtocolComData:");
+        sb.append(" XXProtocolComData:");
         sb.append(" DATA_STATE : ").append(mComDataArray.getStateStr()).append(" , ");
         sb.append(" HEAD : ").append(Integer.toHexString(getProtocolHead() & 0xFF)).append(" , ");
         sb.append(" VALID_LENGTH : ").append(getProtocolValidLength()).append(" , ");

@@ -8,9 +8,8 @@ import cn.com.swain.support.protocolEngine.DataInspector.DataInspector;
 import cn.com.swain.support.protocolEngine.ProtocolBuild;
 import cn.com.swain.support.protocolEngine.datagram.ProtocolException.UnknownVersionException;
 import cn.com.swain.support.protocolEngine.datagram.dataproducer.ISocketDataProducer;
-import cn.com.swain.support.protocolEngine.datagram.dataproducer.SocketDataQueueProducer;
 import cn.com.swain.support.protocolEngine.pack.ReceivesData;
-import cn.com.swain.support.protocolEngine.resolve.QX.QxDataResolveQueue;
+import cn.com.swain.support.protocolEngine.resolve.XX.XXDataResolveQueue;
 import cn.com.swain.support.protocolEngine.result.IProtocolAnalysisResult;
 
 /**
@@ -50,8 +49,8 @@ public class ProtocolMultiTaskProcessor extends AbsProtocolProcessor {
         }
 
 
-        if (ProtocolBuild.VERSION.isQXVersion(protocolVersion)) {
-            this.mDataResolveQueue = new QxDataResolveQueue(protocolLooper,
+        if (ProtocolBuild.VERSION.isXXVersion(protocolVersion)) {
+            this.mDataResolveQueue = new XXDataResolveQueue(protocolLooper,
                     new DataInspectorPool(new DataInspector(mProtocolCallBack), callBackPoolSize),
                     mSocketDataProducer,
                     mLargerSocketDataProducer);

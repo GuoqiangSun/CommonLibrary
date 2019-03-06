@@ -45,7 +45,7 @@ public class DatagramInspector {
     public boolean hasHead() {
         byte protocolHead = mSocketDataArray.getProtocolHead();
 
-        return (protocolHead == ProtocolBuild.QX.STX);
+        return (protocolHead == ProtocolBuild.XX.STX);
 
     }
 
@@ -81,7 +81,7 @@ public class DatagramInspector {
 
         byte protocolTail = mSocketDataArray.getProtocolTail();
 
-        return (protocolTail == ProtocolBuild.QX.ETX);
+        return (protocolTail == ProtocolBuild.XX.ETX);
 
     }
 

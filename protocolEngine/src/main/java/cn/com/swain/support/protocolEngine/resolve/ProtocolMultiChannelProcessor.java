@@ -17,15 +17,15 @@ import cn.com.swain.support.protocolEngine.result.IProtocolAnalysisResult;
 
 public class ProtocolMultiChannelProcessor extends AbsProtocolProcessor {
 
-    private final SparseArray<AbsProtocolProcessor> mSingChannelMap = new SparseArray<>(8);
+    private SparseArray<AbsProtocolProcessor> mSingChannelMap;
     private final Object synObj = new byte[1];
 
-    private final int protocolVersion;
-    private final Looper protocolLooper;
-    private final IProtocolAnalysisResult mProtocolCallBack;
-    private final int callBackPoolSize;
-    private final ISocketDataProducer mSocketDataProducer;
-    private final ISocketDataProducer mLargerSocketDataProducer;
+    private int protocolVersion;
+    private Looper protocolLooper;
+    private IProtocolAnalysisResult mProtocolCallBack;
+    private int callBackPoolSize;
+    private ISocketDataProducer mSocketDataProducer;
+    private ISocketDataProducer mLargerSocketDataProducer;
 
     /**
      * @param protocolLooper            解析线程
@@ -51,6 +51,7 @@ public class ProtocolMultiChannelProcessor extends AbsProtocolProcessor {
         if (mSocketDataProducer == null) {
             throw new NullPointerException(" <ProtocolMultiChannelProcessor> ISocketDataProducer==null . ");
         }
+        this.mSingChannelMap = new SparseArray<>(8);
         this.protocolLooper = protocolLooper;
         this.protocolVersion = protocolVersion;
         this.callBackPoolSize = callBackPoolSize;
@@ -63,14 +64,20 @@ public class ProtocolMultiChannelProcessor extends AbsProtocolProcessor {
     @Override
     public void release() {
         synchronized (synObj) {
-            for (int i = 0; i < mSingChannelMap.size(); i++) {
-                int i1 = mSingChannelMap.keyAt(i);
-                AbsProtocolProcessor dataResolveQueue = mSingChannelMap.get(i1);
+            SparseArray<AbsProtocolProcessor> singChannelMap = this.mSingChannelMap;
+            this.mSingChannelMap = null;
+            for (int i = 0; i < singChannelMap.size(); i++) {
+                int i1 = singChannelMap.keyAt(i);
+                AbsProtocolProcessor dataResolveQueue = singChannelMap.get(i1);
                 if (dataResolveQueue != null) {
                     dataResolveQueue.release();
                 }
             }
-            mSingChannelMap.clear();
+            singChannelMap.clear();
+            mProtocolCallBack = null;
+            protocolLooper = null;
+            mSocketDataProducer = null;
+            mLargerSocketDataProducer = null;
         }
     }
 
@@ -92,6 +99,10 @@ public class ProtocolMultiChannelProcessor extends AbsProtocolProcessor {
     }
 
     private AbsProtocolProcessor getDataResolveQueue(int channel) {
+        if (mSingChannelMap == null) {
+            Tlog.e(TAG, " getDataResolveQueue mSingChannelMap=null already release");
+            return null;
+        }
 
         AbsProtocolProcessor dataResolveQueue = mSingChannelMap.get(channel);
         if (dataResolveQueue == null) {

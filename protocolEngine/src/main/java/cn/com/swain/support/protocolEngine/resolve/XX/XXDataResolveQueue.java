@@ -1,4 +1,4 @@
-package cn.com.swain.support.protocolEngine.resolve.QX;
+package cn.com.swain.support.protocolEngine.resolve.XX;
 
 import android.os.Looper;
 
@@ -16,22 +16,22 @@ import cn.com.swain.support.protocolEngine.resolve.ResolveData;
  * date: 2019/1/24 0024
  * Desc:
  */
-public class QxDataResolveQueue extends DataResolveQueue {
+public class XXDataResolveQueue extends DataResolveQueue {
 
-    private static final byte STX = ProtocolBuild.QX.STX;
-    private static final byte ETX = ProtocolBuild.QX.ETX;
+    private static final byte STX = ProtocolBuild.XX.STX;
+    private static final byte ETX = ProtocolBuild.XX.ETX;
 
-    public QxDataResolveQueue(Looper mLooper, IDataInspector mDataInspector,
+    public XXDataResolveQueue(Looper mLooper, IDataInspector mDataInspector,
                               ISocketDataProducer mSocketDataProducer, ISocketDataProducer mLargerSocketDataProducer) {
         super(mLooper, mDataInspector, mSocketDataProducer, mLargerSocketDataProducer);
     }
 
-    public QxDataResolveQueue(Looper mLooper, IDataInspector mDataInspector, ISocketDataProducer mSocketDataProducer) {
+    public XXDataResolveQueue(Looper mLooper, IDataInspector mDataInspector, ISocketDataProducer mSocketDataProducer) {
         super(mLooper, mDataInspector, mSocketDataProducer);
     }
 
     @Override
-    protected void resolveData(ReceivesData receiverData, byte[] buf, ResolveData mResolveData) {
+    protected synchronized void resolveData(ReceivesData receiverData, byte[] buf, ResolveData mResolveData) {
 
         SocketDataArray mTmpSocketDataArray = mResolveData.mLastSocketDataArray;
 
@@ -55,29 +55,32 @@ public class QxDataResolveQueue extends DataResolveQueue {
 
                     }
 
+                    // produceSocketDataArray时,直接拿mTmpSocketDataArray来接,
+                    // 会出现修改上个SocketDataArray的bug
+                    SocketDataArray socketDataArray = null;
+
                     if (checkPkgIsLargerSize(buf, length)) {
-                        mTmpSocketDataArray = produceLargerSocketDataArray();
+                        socketDataArray = produceLargerSocketDataArray();
                     }
 
-                    if (mTmpSocketDataArray != null) {
+                    if (socketDataArray != null) {
                         mResolveData.isLargerPkg = true;
                     } else {
                         mResolveData.isLargerPkg = false;
-                        mTmpSocketDataArray = produceSocketDataArray();
+                        socketDataArray = produceSocketDataArray();
                     }
 
-                    mTmpSocketDataArray.resetIsCompletePkg();
-                    mTmpSocketDataArray.reset();
-                    mTmpSocketDataArray.setISUsed();
-                    mTmpSocketDataArray.setID(receiverData.fromID);
-                    mTmpSocketDataArray.setObj(receiverData.obj);
-                    mTmpSocketDataArray.setArg(receiverData.arg);
-                    mTmpSocketDataArray.setModel(receiverData.getReceiveModel());
-                    mTmpSocketDataArray.changeStateToReverse();
-                    mTmpSocketDataArray.onAddHead(buf[i]);
+                    socketDataArray.setISUsed();
+                    socketDataArray.resetIsCompletePkg();
+                    socketDataArray.reset();
+                    socketDataArray.setID(receiverData.fromID);
+                    socketDataArray.setObj(receiverData.obj);
+                    socketDataArray.setArg(receiverData.arg);
+                    socketDataArray.setModel(receiverData.getReceiveModel());
+                    socketDataArray.changeStateToReverse();
+                    socketDataArray.onAddHead(buf[i]);
 
-                    mResolveData.mLastSocketDataArray = mTmpSocketDataArray;
-
+                    mTmpSocketDataArray = mResolveData.mLastSocketDataArray = socketDataArray;
                     // Tlog.v("startCount", " count : " + ++time);
 
                     break;
