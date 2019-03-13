@@ -1,4 +1,4 @@
-package cn.com.swain.baselib.util;
+package cn.com.swain.baselib.app.utils;
 
 import android.annotation.SuppressLint;
 import android.app.ActivityManager;
@@ -17,6 +17,8 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
+
+import cn.com.swain.baselib.util.StrUtil;
 
 /**
  * author: Guoqiang_Sun

@@ -23,8 +23,8 @@ import android.widget.Toast;
 
 import cn.com.common.test.R;
 import cn.com.common.test.global.LooperManager;
-import cn.com.swain.baselib.util.PermissionHelper;
-import cn.com.swain.baselib.util.PermissionRequest;
+import cn.com.swain.baselib.permission.PermissionHelper;
+import cn.com.swain.baselib.permission.PermissionRequest;
 import cn.com.swain.support.ble.enable.AbsBleEnable;
 import cn.com.swain.support.ble.enable.BleEnabler;
 import cn.com.swain.support.ble.scan.AbsBleScan;

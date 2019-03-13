@@ -1,6 +1,11 @@
 package cn.com.swain.support.protocolEngine.datagram;
 
+import java.io.IOException;
+
+import cn.com.swain.baselib.clone.DeepCloneException;
+import cn.com.swain.baselib.clone.IDeepCloneable;
 import cn.com.swain.baselib.log.Tlog;
+import cn.com.swain.baselib.clone.SerialManager;
 import cn.com.swain.support.protocolEngine.ProtocolBuild;
 import cn.com.swain.support.protocolEngine.datagram.ProtocolDatagram.AbsProtocolDataPack;
 import cn.com.swain.support.protocolEngine.datagram.ProtocolDatagram.XX.XXProtocolComData;
@@ -19,7 +24,7 @@ import cn.com.swain.support.protocolEngine.resolve.AbsProtocolProcessor;
  * date : 2018/8/1 0016
  * desc :
  */
-public class SocketDataArray extends AbsProtocolDataPack implements Cloneable, IEscapeDataArray {
+public class SocketDataArray extends AbsProtocolDataPack implements Cloneable, IDeepCloneable, IEscapeDataArray {
 
     private final String TAG = AbsProtocolProcessor.TAG;
 
@@ -62,7 +67,6 @@ public class SocketDataArray extends AbsProtocolDataPack implements Cloneable, I
             throw new UnknownVersionException(" new SocketDataArray() unknown company version:" + version);
         }
     }
-
 
     /**
      * 是否收到一包完整的数据包
@@ -620,27 +624,42 @@ public class SocketDataArray extends AbsProtocolDataPack implements Cloneable, I
     @Override
     public String toString() {
         return "SocketDataArray :" + hashCode()
-                + "-"
+                + " use:" + used
+                + " isCompletePkg:" + isCompletePkg
+                + " \n"
                 + String.valueOf(mAbsProtocolDataPack)
-                + " \n "
+                + " \n"
                 + String.valueOf(mEscapeDataArray)
-                + " \n "
-                + String.valueOf(mModel);
+                + " \nID:" + String.valueOf(ID)
+                + ",  obj:" + String.valueOf(obj)
+                + ",  arg:" + arg
+                + ",  model:" + String.valueOf(mModel)
+                ;
     }
 
     @Override
-    protected Object clone() {
+    public SocketDataArray deepClone() throws DeepCloneException {
+
+        try {
+            String s = SerialManager.writeObject(this);
+            return (SocketDataArray)SerialManager.readObject(s);
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new DeepCloneException(e);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+            throw new DeepCloneException(e);
+        }
+    }
+
+    @Override
+    public SocketDataArray clone() throws CloneNotSupportedException {
 
         SocketDataArray mSIComDataArray;
-        try {
 
-            mSIComDataArray = (SocketDataArray) super.clone();
+        mSIComDataArray = (SocketDataArray) super.clone();
 
-        } catch (CloneNotSupportedException e) {
 
-            mSIComDataArray = null;
-
-        }
         return mSIComDataArray;
     }
 
@@ -652,12 +671,12 @@ public class SocketDataArray extends AbsProtocolDataPack implements Cloneable, I
      * @return SocketDataArray
      */
     public static SocketDataArray parseSocketData(byte[] pkgData, int version) throws EscapeIOException {
-        SocketDataArray mSocketDataArray = new SocketDataArray(version);
-        return parseSocketData(pkgData, mSocketDataArray);
+        return parseSocketData(pkgData, new SocketDataArray(version));
     }
 
     public static SocketDataArray parseSocketData(byte[] pkgData, SocketDataArray mSocketDataArray) throws EscapeIOException {
         mSocketDataArray.reset();
+        mSocketDataArray.setISUsed();
         mSocketDataArray.changeStateToReverse();
         mSocketDataArray.onAddPackageReverse(pkgData);
 
@@ -673,7 +692,9 @@ public class SocketDataArray extends AbsProtocolDataPack implements Cloneable, I
             throw new EscapeIOException(" not has tail ["
                     + ProtocolBuild.VERSION.getETX(mSocketDataArray.getConstructionVersion()) + "]");
         }
+        mSocketDataArray.setIsCompletePkg();
         return mSocketDataArray;
     }
+
 
 }

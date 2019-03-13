@@ -1,4 +1,4 @@
-package cn.com.swain.baselib.util;
+package cn.com.swain.baselib.app.provider;
 
 import android.support.v4.content.FileProvider;
 

@@ -82,12 +82,12 @@ public class ProtocolMultiChannelProcessor extends AbsProtocolProcessor {
     }
 
     @Override
-    public void onInputServerData(ReceivesData mReceivesData) {
+    public void onInputProtocolData(ReceivesData mReceivesData) {
         AbsProtocolProcessor mDataResolveQueue = getDataResolveQueue(mReceivesData);
         if (mDataResolveQueue != null) {
-            mDataResolveQueue.onInputServerData(mReceivesData);
+            mDataResolveQueue.onInputProtocolData(mReceivesData);
         } else {
-            Tlog.e(TAG, " ProtocolMultiChannelProcessor onInputServerData mDataResolveQueue=null :"
+            Tlog.e(TAG, " ProtocolMultiChannelProcessor onInputProtocolData mDataResolveQueue=null :"
                     + String.valueOf(mReceivesData));
         }
     }

@@ -3,7 +3,6 @@ package cn.com.swain.support.protocolEngine.datagram.dataproducer;
 import java.util.Arrays;
 
 import cn.com.swain.baselib.log.Tlog;
-import cn.com.swain.support.protocolEngine.ProtocolProcessor;
 import cn.com.swain.support.protocolEngine.datagram.SocketDataArray;
 import cn.com.swain.support.protocolEngine.resolve.AbsProtocolProcessor;
 
@@ -37,8 +36,8 @@ public class SocketDataQueueProducer implements ISocketDataProducer {
     public SocketDataQueueProducer(int version, int normalSize) {
         this.version = version;
         this.name = String.valueOf((int) ((Math.random() * 9 + 1) * 100000));
-        if (normalSize > 5) {
-            normalSize = 5;
+        if (normalSize > Byte.MAX_VALUE) {
+            normalSize = Byte.MAX_VALUE;
         } else if (normalSize <= 0) {
             normalSize = 1;
         }

@@ -1,4 +1,4 @@
-package cn.com.swain.baselib.util;
+package cn.com.swain.baselib.permission;
 
 import android.app.Activity;
 import android.content.pm.PackageManager;

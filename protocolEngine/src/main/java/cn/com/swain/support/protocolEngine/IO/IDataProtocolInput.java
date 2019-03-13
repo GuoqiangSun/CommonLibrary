@@ -10,6 +10,11 @@ import cn.com.swain.support.protocolEngine.pack.ReceivesData;
 
 public interface IDataProtocolInput {
 
-    void onInputServerData(ReceivesData mReceivesData);
+    /**
+     * 输入一包socket协议数据,解析后,实现业务功能
+     *
+     * @param mReceivesData 数据
+     */
+    void onInputProtocolData(ReceivesData mReceivesData);
 
 }

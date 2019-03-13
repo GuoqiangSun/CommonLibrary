@@ -14,6 +14,9 @@
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.CAMERA" />
 
+    <uses-permission android:name="android.permission.TRANSMIT_IR" />
+    <uses-feature android:name="android.hardware.usb.host" />
+
     <application
         android:name=".main.CommonApplication"
         android:allowBackup="true"
@@ -103,6 +106,18 @@
         <activity android:name=".light.ColorLightActivity" />
         <activity android:name=".testScrollView.LinearViewActivity" />
         <activity android:name=".testscreen.OrientationActivity" />
+
+        <activity android:name=".ir.InfraredActivity" />
+        <activity android:name=".usb.DeviceListActivity" >
+            <intent-filter>
+                <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"
+                android:resource="@xml/device_filter" />
+        </activity>
+        <activity android:name=".usb.SerialConsoleActivity" />
 
     </application>
 

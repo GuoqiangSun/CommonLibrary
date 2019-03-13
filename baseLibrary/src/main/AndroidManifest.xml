@@ -8,7 +8,7 @@
     <application>
 
         <provider
-            android:name=".util.PhotoProvider"
+            android:name=".app.provider.PhotoProvider"
             android:authorities="${applicationId}.photo.provider"
             android:exported="false"
             android:grantUriPermissions="true"
@@ -19,7 +19,7 @@
         </provider>
 
         <activity
-            android:name=".util.PermissionHelper$PermissionActivity"
+            android:name=".permission.PermissionHelper$PermissionActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:multiprocess="true"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />

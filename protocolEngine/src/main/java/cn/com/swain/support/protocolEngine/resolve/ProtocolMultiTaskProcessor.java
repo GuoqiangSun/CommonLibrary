@@ -68,11 +68,11 @@ public class ProtocolMultiTaskProcessor extends AbsProtocolProcessor {
     }
 
     @Override
-    public void onInputServerData(ReceivesData mReceivesData) {
+    public void onInputProtocolData(ReceivesData mReceivesData) {
         if (mDataResolveQueue != null) {
             mDataResolveQueue.postReceiveDataToQueue(mReceivesData);
         } else {
-            Tlog.e(TAG, " ProtocolMultiTaskProcessor onInputServerData mDataResolveQueue=null :"
+            Tlog.e(TAG, " ProtocolMultiTaskProcessor onInputProtocolData mDataResolveQueue=null :"
                     + String.valueOf(mReceivesData));
         }
     }

@@ -40,9 +40,9 @@ dependencies {
 //    //项目名称
 //    artifactId = 'baselib'
 //    //版本号
-//    publishVersion = '3.2.11'
+//    publishVersion = '3.2.12'
 //    //描述，不重要
-//    desc = '修改权限请求'
+//    desc = '修改目录结构'
 //    //网站，不重要
 //    website = 'https://www.startai.com.cn'
 //

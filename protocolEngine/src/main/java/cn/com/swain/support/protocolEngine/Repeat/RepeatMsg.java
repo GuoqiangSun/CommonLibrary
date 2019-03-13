@@ -78,7 +78,7 @@ public class RepeatMsg extends Handler {
                 responseData.getRepeatMsgModel().setRepeatOnce();
 
                 if (mResponse != null) {
-                    mResponse.onOutputDataToServer(responseData);
+                    mResponse.onOutputProtocolData(responseData);
                 }
 
             }

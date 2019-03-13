@@ -46,10 +46,11 @@ public class Bit {
     /**
      * 将 tmpDevice 添加进来
      */
-    public final void addDevice(int tmpDevice) {
+    public final Bit addDevice(int tmpDevice) {
 
         this.device |= tmpDevice;
 
+        return this;
     }
 
     /**
@@ -68,10 +69,11 @@ public class Bit {
     /**
      * 将 tmpDevice 移除出去
      */
-    public final void removeDevice(int tmpDevice) {
+    public final Bit removeDevice(int tmpDevice) {
 
         this.device = this.device & ~tmpDevice;
 
+        return this;
     }
 
     /**
@@ -90,11 +92,11 @@ public class Bit {
     /**
      * flag true {@link #addDevice(int)} or {@link #removeDevice(int)}
      */
-    public final void reserveDevice(int tmpDevice, boolean flag) {
+    public final Bit reserveDevice(int tmpDevice, boolean flag) {
         if (flag) {
-            addDevice(tmpDevice);
+            return addDevice(tmpDevice);
         } else {
-            removeDevice(tmpDevice);
+            return removeDevice(tmpDevice);
         }
     }
 
@@ -105,7 +107,7 @@ public class Bit {
         checkPoint(bitPoint);
         return ((this.device >> bitPoint) & 0x01) == 1;
     }
-    
+
     /**
      * 判断bitPoint位是否为 0
      */
@@ -125,6 +127,15 @@ public class Bit {
     @Override
     public String toString() {
         return " Bit=" + Integer.toBinaryString(device);
+    }
+
+
+    public static Bit getBit() {
+        return new Bit();
+    }
+
+    public static Bit getBit(int device) {
+        return new Bit(device);
     }
 
     /**

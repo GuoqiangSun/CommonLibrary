@@ -1,11 +1,13 @@
 package cn.com.swain.support.protocolEngine.datagram.ProtocolDatagram;
 
+import java.io.Serializable;
+
 /**
  * author: Guoqiang_Sun
  * date : 2018/8/1 0001
  * desc :
  */
-public abstract class AbsProtocolDataPack implements IProtocolComData {
+public abstract class AbsProtocolDataPack implements IProtocolComData , Serializable {
 
     private byte absProtocol_head;
 

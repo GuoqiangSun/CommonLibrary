@@ -20,8 +20,8 @@ import java.util.concurrent.Executors;
 
 import cn.com.common.test.R;
 import cn.com.swain.baselib.log.Tlog;
-import cn.com.swain.baselib.util.CpuUtil;
-import cn.com.swain.baselib.util.PermissionRequest;
+import cn.com.swain.baselib.app.utils.CpuUtil;
+import cn.com.swain.baselib.permission.PermissionRequest;
 
 public class FunctionActivity extends AppCompatActivity {
 

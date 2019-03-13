@@ -10,7 +10,7 @@ import java.util.Locale;
 
 import cn.com.swain.baselib.app.IApp.IApp;
 import cn.com.swain.baselib.log.Tlog;
-import cn.com.swain.baselib.util.AppUtils;
+import cn.com.swain.baselib.app.utils.AppUtils;
 
 /**
  * author: Guoqiang_Sun

@@ -1,5 +1,7 @@
 package cn.com.swain.support.protocolEngine.datagram.escape;
 
+import java.io.Serializable;
+
 import cn.com.swain.baselib.log.Tlog;
 import cn.com.swain.baselib.util.StrUtil;
 import cn.com.swain.support.protocolEngine.resolve.AbsProtocolProcessor;
@@ -10,7 +12,7 @@ import cn.com.swain.support.protocolEngine.resolve.AbsProtocolProcessor;
  * desc :
  */
 
-public abstract class EscapeDataArray implements IEscapeDataArray {
+public abstract class EscapeDataArray implements IEscapeDataArray, Serializable {
 
     private String TAG = AbsProtocolProcessor.TAG;
 
@@ -27,6 +29,7 @@ public abstract class EscapeDataArray implements IEscapeDataArray {
      * 状态 ，转义，反转义
      */
     private volatile int state = STATE_UNKNOWN;
+
 
     /**
      * empty byte
@@ -57,6 +60,26 @@ public abstract class EscapeDataArray implements IEscapeDataArray {
         this.DATA = new byte[size];
         this.point = 0;
         this.originCapacity = this.capacity = size;
+    }
+
+    protected EscapeDataArray(int point, byte[] data, int originCapacity, int capacity, int state) {
+        this.DATA = data;
+        this.point = point;
+        this.originCapacity = originCapacity;
+        this.capacity = capacity;
+        this.state = state;
+    }
+
+    protected int getOriginCapacity() {
+        return originCapacity;
+    }
+
+    protected int getState() {
+        return state;
+    }
+
+    protected byte[] getDATA() {
+        return DATA;
     }
 
     @Override
@@ -305,16 +328,21 @@ public abstract class EscapeDataArray implements IEscapeDataArray {
         return true;
     }
 
-    /************************************************/
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(" EscapeDataArray:");
-        sb.append(" curState : ").append(getStateStr()).append(", point : ").append(point).append(",");
-        sb.append(" capacity : ").append(capacity).append(" == data.length : ").append(DATA.length).append(",");
+        sb.append(" curState:").append(getStateStr())
+                .append(", point:").append(point).append(",");
+        sb.append(" capacity:").append(capacity).append(" == data.length:")
+                .append(DATA != null ? DATA.length : 0).append(",");
         sb.append(" content : ");
-        for (byte b : DATA) {
-            sb.append(Integer.toHexString(b & 0xFF)).append(",");
+        if (DATA != null) {
+            for (byte b : DATA) {
+                sb.append(Integer.toHexString(b & 0xFF)).append(",");
+            }
+        } else {
+            sb.append(" null,");
         }
         sb.append(" : END. ");
         return sb.toString();

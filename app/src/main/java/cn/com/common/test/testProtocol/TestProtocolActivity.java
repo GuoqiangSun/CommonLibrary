@@ -4,10 +4,12 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 
+import java.io.Serializable;
 import java.util.Arrays;
 
 import cn.com.common.test.global.LooperManager;
 import cn.com.common.test.main.CommonApplication;
+import cn.com.swain.baselib.clone.DeepCloneException;
 import cn.com.swain.baselib.log.Tlog;
 import cn.com.swain.support.protocolEngine.DataInspector.DatagramInspector;
 import cn.com.swain.support.protocolEngine.ProtocolBuild;
@@ -82,6 +84,8 @@ public class TestProtocolActivity extends AppCompatActivity {
         test2();
         test3();
         test4();
+
+        testSocketDataArrayClone();
     }
 
 
@@ -91,19 +95,19 @@ public class TestProtocolActivity extends AppCompatActivity {
                 , (byte) 0xff, 0x0, 0x11, 0x0
         };
         ReceivesData mReceiveData = new ReceivesData("00:00:00:00:00:00", buf);
-        absProtocolProcessor.onInputServerData(mReceiveData);
+        absProtocolProcessor.onInputProtocolData(mReceiveData);
     }
 
     private void test2() {
         ResponseData electricityPrice = ProtocolDataCache.getTempUnit("00:00:00:00:00:00", (byte) 2);
         ReceivesData mReceiveData = new ReceivesData(electricityPrice.toID, electricityPrice.data);
-        absProtocolProcessor.onInputServerData(mReceiveData);
+        absProtocolProcessor.onInputProtocolData(mReceiveData);
     }
 
     private void test3() {
         ResponseData monetaryUnit = ProtocolDataCache.getMonetaryUnit("00:00:00:00:00:00", (byte) 0x03);
         ReceivesData mReceiveData = new ReceivesData(monetaryUnit.toID, monetaryUnit.data);
-        absProtocolProcessor.onInputServerData(mReceiveData);
+        absProtocolProcessor.onInputProtocolData(mReceiveData);
     }
 
     private void test4() {
@@ -115,7 +119,7 @@ public class TestProtocolActivity extends AppCompatActivity {
             bytes[3] = (byte) 0x96;
         }
         ReceivesData mReceiveData = new ReceivesData(monetaryUnit.toID, bytes);
-        absProtocolProcessor.onInputServerData(mReceiveData);
+        absProtocolProcessor.onInputProtocolData(mReceiveData);
     }
 
     private void test5() {
@@ -169,12 +173,22 @@ public class TestProtocolActivity extends AppCompatActivity {
         };
 
         ReceivesData mReceiveData = new ReceivesData("00:00:00:00:00:00", buf);
-        absProtocolProcessor.onInputServerData(mReceiveData);
+        absProtocolProcessor.onInputProtocolData(mReceiveData);
 
     }
 
+    public static class P implements Serializable {
 
-    private void testSocketDataArray() {
+
+        public String name;
+
+        @Override
+        public String toString() {
+            return "name:" + name;
+        }
+    }
+
+    private void testSocketDataArrayClone() {
         SocketDataArray mSocketDataArray = new SocketDataArray(0);
 
 //        心跳	0xff	0x0	0x5	0x0	0x0	0x01	0x01	0x01	效验（0x31）	0xee
@@ -184,15 +198,62 @@ public class TestProtocolActivity extends AppCompatActivity {
 //        buf = new byte[]{(byte) 0xff, 0, 6, 0, 0, 1, 1, 2, (byte) 0x55, (byte) 0xaa, (byte) 0xeb, (byte) 0xee};
 
         mSocketDataArray.onAddPackageReverse(buf);
-        Tlog.v(TAG, mSocketDataArray.toString());
+        P p = new P();
+        p.name = "abc";
 
-        DatagramInspector inspector = new DatagramInspector(mSocketDataArray);
-        Tlog.v(TAG, " crc " + inspector.checkCrc() + " h " + inspector.hasHead() + " t " + inspector.hasTail());
+        mSocketDataArray.setObj(p);
+
+        Tlog.v(TAG, "Reverse: " + mSocketDataArray.toString());
+
+        try {
+            SocketDataArray clone = mSocketDataArray.clone();
+
+            ResponseData monetaryUnit = ProtocolDataCache.getMonetaryUnit("00:00:00:00:00:00", (byte) 0x03);
+            mSocketDataArray.onAddPackageReverse(monetaryUnit.data);
+            p.name = "cbaabc";
+
+            Tlog.v(TAG, "clone: " + clone.toString());
+
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+            Tlog.e(TAG," CloneNotSupportedException",e);
+        }
+
+        try {
+            SocketDataArray clone =  mSocketDataArray.deepClone();
+
+            ResponseData monetaryUnit = ProtocolDataCache.getMonetaryUnit("00:00:00:00:00:00", (byte) 0x03);
+            mSocketDataArray.onAddPackageReverse(monetaryUnit.data);
+
+            p.name = "cba";
+
+            Tlog.v(TAG, "deepClone: " + clone.toString());
+
+        } catch (DeepCloneException e) {
+            e.printStackTrace();
+            Tlog.e(TAG," DeepCloneException",e);
+        }
+
+
+    }
+
+    private void testSocketArrayReverseAndEscape() {
+        SocketDataArray mSocketDataArray = new SocketDataArray(0);
+
+//        心跳	0xff	0x0	0x5	0x0	0x0	0x01	0x01	0x01	效验（0x31）	0xee
+
+        byte[] buf = new byte[]{(byte) 0xff, 0x00, 0x05, 0x00, 0x00, 0x01, 0x01, 0x01, 0x31, (byte) 0xee};
+
+//        buf = new byte[]{(byte) 0xff, 0, 6, 0, 0, 1, 1, 2, (byte) 0x55, (byte) 0xaa, (byte) 0xeb, (byte) 0xee};
+
+        mSocketDataArray.onAddPackageReverse(buf);
+        Tlog.v(TAG, "onAddPackageReverse: " + mSocketDataArray.toString());
+
 
         SocketDataArray socketDataArray = null;
         try {
             socketDataArray = SocketDataArray.parseSocketData(buf, 0);
-            Tlog.d(TAG, " socketDataArray " + socketDataArray.toString());
+            Tlog.d(TAG, " parseSocketData:  " + socketDataArray.toString());
         } catch (EscapeIOException e) {
             e.printStackTrace();
             Tlog.e(TAG, " ", e);
@@ -212,18 +273,34 @@ public class TestProtocolActivity extends AppCompatActivity {
 
         mSocketDataArray.onAddPackageEscape(buf);
 
+        Tlog.v(TAG, "onAddPackageEscape: " + mSocketDataArray.toString());
 
-        Tlog.v(TAG, mSocketDataArray.toString());
+
         SocketDataArray socketDataArray2 = null;
         try {
             socketDataArray2 = SocketDataArray.parseSocketData(buf, 0);
-            Tlog.d(TAG, " socketDataArray2 " + socketDataArray2.toString());
+            Tlog.d(TAG, " parseSocketData2 " + socketDataArray2.toString());
         } catch (EscapeIOException e) {
             e.printStackTrace();
             Tlog.e(TAG, " ", e);
         }
 
+    }
 
+    private void testInspector() {
+        SocketDataArray mSocketDataArray = new SocketDataArray(0);
+
+//        心跳	0xff	0x0	0x5	0x0	0x0	0x01	0x01	0x01	效验（0x31）	0xee
+
+        byte[] buf = new byte[]{(byte) 0xff, 0x00, 0x05, 0x00, 0x00, 0x01, 0x01, 0x01, 0x31, (byte) 0xee};
+
+//        buf = new byte[]{(byte) 0xff, 0, 6, 0, 0, 1, 1, 2, (byte) 0x55, (byte) 0xaa, (byte) 0xeb, (byte) 0xee};
+
+        mSocketDataArray.onAddPackageReverse(buf);
+        Tlog.v(TAG, mSocketDataArray.toString());
+
+        DatagramInspector inspector = new DatagramInspector(mSocketDataArray);
+        Tlog.v(TAG, "inspector crc " + inspector.checkCrc() + " h " + inspector.hasHead() + " t " + inspector.hasTail());
     }
 
 

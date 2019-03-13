@@ -1,9 +1,8 @@
 package cn.com.swain.support.protocolEngine.IO;
 
-import cn.com.swain.baselib.app.IApp.IService;
+import cn.com.swain.baselib.log.Tlog;
 import cn.com.swain.support.protocolEngine.pack.ReceivesData;
 import cn.com.swain.support.protocolEngine.pack.ResponseData;
-import cn.com.swain.baselib.log.Tlog;
 
 /**
  * author: Guoqiang_Sun
@@ -11,39 +10,12 @@ import cn.com.swain.baselib.log.Tlog;
  * desc :
  */
 
-public class ProtocolWrapper implements IService, IDataProtocolOutput, IDataProtocolInput {
+public class ProtocolWrapper implements IDataProtocolOutput, IDataProtocolInput {
 
     public static final String TAG = "ProtocolWrapper";
 
     public ProtocolWrapper() {
 
-    }
-
-    @Override
-    public void onSCreate() {
-        Tlog.v(TAG, " ProtocolWrapper onSCreate()");
-    }
-
-    @Override
-    public void onSResume() {
-        Tlog.v(TAG, " ProtocolWrapper onSResume()");
-    }
-
-    @Override
-    public void onSPause() {
-        Tlog.v(TAG, " ProtocolWrapper onSPause()");
-    }
-
-    @Override
-    public void onSDestroy() {
-        Tlog.v(TAG, " ProtocolWrapper onSDestroy()");
-        mDataOutputBase = null;
-        mDataInputBase = null;
-    }
-
-    @Override
-    public void onSFinish() {
-        Tlog.v(TAG, " ProtocolWrapper onSFinish()");
     }
 
     private IDataProtocolOutput mDataOutputBase;
@@ -53,8 +25,19 @@ public class ProtocolWrapper implements IService, IDataProtocolOutput, IDataProt
         if (mHardware != null) {
             mHardware.regIProtocolInput(this);
         } else {
-            Tlog.e(TAG, " AbsProtocolWrapper regOutputBase()  AbsHardware==null ");
+            Tlog.e(TAG, " AbsProtocolWrapper regOutputBase() AbsHardware==null");
         }
+    }
+
+    public void unregOutputBase(IDataOutputRegInput mHardware) {
+        if (mDataOutputBase != null && mDataOutputBase == mHardware) {
+            Tlog.e(TAG, " AbsProtocolWrapper unregOutputBase() success");
+            mDataOutputBase = null;
+        }
+    }
+
+    public void releaseOutputBase(){
+        mDataOutputBase = null;
     }
 
     private IDataProtocolInput mDataInputBase;
@@ -64,15 +47,26 @@ public class ProtocolWrapper implements IService, IDataProtocolOutput, IDataProt
         if (mVirtualScm != null) {
             mVirtualScm.regIProtocolOutput(this);
         } else {
-            Tlog.e(TAG, " AbsProtocolWrapper regInputBase()  AbsProtocolManager==null ");
+            Tlog.e(TAG, " AbsProtocolWrapper regInputBase() AbsProtocolManager==null");
         }
     }
 
+    public void unregInputBase(IDataInputRegOutput mVirtualScm) {
+        if (mDataInputBase != null && mDataInputBase == mVirtualScm) {
+            Tlog.e(TAG, " AbsProtocolWrapper unregInputBase() success");
+            mDataInputBase = null;
+        }
+    }
+
+    public void releaseInputBase(){
+        mDataInputBase = null;
+    }
+
     @Override
-    public void onInputServerData(ReceivesData mReceiverData) {
+    public void onInputProtocolData(ReceivesData mReceiverData) {
 
         if (mDataInputBase != null) {
-            mDataInputBase.onInputServerData(mReceiverData);
+            mDataInputBase.onInputProtocolData(mReceiverData);
         } else {
             Tlog.e(TAG, " onInputClientData  mProtocolInputBase==null . ");
         }
@@ -81,10 +75,10 @@ public class ProtocolWrapper implements IService, IDataProtocolOutput, IDataProt
     }
 
     @Override
-    public void onOutputDataToServer(ResponseData mResponseData) {
+    public void onOutputProtocolData(ResponseData mResponseData) {
 
         if (mDataOutputBase != null) {
-            mDataOutputBase.onOutputDataToServer(mResponseData);
+            mDataOutputBase.onOutputProtocolData(mResponseData);
         } else {
             Tlog.e(TAG, " onOutputDataToClient  mProtocolOutputBase==null . ");
         }
@@ -92,9 +86,9 @@ public class ProtocolWrapper implements IService, IDataProtocolOutput, IDataProt
     }
 
     @Override
-    public void onBroadcastDataToServer(ResponseData mResponseData) {
+    public void onBroadcastProtocolData(ResponseData mResponseData) {
         if (mDataOutputBase != null) {
-            mDataOutputBase.onBroadcastDataToServer(mResponseData);
+            mDataOutputBase.onBroadcastProtocolData(mResponseData);
         } else {
             Tlog.e(TAG, " onOutputDataToClient  mProtocolOutputBase==null . ");
         }

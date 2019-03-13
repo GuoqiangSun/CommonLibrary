@@ -9,6 +9,7 @@ import android.view.View;
 
 import cn.com.common.test.R;
 import cn.com.common.test.global.FileManager;
+import cn.com.common.test.ir.InfraredActivity;
 import cn.com.common.test.light.ColorLightActivity;
 import cn.com.common.test.p2p.p2pAndroid.P2pClientActivity;
 import cn.com.common.test.scanOR.ScanORCodeActivity;
@@ -21,11 +22,12 @@ import cn.com.common.test.testScrollView.ScrollViewActivity;
 import cn.com.common.test.testUdp.FastMultiUdpActivity;
 import cn.com.common.test.testUdp.FastUdpActivity;
 import cn.com.common.test.testscreen.OrientationActivity;
+import cn.com.common.test.usb.DeviceListActivity;
 import cn.com.swain.baselib.log.TFlog;
 import cn.com.swain.baselib.log.Tlog;
-import cn.com.swain.baselib.util.PermissionGroup;
-import cn.com.swain.baselib.util.PermissionHelper;
-import cn.com.swain.baselib.util.PermissionRequest;
+import cn.com.swain.baselib.permission.PermissionGroup;
+import cn.com.swain.baselib.permission.PermissionHelper;
+import cn.com.swain.baselib.permission.PermissionRequest;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -214,5 +216,13 @@ public class MainActivity extends AppCompatActivity {
 
     public void screenRate(View view) {
         startActivity(new Intent(this, OrientationActivity.class));
+    }
+
+    public void skipIr(View view) {
+        startActivity(new Intent(this, InfraredActivity.class));
+    }
+
+    public void skipUsb(View view) {
+        startActivity(new Intent(this, DeviceListActivity.class));
     }
 }

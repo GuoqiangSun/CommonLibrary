@@ -298,12 +298,12 @@ public class XXProtocolComData2 extends AbsProtocolDataPack {
 
         StringBuilder sb = new StringBuilder();
         sb.append(" XXProtocolComData:");
-        sb.append(" DATA_STATE : ").append(mComDataArray.getStateStr()).append(" , ");
-        sb.append(" HEAD : ").append(Integer.toHexString(getProtocolHead() & 0xFF)).append(" , ");
-        sb.append(" VALID_LENGTH : ").append(getProtocolValidLength()).append(" , ");
-        sb.append(" TYPE : ").append(Integer.toHexString(getProtocolType() & 0xFF)).append(" , ");
-        sb.append(" CMD : ").append(Integer.toHexString(getProtocolCmd() & 0xFF)).append(" , ");
-        sb.append(" CRC8 : ").append(Integer.toHexString(getProtocolCrc8() & 0xFF)).append(" , ");
+        sb.append(" DATA_STATE:").append(mComDataArray.getStateStr()).append(" ,");
+        sb.append(" HEAD:").append(Integer.toHexString(getProtocolHead() & 0xFF)).append(" ,");
+        sb.append(" VALID_LENGTH:").append(getProtocolValidLength()).append(" ,");
+        sb.append(" TYPE:").append(Integer.toHexString(getProtocolType() & 0xFF)).append(" ,");
+        sb.append(" CMD:").append(Integer.toHexString(getProtocolCmd() & 0xFF)).append(" ,");
+        sb.append(" CRC8:").append(Integer.toHexString(getProtocolCrc8() & 0xFF)).append(" ,");
 
         byte[] protocolParams = getProtocolParams();
 

@@ -29,7 +29,7 @@ public class CommonApplication extends BaseApplication {
         FileManager.getInstance().init(this);
 
 //        Tlog.setLogRecordDebug(true);
-        Tlog.setPrintStackDebug(true);
+//        Tlog.setPrintStackDebug(true);
 
         LooperManager.getInstance().init(this);
 

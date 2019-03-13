@@ -31,7 +31,7 @@ public abstract class SocketResponseTask extends AbsSocketDataTask {
     protected void response(ResponseData mResponseData) {
 
         if (mResponse != null) {
-            mResponse.onOutputDataToServer(mResponseData);
+            mResponse.onOutputProtocolData(mResponseData);
         } else {
             Tlog.e(TAG, " response mResponse == null ");
         }

@@ -1,4 +1,4 @@
-package cn.com.swain.baselib.util;
+package cn.com.swain.baselib.permission;
 
 import android.app.Activity;
 import android.content.Context;
@@ -15,6 +15,7 @@ import android.view.MotionEvent;
 import android.view.WindowManager;
 
 import cn.com.swain.baselib.log.Tlog;
+import cn.com.swain.baselib.app.utils.StatusBarUtil;
 
 /**
  * author: Guoqiang_Sun

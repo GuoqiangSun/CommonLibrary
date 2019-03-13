@@ -74,6 +74,15 @@
             android:text="screenRate"
             android:textAllCaps="false" />
 
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:onClick="skipUsb"
+            android:text="skipUsb"
+            android:textAllCaps="false" />
+
     </LinearLayout>
 
     <LinearLayout
@@ -136,6 +145,14 @@
             android:layout_gravity="center_horizontal"
             android:onClick="requestPermission1"
             android:text="requestPermission1"
+            android:textAllCaps="false" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:onClick="skipIr"
+            android:text="skipIr"
             android:textAllCaps="false" />
 
     </LinearLayout>

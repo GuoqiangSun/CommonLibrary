@@ -10,8 +10,18 @@ import cn.com.swain.support.protocolEngine.pack.ResponseData;
 
 public interface IDataProtocolOutput {
 
-    void onOutputDataToServer(ResponseData mResponseData);
+    /**
+     * 输出一包socket协议数据
+     *
+     * @param mResponseData 数据
+     */
+    void onOutputProtocolData(ResponseData mResponseData);
 
-    void onBroadcastDataToServer(ResponseData mResponseData);
+    /**
+     * 广播一包socket协议数据
+     *
+     * @param mResponseData 数据
+     */
+    void onBroadcastProtocolData(ResponseData mResponseData);
 
 }

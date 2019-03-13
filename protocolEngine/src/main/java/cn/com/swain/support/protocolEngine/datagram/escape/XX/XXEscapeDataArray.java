@@ -1,7 +1,6 @@
 package cn.com.swain.support.protocolEngine.datagram.escape.XX;
 
 import cn.com.swain.support.protocolEngine.ProtocolBuild;
-import cn.com.swain.support.protocolEngine.ProtocolCode;
 import cn.com.swain.support.protocolEngine.datagram.escape.EscapeDataArray;
 
 /**
@@ -15,7 +14,6 @@ import cn.com.swain.support.protocolEngine.datagram.escape.EscapeDataArray;
  * ESC - {@link ProtocolBuild.XX#ESC}（转义符）	ESC 转成 ESC 和 ESC_ESC{@link ProtocolBuild.XX#ESC_ESC}
  */
 public class XXEscapeDataArray extends EscapeDataArray {
-
 
     private static final byte STX = ProtocolBuild.XX.STX;
     private static final byte ETX = ProtocolBuild.XX.ETX;
@@ -146,5 +144,4 @@ public class XXEscapeDataArray extends EscapeDataArray {
         }
 
     }
-
 }

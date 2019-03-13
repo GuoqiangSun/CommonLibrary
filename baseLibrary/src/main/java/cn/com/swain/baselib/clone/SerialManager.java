@@ -1,4 +1,4 @@
-package cn.com.swain.baselib.util;
+package cn.com.swain.baselib.clone;
 
 import android.content.Context;
 
@@ -22,6 +22,7 @@ import java.io.Serializable;
 public class SerialManager {
 
     // 序列化对象为String字符串，先对序列化后的结果进行BASE64编码，否则不能直接进行反序列化
+    // 如果是内部类，需要是静态内部类public static class
     public static String writeObject(Object o) throws IOException {
 
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -52,14 +53,6 @@ public class SerialManager {
         bis.close();
         ois.close();
         return o;
-    }
-
-    private static final String OBJ_PATH = "serialObj";
-
-    public static void saveObj(Context mContext, Object o) {
-
-        saveObj(mContext, o, OBJ_PATH);
-
     }
 
 
@@ -114,13 +107,6 @@ public class SerialManager {
         }
 
         return false;
-    }
-
-
-    public static Object getObj(Context mContext) {
-
-        return getObj(mContext, OBJ_PATH);
-
     }
 
     public static Object getObj(Context mContext, String path) {

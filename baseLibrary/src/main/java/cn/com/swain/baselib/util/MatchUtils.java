@@ -1,5 +1,8 @@
 package cn.com.swain.baselib.util;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  * author: Guoqiang_Sun
  * date: 2018/11/27 0027
@@ -95,6 +98,24 @@ public class MatchUtils {
     public static boolean matchIP(String text) {
         if (text != null && !text.isEmpty()) {
             return text.matches(IP_REGEX);
+        }
+        return false;
+    }
+
+
+    private static final String CHAR_PATTERN_STR = "[ `~!@#$%^&*()+=|{}':;',\\[\\].<>/?~！@#￥%……&*（）——+|{}【】‘；：”“’。，、？]|\n|\r|\t";
+//    private static final String regEx = "[ _`~!@#$%^&*()+=|{}':;',\\[\\].<>/?~！@#￥%……&*（）——+|{}【】‘；：”“’。，、？]|\n|\r|\t";
+
+
+    /**
+     * 判断是否含有特殊字符
+     *
+     * @param text 字符串
+     * @return true为包含，false为不包含
+     */
+    public static boolean isSpecialStr(String text) {
+        if (text != null && !text.isEmpty()) {
+            return text.matches(CHAR_PATTERN_STR);
         }
         return false;
     }
