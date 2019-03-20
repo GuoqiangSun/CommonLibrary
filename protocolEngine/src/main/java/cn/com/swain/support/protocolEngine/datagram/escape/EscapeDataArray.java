@@ -252,8 +252,9 @@ public abstract class EscapeDataArray implements IEscapeDataArray, Serializable 
             return EMPTY;
         }
 */
-
-        return (DATA == null) ? EMPTY : (index >= point) ? EMPTY : DATA[index];
+        int mPoint = point;
+        byte[] data = DATA;
+        return (data == null) ? EMPTY : (index >= mPoint) ? EMPTY : data[index];
 
     }
 
@@ -262,25 +263,29 @@ public abstract class EscapeDataArray implements IEscapeDataArray, Serializable 
         if (point <= 0 || DATA == null) {
             return null;
         }
-        final byte[] signalData = new byte[point];
-        System.arraycopy(DATA, 0, signalData, 0, point);
+        int length = point;
+        byte[] data = DATA;
+        final byte[] signalData = new byte[length];
+        System.arraycopy(data, 0, signalData, 0, length);
         return signalData;
     }
 
 
     @Override
     public byte[] toArray(int srcPoint, int length) {
-
-        if (point < (srcPoint + length)) {
+        byte[] data = DATA;
+        int dLength = point;
+        if (dLength < (srcPoint + length)) {
             if (Tlog.isDebug()) {
-                Tlog.e(TAG, " IndexOutOfBoundsException toArray() " + StrUtil.toString(DATA));
+                Tlog.e(TAG, " IndexOutOfBoundsException toArray() " + StrUtil.toString(data));
             }
-            throw new IndexOutOfBoundsException(" toArray(int int) srcPoint: " + srcPoint + " length: " + length + " mDataPoint: " + point);
+            throw new IndexOutOfBoundsException(" toArray(int int) srcPoint: "
+                    + srcPoint + " length: " + length + " mDataPoint: " + dLength);
         }
 
         final byte[] mData = new byte[length];
 
-        System.arraycopy(DATA, srcPoint, mData, 0, length);
+        System.arraycopy(data, srcPoint, mData, 0, length);
 
         return mData;
     }
@@ -288,21 +293,24 @@ public abstract class EscapeDataArray implements IEscapeDataArray, Serializable 
     @Override
     public boolean copyArray(byte[] data) {
 
+        int length = point;
+        byte[] sData = DATA;
+
         if (data == null) {
             if (Tlog.isDebug()) {
-                Tlog.e(TAG, " NullPointerException copyArray()" + StrUtil.toString(DATA));
+                Tlog.e(TAG, " NullPointerException copyArray()" + StrUtil.toString(sData));
             }
             throw new NullPointerException(" copyArray(byte[]) data == null ");
         }
 
-        if (data.length < point) {
+        if (data.length < length) {
             if (Tlog.isDebug()) {
-                Tlog.e(TAG, " IndexOutOfBoundsException copyArray() " + StrUtil.toString(DATA));
+                Tlog.e(TAG, " IndexOutOfBoundsException copyArray() " + StrUtil.toString(sData));
             }
             throw new IndexOutOfBoundsException(" copyArray(byte[]);data.length must more than point; data.length(" + data.length + ")<point(" + point + ")");
         }
 
-        System.arraycopy(DATA, 0, data, 0, point);
+        System.arraycopy(sData, 0, data, 0, length);
         return true;
     }
 
@@ -310,21 +318,25 @@ public abstract class EscapeDataArray implements IEscapeDataArray, Serializable 
     @Override
     public boolean copyArray(byte[] data, int srcPoint, int length) {
 
+        int dLength = point;
+        byte[] sData = DATA;
+
         if (data == null) {
             if (Tlog.isDebug()) {
-                Tlog.e(TAG, " NullPointerException copyArray() " + StrUtil.toString(DATA));
+                Tlog.e(TAG, " NullPointerException copyArray() " + StrUtil.toString(sData));
             }
             throw new NullPointerException(" copyArray(byte[] int int) data is null ");
         }
 
-        if (point < (srcPoint + length)) {
+        if (dLength < (srcPoint + length)) {
             if (Tlog.isDebug()) {
-                Tlog.e(TAG, " IndexOutOfBoundsException copyArray() " + StrUtil.toString(DATA));
+                Tlog.e(TAG, " IndexOutOfBoundsException copyArray() " + StrUtil.toString(sData));
             }
-            throw new IndexOutOfBoundsException("copyArray(byte[] int int) srcPoint: " + srcPoint + " length: " + length + " point: " + point);
+            throw new IndexOutOfBoundsException("copyArray(byte[] int int) srcPoint: "
+                    + srcPoint + " length: " + length + " point: " + dLength);
         }
 
-        System.arraycopy(DATA, srcPoint, data, 0, length);
+        System.arraycopy(sData, srcPoint, data, 0, length);
         return true;
     }
 

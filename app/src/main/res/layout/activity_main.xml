@@ -83,6 +83,15 @@
             android:text="skipUsb"
             android:textAllCaps="false" />
 
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:onClick="skipFloatWindow"
+            android:text="skipFloatWindow"
+            android:textAllCaps="false" />
+
     </LinearLayout>
 
     <LinearLayout

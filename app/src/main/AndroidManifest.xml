@@ -14,7 +14,10 @@
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.CAMERA" />
 
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+
     <uses-permission android:name="android.permission.TRANSMIT_IR" />
+
     <uses-feature android:name="android.hardware.usb.host" />
 
     <application
@@ -108,7 +111,7 @@
         <activity android:name=".testscreen.OrientationActivity" />
 
         <activity android:name=".ir.InfraredActivity" />
-        <activity android:name=".usb.DeviceListActivity" >
+        <activity android:name=".usb.DeviceListActivity">
             <intent-filter>
                 <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />
             </intent-filter>
@@ -118,7 +121,9 @@
                 android:resource="@xml/device_filter" />
         </activity>
         <activity android:name=".usb.SerialConsoleActivity" />
+        <activity android:name=".suspension.SuspensionActivity" />
 
+        <service android:name=".suspension.SuspendService" />
     </application>
 
 </manifest>

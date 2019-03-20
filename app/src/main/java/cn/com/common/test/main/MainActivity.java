@@ -14,6 +14,7 @@ import cn.com.common.test.light.ColorLightActivity;
 import cn.com.common.test.p2p.p2pAndroid.P2pClientActivity;
 import cn.com.common.test.scanOR.ScanORCodeActivity;
 import cn.com.common.test.shake.ShakeActivity;
+import cn.com.common.test.suspension.SuspensionActivity;
 import cn.com.common.test.testBle.BleScanActivity;
 import cn.com.common.test.testFun.FunctionActivity;
 import cn.com.common.test.testProtocol.TestProtocolActivity;
@@ -224,5 +225,9 @@ public class MainActivity extends AppCompatActivity {
 
     public void skipUsb(View view) {
         startActivity(new Intent(this, DeviceListActivity.class));
+    }
+
+    public void skipFloatWindow(View view) {
+        startActivity(new Intent(this, SuspensionActivity.class));
     }
 }
