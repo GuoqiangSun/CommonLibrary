@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
 import cn.com.swain.baselib.log.Tlog;
+import cn.com.swain.baselib.permission.FloatPermissionHelper;
 import cn.com.swain.baselib.permission.FloatWindowPermission;
 
 /**
@@ -27,14 +28,14 @@ public class SuspensionActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        FloatWindowPermission.getInstance().unregFloatWindowPermissionListener();
+        FloatPermissionHelper.getInstance().unregFloatWindowPermissionListener();
     }
 
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-        FloatWindowPermission.getInstance().onActivityResult(this, requestCode, resultCode, data);
+        FloatPermissionHelper.getInstance().onActivityResult(this, requestCode, resultCode, data);
 
         super.onActivityResult(requestCode, resultCode, data);
     }
@@ -52,7 +53,7 @@ public class SuspensionActivity extends AppCompatActivity {
     }
 
     private void skipService(String conMac) {
-        FloatWindowPermission instance = FloatWindowPermission.getInstance();
+        FloatWindowPermission instance = FloatPermissionHelper.getInstance();
         instance.regFloatWindowPermissionListener(new FloatWindowPermission.OnFloatWindowPermissionLsn() {
             @Override
             public void onFloatWindowPermissionResult(boolean grant) {

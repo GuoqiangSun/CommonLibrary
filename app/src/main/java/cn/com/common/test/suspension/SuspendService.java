@@ -18,7 +18,7 @@ import android.widget.Toast;
 
 import cn.com.common.test.R;
 import cn.com.swain.baselib.log.Tlog;
-import cn.com.swain.baselib.permission.FloatWindowPermission;
+import cn.com.swain.baselib.permission.FloatPermissionHelper;
 
 /**
  * author: Guoqiang_Sun
@@ -98,7 +98,7 @@ public class SuspendService extends Service {
 
 //        if ((Build.VERSION.SDK_INT < Build.VERSION_CODES.M || Settings.canDrawOverlays(this))) {
 
-        if (FloatWindowPermission.getInstance().checkPermission(getApplicationContext())) {
+        if (FloatPermissionHelper.getInstance().checkPermission(getApplicationContext())) {
 
             Tlog.v(" windowManager addView ");
 //        if (SettingsCompat.canDrawOverlays(getApplication())) {

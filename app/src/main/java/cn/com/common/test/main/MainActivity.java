@@ -8,6 +8,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
 import cn.com.common.test.R;
+import cn.com.common.test.facedetect.TutorialOnFaceDetect;
+import cn.com.common.test.facedetect.TutorialOnFaceDetect1;
 import cn.com.common.test.global.FileManager;
 import cn.com.common.test.ir.InfraredActivity;
 import cn.com.common.test.light.ColorLightActivity;
@@ -229,5 +231,13 @@ public class MainActivity extends AppCompatActivity {
 
     public void skipFloatWindow(View view) {
         startActivity(new Intent(this, SuspensionActivity.class));
+    }
+
+    public void facedetec(View view) {
+        startActivity(new Intent(this, TutorialOnFaceDetect.class));
+    }
+
+    public void facedetec1(View view) {
+        startActivity(new Intent(this, TutorialOnFaceDetect1.class));
     }
 }

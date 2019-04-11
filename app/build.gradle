@@ -33,8 +33,6 @@ dependencies {
     implementation project(':baseLibrary')
     implementation project(':fastBle')
     implementation project(':protocolEngine')
-//    implementation project(':Tlog')
-//    implementation project(':scrollTxt')
     implementation project(':fastudp')
 
     implementation 'pub.devrel:easypermissions:1.1.0'

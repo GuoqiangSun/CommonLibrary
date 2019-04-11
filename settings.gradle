@@ -1,1 +1,1 @@
-include ':app', ':baseLibrary', ':fastBle', ':protocolEngine', ':scrollTxt', ':Tlog', ':fastudp'
+include ':app', ':baseLibrary', ':fastBle', ':protocolEngine', ':fastudp'

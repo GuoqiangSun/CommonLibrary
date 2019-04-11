@@ -8,13 +8,11 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/Tlog" />
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/baseLibrary" />
             <option value="$PROJECT_DIR$/fastBle" />
             <option value="$PROJECT_DIR$/fastudp" />
             <option value="$PROJECT_DIR$/protocolEngine" />
-            <option value="$PROJECT_DIR$/scrollTxt" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

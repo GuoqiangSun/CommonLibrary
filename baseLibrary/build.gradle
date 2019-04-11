@@ -4,7 +4,7 @@ android {
     compileSdkVersion 27
 
     defaultConfig {
-        minSdkVersion 18
+        minSdkVersion 17
         targetSdkVersion 27
         versionCode 3211
         versionName "3.2.11"
@@ -40,7 +40,7 @@ dependencies {
 //    //项目名称
 //    artifactId = 'baselib'
 //    //版本号
-//    publishVersion = '3.2.13'
+//    publishVersion = '3.2.15'
 //    //描述，不重要
 //    desc = '增加悬浮框权限'
 //    //网站，不重要

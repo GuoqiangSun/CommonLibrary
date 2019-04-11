@@ -28,12 +28,16 @@ public class BleEnabler extends AbsBleEnable {
     private BleEnableHandler mBleEnableHandler;
 
     public BleEnabler(Context mCtx, Looper mWorkLooper) {
-        BluetoothManager mBluetoothManager = (BluetoothManager) mCtx.getSystemService(Context.BLUETOOTH_SERVICE);
-        if (mBluetoothManager != null) {
-            BluetoothAdapter mBluetoothAdapter = mBluetoothManager.getAdapter();
-            init(mWorkLooper, mBluetoothAdapter);
-        } else {
-            Tlog.e(TAG, " mBluetoothManager=null ");
+        try {
+            BluetoothManager mBluetoothManager = (BluetoothManager) mCtx.getSystemService(Context.BLUETOOTH_SERVICE);
+            if (mBluetoothManager != null) {
+                BluetoothAdapter mBluetoothAdapter = mBluetoothManager.getAdapter();
+                init(mWorkLooper, mBluetoothAdapter);
+            } else {
+                Tlog.e(TAG, " mBluetoothManager=null ");
+            }
+        } catch (Exception e) {
+            Tlog.e(TAG, " new BleEnabler ", e);
         }
     }
 
@@ -44,13 +48,13 @@ public class BleEnabler extends AbsBleEnable {
 
     @Override
     public int beGetBleState() {
-        return mBluetoothAdapter.getState();
+        return mBluetoothAdapter != null ? mBluetoothAdapter.getState() : -1;
     }
 
     @Override
     public boolean beIsBleEnable() {
 
-        return (mBluetoothAdapter.isEnabled());
+        return mBluetoothAdapter != null && mBluetoothAdapter.isEnabled();
     }
 
 
@@ -62,15 +66,19 @@ public class BleEnabler extends AbsBleEnable {
 
     @Override
     public boolean beEnableBle() {
-        return beIsBleEnable() || mBluetoothAdapter.enable();
+        return beIsBleEnable() || (mBluetoothAdapter != null && mBluetoothAdapter.enable());
     }
 
     @Override
     public void checkBleState(BleStateResult mResult) {
         if (!mResult.checkFinish() && mResult.isValidDelay()) {
             mResult.updateTimes();
-            Message message = mBleEnableHandler.obtainMessage(MSG_WHAT_CHECK_BLE_STATE, mResult);
-            mBleEnableHandler.sendMessageDelayed(message, mResult.getDelay());
+            if (mBleEnableHandler != null) {
+                Message message = mBleEnableHandler.obtainMessage(MSG_WHAT_CHECK_BLE_STATE, mResult);
+                mBleEnableHandler.sendMessageDelayed(message, mResult.getDelay());
+            } else {
+                Tlog.e(TAG, " checkBleState mBleEnableHandler=null ");
+            }
         } else {
             Tlog.v(TAG, " check finish()  cru:" + mResult.getCurTimes() + " total:" + mResult.getTotalTimes() + " delay:" + mResult.getDelay());
         }
@@ -89,7 +97,7 @@ public class BleEnabler extends AbsBleEnable {
 
                 Tlog.v(TAG, " checkBleState : mResult times:" + mResult.getCurTimes());
 
-                if (mBluetoothAdapter.isEnabled()) {
+                if (mBluetoothAdapter != null && mBluetoothAdapter.isEnabled()) {
                     mResult.setEnabled();
                 } else {
                     mResult.setDisEnabled();

@@ -25,19 +25,10 @@ import cn.com.swain.baselib.permission.rom.RomUtils;
 public class FloatWindowPermission {
     public static final String TAG = "FloatWindowPermission";
 
-    public static final int REQUEST_CODE = 0x9637;
+    private final int REQUEST_CODE;
 
-    private static volatile FloatWindowPermission instance;
-
-    public static FloatWindowPermission getInstance() {
-        if (instance == null) {
-            synchronized (FloatWindowPermission.class) {
-                if (instance == null) {
-                    instance = new FloatWindowPermission();
-                }
-            }
-        }
-        return instance;
+    public FloatWindowPermission(int REQUEST_CODE) {
+        this.REQUEST_CODE = REQUEST_CODE;
     }
 
     private OnFloatWindowPermissionLsn mResult;
@@ -144,7 +135,7 @@ public class FloatWindowPermission {
         }
     }
 
-    private void applyPermission(Activity context) {
+    public void applyPermission(Activity context) {
         boolean result;
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             if (RomUtils.checkIsMiuiRom()) {
@@ -158,7 +149,11 @@ public class FloatWindowPermission {
             } else if (RomUtils.checkIsOppoRom()) {
                 result = oppoROMPermissionApply(context);
             } else {
-                result = false;
+                // 没找到机型,默认是有权限滴
+                if (mResult != null) {
+                    mResult.onFloatWindowPermissionResult(true);
+                }
+                return;
             }
         } else {
             result = commonROMPermissionApply(context);

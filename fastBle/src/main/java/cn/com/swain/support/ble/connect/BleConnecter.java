@@ -14,8 +14,8 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.UUID;
 
-import cn.com.swain.support.ble.scan.ScanBle;
 import cn.com.swain.baselib.log.Tlog;
+import cn.com.swain.support.ble.scan.ScanBle;
 
 /**
  * author: Guoqiang_Sun
@@ -93,6 +93,11 @@ class BleConnecter implements Serializable {
 
         Tlog.e(TAG, " connectBle() , address: " + mItem.address);
 
+        if (mAdapter == null) {
+            Tlog.e(TAG, " connectBle() , mAdapter==null ");
+            return;
+        }
+
         // 连接ble
         BluetoothDevice remoteDevice = mAdapter.getRemoteDevice(mItem.address);
         remoteDevice.connectGatt(mCtx, false,
@@ -168,7 +173,7 @@ class BleConnecter implements Serializable {
                 Tlog.w(TAG, " discoverServices(),  mConGatt==null ");
             }
         } else {
-            Tlog.w(TAG, " discoverService(),  mConGatt already disconnect; discon:"+discon);
+            Tlog.w(TAG, " discoverService(),  mConGatt already disconnect; discon:" + discon);
         }
     }
 

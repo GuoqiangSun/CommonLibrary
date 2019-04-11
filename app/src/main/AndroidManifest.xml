@@ -122,6 +122,8 @@
         </activity>
         <activity android:name=".usb.SerialConsoleActivity" />
         <activity android:name=".suspension.SuspensionActivity" />
+        <activity android:name=".facedetect.TutorialOnFaceDetect" />
+        <activity android:name=".facedetect.TutorialOnFaceDetect1" />
 
         <service android:name=".suspension.SuspendService" />
     </application>
