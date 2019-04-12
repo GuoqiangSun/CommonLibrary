@@ -35,7 +35,7 @@ public class OppoUtils {
         if (version >= 19) {
             AppOpsManager manager = (AppOpsManager) context.getSystemService(Context.APP_OPS_SERVICE);
             try {
-                Class clazz = AppOpsManager.class;
+                Class<?> clazz = AppOpsManager.class;
                 Method method = clazz.getDeclaredMethod("checkOp", int.class, int.class, String.class);
                 return AppOpsManager.MODE_ALLOWED == (int) method.invoke(manager, op, Binder.getCallingUid(), context.getPackageName());
             } catch (Exception e) {
@@ -64,7 +64,20 @@ public class OppoUtils {
         } catch (Exception e) {
             e.printStackTrace();
             Tlog.w(TAG, " applyOppoPermission ", e);
-            return false;
+            try {
+//                com.color.safecenter/.permission.PermissionTopActivity
+                Intent intent = new Intent();
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                ComponentName comp = new ComponentName("com.coloros.safecenter",
+                        "com.coloros.safecenter.permission.PermissionTopActivity");//悬浮窗管理页面
+                intent.setComponent(comp);
+                context.startActivityForResult(intent, requestCode);
+                return true;
+
+            }catch (Exception e1){
+                return false;
+            }
+
         }
     }
 }

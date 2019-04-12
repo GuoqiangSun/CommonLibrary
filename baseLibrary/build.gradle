@@ -4,10 +4,10 @@ android {
     compileSdkVersion 27
 
     defaultConfig {
-        minSdkVersion 17
+        minSdkVersion 18
         targetSdkVersion 27
-        versionCode 3211
-        versionName "3.2.11"
+        versionCode 3216
+        versionName "3.2.16"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
@@ -30,20 +30,20 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 }
 
-//apply plugin: 'com.novoda.bintray-release'
-//publish {
-//
-//    //bintray.com用户名
-//    userOrg = 'swain169'
-//    //自定义，别人引用时  groupId:artifactId:publishVersion
-//    groupId = 'cn.com.swain169'
-//    //项目名称
-//    artifactId = 'baselib'
-//    //版本号
-//    publishVersion = '3.2.15'
-//    //描述，不重要
-//    desc = '增加悬浮框权限'
-//    //网站，不重要
-//    website = 'https://www.startai.com.cn'
-//
-//}
+apply plugin: 'com.novoda.bintray-release'
+publish {
+
+    //bintray.com用户名
+    userOrg = 'swain169'
+    //自定义，别人引用时  groupId:artifactId:publishVersion
+    groupId = 'cn.com.swain169'
+    //项目名称
+    artifactId = 'baselib'
+    //版本号
+    publishVersion = '3.2.16'
+    //描述，不重要
+    desc = '增加悬浮框权限'
+    //网站，不重要
+    website = 'https://www.startai.com.cn'
+
+}
