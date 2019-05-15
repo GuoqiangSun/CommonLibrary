@@ -13,8 +13,7 @@ import cn.com.swain.baselib.jsInterface.response.BaseCommonJsUtils;
  * desc :
  */
 public abstract class AbsCommonJsInterfaceProxy
-        extends AbsCommonJsInterfaceWrapper
-        implements IJSRequest {
+        extends AbsCommonJsInterface {
 
     public AbsCommonJsInterfaceProxy(String name, AbsJsInterface mJsInterface) {
         super(name, mJsInterface);

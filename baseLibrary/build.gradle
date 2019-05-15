@@ -6,8 +6,8 @@ android {
     defaultConfig {
         minSdkVersion 18
         targetSdkVersion 27
-        versionCode 3216
-        versionName "3.2.16"
+        versionCode 3217
+        versionName "3.2.17"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
@@ -42,7 +42,7 @@ publish {
     //版本号
     publishVersion = '3.2.16'
     //描述，不重要
-    desc = '增加悬浮框权限'
+    desc = '增加新数据结构'
     //网站，不重要
     website = 'https://www.startai.com.cn'
 
