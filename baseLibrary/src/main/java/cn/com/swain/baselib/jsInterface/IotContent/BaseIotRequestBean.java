@@ -1,4 +1,4 @@
-package cn.com.swain.baselib.jsInterface.CommonContent;
+package cn.com.swain.baselib.jsInterface.IotContent;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -9,7 +9,7 @@ import org.json.JSONObject;
  * date : 2018/8/27 0027
  * desc :
  */
-public class BaseJsRequestBean extends AbsJsRequestBean {
+public class BaseIotRequestBean extends AbsIotRequestBean {
 
     private String jsonStr;
 

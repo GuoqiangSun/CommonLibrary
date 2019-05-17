@@ -124,6 +124,7 @@
         <activity android:name=".suspension.SuspensionActivity" />
         <activity android:name=".facedetect.TutorialOnFaceDetect" />
         <activity android:name=".facedetect.TutorialOnFaceDetect1" />
+        <activity android:name=".test.TestActivity" />
 
         <service android:name=".suspension.SuspendService" />
     </application>

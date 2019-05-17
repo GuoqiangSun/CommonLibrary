@@ -92,6 +92,14 @@
             android:text="skipFloatWindow"
             android:textAllCaps="false" />
 
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:onClick="test"
+            android:text="test"
+            android:textAllCaps="false" />
+
     </LinearLayout>
 
     <LinearLayout

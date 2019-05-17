@@ -25,18 +25,17 @@ public abstract class AbsCommonJsInterfaceProxy
 
 
     @Override
-    public void handleJsRequest(String jsonData) {
+    protected void handleJsRequest(String jsonData,JSONObject json) {
 
-        JSONObject json;
         String key;
         try {
-            json = new JSONObject(jsonData);
             key = json.getString(BaseCommonJsUtils.KEY_MSG_TYPE);
         } catch (JSONException e) {
             e.printStackTrace();
             onJsDataParseError(e, jsonData);
             return;
         }
+
         final BaseCommonJsRequestBean mData = new BaseCommonJsRequestBean();
         mData.setRootJsonObj(json);
         mData.setRootJsonStr(jsonData);
@@ -51,13 +50,9 @@ public abstract class AbsCommonJsInterfaceProxy
         }
 
         onJsRequest(mData);
-
     }
 
-
     protected abstract void onJsRequest(BaseCommonJsRequestBean mData);
-
-    protected abstract void onJsDataParseError(JSONException e, String jsonData);
 
     protected abstract void onJsPressBackFinish();
 

@@ -1,53 +1,53 @@
-package cn.com.swain.baselib.jsInterface.CommonContent.qx;
+package cn.com.swain.baselib.jsInterface.IotContent;
 
 /**
  * author Guoqiang_Sun
  * date 2019/5/15
  * desc @see https://docs.qq.com/doc/DY1JldFNtWHNvY0NL?opendocxfrom=admin
  */
-public class QXControlContent {
+public class ControlContent {
 
     /**
      * 两个字节
      * 版本号
      */
-    public int ver;
+    private int ver;
 
     /**
      * 六个字节
      * 时间戳，单位毫秒
      */
-    public long ts;
+    private long ts;
 
     /**
      * 六个字节
      * 数据包来自哪里
      */
-    public long from;
+    private long from;
 
     /**
      * 六个字节
      * 数据包去向哪里
      */
-    public long to;
+    private long to;
 
     /**
      * 两个字节
      * 数据包标签
      */
-    public int session;
+    private int session;
 
     /**
      * 四个字节
      * 应用标识
      */
-    public long appid;
+    private long appid;
 
     /**
      * 两个字节
      * 消息通道
      */
-    public int msgtw;
+    private int msgtw;
 
     public int getVer() {
         return ver;
@@ -107,7 +107,7 @@ public class QXControlContent {
 
     @Override
     public String toString() {
-        return "QXControlContent{" +
+        return "ControlContent{" +
                 "ver=" + ver +
                 ", ts=" + ts +
                 ", from=" + from +

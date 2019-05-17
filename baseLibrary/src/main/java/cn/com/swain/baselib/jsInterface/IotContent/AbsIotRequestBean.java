@@ -1,4 +1,4 @@
-package cn.com.swain.baselib.jsInterface.CommonContent;
+package cn.com.swain.baselib.jsInterface.IotContent;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -8,7 +8,7 @@ import org.json.JSONObject;
  * date 2019/5/15
  * desc
  */
-public abstract class AbsJsRequestBean {
+public abstract class AbsIotRequestBean {
 
     /**
      * JS 请求的 JSON字符串

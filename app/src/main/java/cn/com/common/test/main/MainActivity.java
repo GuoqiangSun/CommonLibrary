@@ -17,6 +17,7 @@ import cn.com.common.test.p2p.p2pAndroid.P2pClientActivity;
 import cn.com.common.test.scanOR.ScanORCodeActivity;
 import cn.com.common.test.shake.ShakeActivity;
 import cn.com.common.test.suspension.SuspensionActivity;
+import cn.com.common.test.test.TestActivity;
 import cn.com.common.test.testBle.BleScanActivity;
 import cn.com.common.test.testFun.FunctionActivity;
 import cn.com.common.test.testProtocol.TestProtocolActivity;
@@ -232,6 +233,10 @@ public class MainActivity extends AppCompatActivity {
     public void skipFloatWindow(View view) {
         startActivity(new Intent(this, SuspensionActivity.class));
     }
+    public void test(View view) {
+        startActivity(new Intent(this, TestActivity.class));
+    }
+
 
     public void facedetec(View view) {
         startActivity(new Intent(this, TutorialOnFaceDetect.class));

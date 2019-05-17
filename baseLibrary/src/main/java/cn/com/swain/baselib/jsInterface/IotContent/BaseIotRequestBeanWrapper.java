@@ -1,4 +1,4 @@
-package cn.com.swain.baselib.jsInterface.CommonContent;
+package cn.com.swain.baselib.jsInterface.IotContent;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -8,11 +8,11 @@ import org.json.JSONObject;
  * date : 2018/8/29 0029
  * desc :
  */
-public class BaseJsRequestBeanWrapper extends AbsJsRequestBean {
+public class BaseIotRequestBeanWrapper extends AbsIotRequestBean {
 
-    private final BaseJsRequestBean mBean;
+    private final BaseIotRequestBean mBean;
 
-    public BaseJsRequestBeanWrapper(BaseJsRequestBean mBean) {
+    public BaseIotRequestBeanWrapper(BaseIotRequestBean mBean) {
         this.mBean = mBean;
     }
 

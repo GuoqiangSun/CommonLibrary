@@ -1,29 +1,35 @@
-package cn.com.swain.baselib.jsInterface.CommonContent.qx;
+package cn.com.swain.baselib.jsInterface.IotContent;
 
 /**
  * author Guoqiang_Sun
  * date 2019/5/15
  * desc
  */
-public class QXBusinessContent {
+public class BusinessContent {
 
     /**
      * 两个字节
      * 客户
      */
-    public int custom;
+    private int custom;
 
     /**
      * 两个字节
      * 产品
      */
-    public int product;
+    private int product;
 
     /**
      * 四个字节
      * 指令
      */
-    public int cmd;
+    private int cmd;
+
+    /**
+     * 两个字节
+     * 结果
+     */
+    private int result;
 
     public int getCustom() {
         return custom;
@@ -49,12 +55,21 @@ public class QXBusinessContent {
         this.cmd = cmd;
     }
 
+    public int getResult() {
+        return result;
+    }
+
+    public void setResult(int result) {
+        this.result = result;
+    }
+
     @Override
     public String toString() {
-        return "QXBusinessContent{" +
+        return "BusinessContent{" +
                 "custom=" + custom +
                 ", product=" + product +
                 ", cmd=" + cmd +
+                ", result=" + result +
                 '}';
     }
 }

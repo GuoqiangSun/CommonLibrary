@@ -1,5 +1,8 @@
 package cn.com.swain.baselib.jsInterface.request;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import cn.com.swain.baselib.jsInterface.AbsJsInterface;
 
 /**
@@ -19,4 +22,20 @@ public abstract class AbsCommonJsInterface
         super(name, mJsInterface);
     }
 
+    @Override
+    public void handleJsRequest(String jsonData) {
+        JSONObject json;
+        try {
+            json = new JSONObject(jsonData);
+        } catch (JSONException e) {
+            e.printStackTrace();
+            onJsDataParseError(e, jsonData);
+            return;
+        }
+        handleJsRequest(jsonData, json);
+    }
+
+    protected abstract void handleJsRequest(String jsonData, JSONObject json);
+
+    protected abstract void onJsDataParseError(JSONException e, String jsonData);
 }
