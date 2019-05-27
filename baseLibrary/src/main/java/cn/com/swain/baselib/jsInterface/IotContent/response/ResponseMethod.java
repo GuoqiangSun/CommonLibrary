@@ -13,8 +13,6 @@ public class ResponseMethod extends BusinessResponse {
         super();
     }
 
-    private static final String METHOD_RESPONSE = "javascript:dataInteractionResponse('$data')";
-
     public String toJsMethod(JSONObject content) {
         String data = toControlJsonStr(content);
         return toJsMethod(data);
@@ -25,12 +23,7 @@ public class ResponseMethod extends BusinessResponse {
         return toJsMethod(data);
     }
 
-    public String toJsMethod(String data) {
-        return METHOD_RESPONSE.replace("$data", checkData(data));
+    public String toJsMethod(String mJsonData) {
+        return ResponseMethodUtil.toJsMethod(mJsonData);
     }
-
-    private static String checkData(String data) {
-        return data != null ? data : "{}";
-    }
-
 }

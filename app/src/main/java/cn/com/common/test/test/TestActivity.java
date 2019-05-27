@@ -35,6 +35,9 @@ public class TestActivity extends Activity {
         mDataContent.setRootJsonObj(jsonObject);
         Tlog.d("DataContent:" + mDataContent);
 
+
+        AbsBusinessJson businessJsonBean1 = mDataContent.getBusinessJsonBean();
+
         AbsBusinessJson businessJsonBean = mDataContent.getBusinessJsonBean();
         Tlog.d("getCmdByJson:" + businessJsonBean.getCmdByJson());
         Tlog.d("getCustomByJson:" + businessJsonBean.getCustomByJson());

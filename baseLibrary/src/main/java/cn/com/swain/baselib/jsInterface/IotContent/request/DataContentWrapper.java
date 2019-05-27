@@ -71,8 +71,8 @@ public class DataContentWrapper extends AbsDataContent {
     }
 
     @Override
-    public ControlContent copyControlDataFromJson(ControlContent mControlContent) {
-        return mDataContent.copyControlDataFromJson(mControlContent);
+    public void copyControlDataFromJson(ControlContent mControlContent) {
+         mDataContent.copyControlDataFromJson(mControlContent);
     }
 
     @Override
@@ -81,7 +81,7 @@ public class DataContentWrapper extends AbsDataContent {
     }
 
     @Override
-    public BusinessContent copyBusinessDataFromJson(BusinessContent mBusinessContent) {
-        return mDataContent.copyBusinessDataFromJson(mBusinessContent);
+    public void copyBusinessDataFromJson(BusinessContent mBusinessContent) {
+         mDataContent.copyBusinessDataFromJson(mBusinessContent);
     }
 }

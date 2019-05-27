@@ -1,5 +1,7 @@
 package cn.com.swain.baselib.jsInterface.IotContent.request;
 
+import android.support.annotation.NonNull;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -57,7 +59,7 @@ public abstract class AbsDataContent extends BaseIotRequestBean {
     /**
      * 从json串获取控制消息并返回
      */
-    public abstract ControlContent copyControlDataFromJson(ControlContent mControlContent);
+    public abstract void copyControlDataFromJson(ControlContent mControlContent);
 
     /**
      * 从json串获取业务消息并copy
@@ -67,6 +69,6 @@ public abstract class AbsDataContent extends BaseIotRequestBean {
     /**
      * 从json串获取控制消息并返回
      */
-    public abstract BusinessContent copyBusinessDataFromJson(BusinessContent mBusinessContent);
+    public abstract void copyBusinessDataFromJson(BusinessContent mBusinessContent);
 
 }

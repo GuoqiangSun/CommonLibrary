@@ -1,5 +1,7 @@
 package cn.com.swain.baselib.jsInterface.IotContent.request;
 
+import android.support.annotation.NonNull;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -18,7 +20,13 @@ import cn.com.swain.baselib.jsInterface.IotContent.request.control.ControlJsonBe
  */
 public class DataContent extends AbsDataContent {
 
+    private final AbsBusinessJson mAbsBusinessJson;
+
+    private final AbsControlJson mAbsControlJson;
+
     public DataContent() {
+        mAbsBusinessJson = new BusinessJsonBean();
+        mAbsControlJson = new ControlJsonBean();
     }
 
     @Override
@@ -33,8 +41,6 @@ public class DataContent extends AbsDataContent {
         super.setRootJsonStr(jsonStr);
         mAbsControlJson.setRootJsonStr(jsonStr);
     }
-
-    private final AbsBusinessJson mAbsBusinessJson = new BusinessJsonBean();
 
     @Override
     public void parseJson(JSONObject jsonObj) {
@@ -60,13 +66,13 @@ public class DataContent extends AbsDataContent {
         return dataContent;
     }
 
+    @NonNull
     @Override
     public AbsBusinessJson getBusinessJsonBean() {
         return mAbsBusinessJson;
     }
 
-    private final AbsControlJson mAbsControlJson = new ControlJsonBean();
-
+    @NonNull
     @Override
     public AbsControlJson getControlJsonBean() {
         return mAbsControlJson;
@@ -113,20 +119,13 @@ public class DataContent extends AbsDataContent {
      */
     @Override
     public ControlContent copyControlDataFromJson() {
-        ControlContent mControlContent = new ControlContent();
-        AbsControlJson controlBean = takeControlBean();
-        mControlContent.setVer(controlBean.getVerByJson());
-        mControlContent.setTs(controlBean.getTsByJson());
-        mControlContent.setFrom(controlBean.getFromByJson());
-        mControlContent.setTo(controlBean.getToByJson());
-        mControlContent.setSession(controlBean.getSessionByJson());
-        mControlContent.setAppid(controlBean.getAppidByJson());
-        mControlContent.setMsgtw(controlBean.getMsgtwByJson());
+        final ControlContent mControlContent = new ControlContent();
+        copyControlDataFromJson(mControlContent);
         return mControlContent;
     }
 
     @Override
-    public ControlContent copyControlDataFromJson(ControlContent mControlContent) {
+    public void copyControlDataFromJson(ControlContent mControlContent) {
         AbsControlJson controlBean = takeControlBean();
         mControlContent.setVer(controlBean.getVerByJson());
         mControlContent.setTs(controlBean.getTsByJson());
@@ -135,7 +134,6 @@ public class DataContent extends AbsDataContent {
         mControlContent.setSession(controlBean.getSessionByJson());
         mControlContent.setAppid(controlBean.getAppidByJson());
         mControlContent.setMsgtw(controlBean.getMsgtwByJson());
-        return mControlContent;
     }
 
     /**
@@ -143,21 +141,17 @@ public class DataContent extends AbsDataContent {
      */
     @Override
     public BusinessContent copyBusinessDataFromJson() {
-        BusinessContent mBusinessContent = new BusinessContent();
-        AbsBusinessJson businessBean = takeBusinessBean();
-        mBusinessContent.setCustom(businessBean.getCustomByJson());
-        mBusinessContent.setProduct(businessBean.getProductByJson());
-        mBusinessContent.setCmd(businessBean.getCmdByJson());
+        final BusinessContent mBusinessContent = new BusinessContent();
+        copyBusinessDataFromJson(mBusinessContent);
         return mBusinessContent;
     }
 
     @Override
-    public BusinessContent copyBusinessDataFromJson(BusinessContent mBusinessContent) {
+    public void copyBusinessDataFromJson(BusinessContent mBusinessContent) {
         AbsBusinessJson businessBean = takeBusinessBean();
         mBusinessContent.setCustom(businessBean.getCustomByJson());
         mBusinessContent.setProduct(businessBean.getProductByJson());
         mBusinessContent.setCmd(businessBean.getCmdByJson());
-        return mBusinessContent;
     }
 
 

@@ -86,6 +86,29 @@ public class PermissionHelper {
         PermissionActivity.start(context, msg);
     }
 
+    /**
+     * 请求权限
+     *
+     * @param context     Context
+     * @param permissions 权限
+     */
+    public static void requestSinglePermissionNoCheck(Context context,
+                                               String permissions) {
+        requestSinglePermissionNoCheck(context, null, permissions);
+    }
+
+    /**
+     * @param context     Context
+     * @param mResult     单条权限结果回调
+     * @param permissions 权限
+     */
+    public static void requestSinglePermissionNoCheck(Context context,
+                                               PermissionRequest.OnPermissionResult mResult,
+                                               String permissions) {
+        final PermissionMsg msg = new PermissionMsg(mResult, permissions);
+        requestPermission(context, msg);
+    }
+
 
     /**
      * 请求权限
@@ -143,7 +166,6 @@ public class PermissionHelper {
             }
         }
     }
-
 
     /**
      * 是否有此权限

@@ -13,6 +13,7 @@ import cn.com.common.test.facedetect.TutorialOnFaceDetect1;
 import cn.com.common.test.global.FileManager;
 import cn.com.common.test.ir.InfraredActivity;
 import cn.com.common.test.light.ColorLightActivity;
+import cn.com.common.test.ocr.OcrActivity;
 import cn.com.common.test.p2p.p2pAndroid.P2pClientActivity;
 import cn.com.common.test.scanOR.ScanORCodeActivity;
 import cn.com.common.test.shake.ShakeActivity;
@@ -233,6 +234,7 @@ public class MainActivity extends AppCompatActivity {
     public void skipFloatWindow(View view) {
         startActivity(new Intent(this, SuspensionActivity.class));
     }
+
     public void test(View view) {
         startActivity(new Intent(this, TestActivity.class));
     }
@@ -244,5 +246,9 @@ public class MainActivity extends AppCompatActivity {
 
     public void facedetec1(View view) {
         startActivity(new Intent(this, TutorialOnFaceDetect1.class));
+    }
+
+    public void ocr(View view) {
+        startActivity(new Intent(this, OcrActivity.class));
     }
 }
