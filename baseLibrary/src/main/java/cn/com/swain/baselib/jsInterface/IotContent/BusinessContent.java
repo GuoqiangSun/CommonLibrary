@@ -23,7 +23,7 @@ public class BusinessContent {
      * 四个字节
      * 指令
      */
-    private int cmd;
+    private long cmd;
 
     /**
      * 两个字节
@@ -47,11 +47,11 @@ public class BusinessContent {
         this.product = product;
     }
 
-    public int getCmd() {
+    public long getCmd() {
         return cmd;
     }
 
-    public void setCmd(int cmd) {
+    public void setCmd(long cmd) {
         this.cmd = cmd;
     }
 

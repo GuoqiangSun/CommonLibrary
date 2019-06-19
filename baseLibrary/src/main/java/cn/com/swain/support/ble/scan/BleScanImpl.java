@@ -70,7 +70,7 @@ class BleScanImpl {
             this.mScannerCallBack = new BleScanCBL();
             this.mBleScanCallBack = null;
         } else {
-            this.mBleScanCallBack = new BleScanImpl.BleScanCB();
+            this.mBleScanCallBack = new BleScanCB();
             this.mBluetoothLeScanner = null;
             this.mScannerCallBack = null;
         }

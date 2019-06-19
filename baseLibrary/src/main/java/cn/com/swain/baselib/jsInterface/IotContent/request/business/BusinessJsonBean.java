@@ -46,16 +46,16 @@ public class BusinessJsonBean extends AbsBusinessJson {
      * 从json串获取cmd
      */
     @Override
-    public int getCmdByJson() {
-        return getIntByRoot("cmd");
+    public long getCmdByJson() {
+        return getLongByRoot("cmd");
     }
 
     /**
      * 从json串获取cmd
      */
     @Override
-    public int getCmdByJson(JSONObject businessJsonData) {
-        return getInt(businessJsonData, "cmd");
+    public long getCmdByJson(JSONObject businessJsonData) {
+        return getLong(businessJsonData, "cmd");
     }
 
     /**
@@ -85,6 +85,19 @@ public class BusinessJsonBean extends AbsBusinessJson {
             e.printStackTrace();
         }
         return 0;
+    }
+
+
+    private long getLong(JSONObject object, String key) {
+        if (object == null) {
+            return 0L;
+        }
+        try {
+            return object.getLong(key);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return 0L;
     }
 
 }

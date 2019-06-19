@@ -10,13 +10,14 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import cn.com.swain.baselib.util.StrUtil;
 import cn.com.swain.baselib.log.Tlog;
+import cn.com.swain.baselib.util.StrUtil;
 
 /**
  * author: Guoqiang_Sun
@@ -178,7 +179,13 @@ public class MyScanRecord {
         int txPowerLevel = Integer.MIN_VALUE;
 
         SparseArray<byte[]> manufacturerData = new SparseArray<byte[]>();
-        Map<ParcelUuid, byte[]> serviceData = new ArrayMap<ParcelUuid, byte[]>();
+        Map<ParcelUuid, byte[]> serviceData = null;
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
+            serviceData = new ArrayMap<ParcelUuid, byte[]>();
+        }else {
+            serviceData = new HashMap<>();
+        }
 
         try {
             while (currentPos < scanRecord.length) {

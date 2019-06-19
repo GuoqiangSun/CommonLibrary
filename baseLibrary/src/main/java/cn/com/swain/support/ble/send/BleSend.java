@@ -3,8 +3,8 @@ package cn.com.swain.support.ble.send;
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCharacteristic;
 
-import cn.com.swain.support.ble.connect.BleConnectEngine;
 import cn.com.swain.baselib.log.Tlog;
+import cn.com.swain.support.ble.connect.BleConnectEngine;
 
 /**
  * author: Guoqiang_Sun

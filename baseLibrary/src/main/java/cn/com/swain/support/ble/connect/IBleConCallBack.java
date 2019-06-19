@@ -49,6 +49,8 @@ public interface IBleConCallBack {
     void onResultServiceOrder(boolean result, ScanBle mItem, BluetoothGatt mConGatt);
 
     /**
+     * 接收通知数据
+     *
      * @param mac     mac
      * @param uuidStr 通知的uuid
      * @param data    数据
@@ -56,6 +58,8 @@ public interface IBleConCallBack {
     void onPeripheralNotify(String mac, String uuidStr, byte[] data);
 
     /**
+     * 数据发送失败
+     *
      * @param mItem
      */
     void onWriteDataFail(ScanBle mItem);

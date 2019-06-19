@@ -79,7 +79,7 @@ public class BleConActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_ble_con);
 
-        item = getIntent().getParcelableExtra("ble");
+        item = getIntent().getParcelableExtra("cn/com/swain/support/ble");
 
         initView();
 
@@ -242,7 +242,7 @@ public class BleConActivity extends AppCompatActivity {
         final Object[] objects = mAbsBleSends.toArray();
 
         int size = mAbsBleSends.size();
-        final String items[] = new String[size];
+        final String[] items = new String[size];
         for (int i = 0; i < size; i++) {
             AbsBleSend mAbsBleSend = mAbsBleSends.get(i);
             items[i] = mAbsBleSend.getUuidStr();

@@ -34,12 +34,12 @@ public abstract class AbsBusinessJson extends BaseIotRequestBean {
     /**
      * 从json串获取cmd
      */
-    public abstract int getCmdByJson();
+    public abstract long getCmdByJson();
 
     /**
      * 从json串获取cmd
      */
-    public abstract int getCmdByJson(JSONObject businessJsonData);
+    public abstract long getCmdByJson(JSONObject businessJsonData);
 
     /**
      * 从json串获取result

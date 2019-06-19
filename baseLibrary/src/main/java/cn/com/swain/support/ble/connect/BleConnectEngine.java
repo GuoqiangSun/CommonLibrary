@@ -17,8 +17,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import cn.com.swain.support.ble.scan.ScanBle;
 import cn.com.swain.baselib.log.Tlog;
+import cn.com.swain.support.ble.scan.ScanBle;
 
 /**
  * author: Guoqiang_Sun

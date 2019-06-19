@@ -250,7 +250,7 @@ public class BleScanActivity extends AppCompatActivity {
 
                     Intent i = new Intent();
                     i.setClass(getApplicationContext(), BleConActivity.class);
-                    i.putExtra("ble", item);
+                    i.putExtra("cn/com/swain/support/ble", item);
                     startActivity(i);
 
                 }
