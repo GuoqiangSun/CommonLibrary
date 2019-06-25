@@ -12,7 +12,7 @@ import android.widget.Toast;
 import java.security.NoSuchAlgorithmException;
 
 import cn.com.common.test.R;
-import cn.com.startai.scansdk.ChargerScanActivity;
+import cn.com.startai.scansdk.ChargerScanScanActivity;
 import cn.com.swain.baselib.util.MD5Util;
 import cn.com.swain.baselib.util.StrUtil;
 import cn.com.swain.baselib.log.Tlog;
@@ -52,7 +52,7 @@ public class ScanORCodeActivity extends AppCompatActivity {
 
     public void scanOR(View view) {
 
-        ChargerScanActivity.showActivityForResult(this, 1002);
+        ChargerScanScanActivity.showActivityForResult(this, 1002);
     }
 
 
