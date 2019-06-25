@@ -1,6 +1,14 @@
 apply plugin: 'com.android.application'
 
 android {
+    signingConfigs {
+        config {
+            storeFile file('..\\commonLibKey.jks')
+            storePassword 'swain169'
+            keyAlias = 'commonLib'
+            keyPassword 'swain169'
+        }
+    }
     compileSdkVersion 27
     defaultConfig {
         applicationId "cn.com.common.lib.test"
@@ -9,6 +17,7 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        signingConfig signingConfigs.config
     }
     compileOptions {
         sourceCompatibility 1.8
@@ -20,12 +29,27 @@ android {
     }
 
     buildTypes {
+        debug{
+            signingConfig signingConfigs.config
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.config
         }
     }
+
+    android.applicationVariants.all { variant ->
+        variant.outputs.all {
+            outputFileName = "CommonLibrary-${variant.buildType.name}.apk"
+        }
+    }
+
 }
+
+
+
+
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
