@@ -112,12 +112,7 @@ public class BleScanAuto extends AbsBleScan {
     }
 
     @Override
-    void leScan(String name, String address, int rssi, List<ParcelUuid> serviceUuids) {
-        final ScanBle bleData = new ScanBle();
-        bleData.setAddress(address);
-        bleData.setName(name);
-        bleData.setRssi(rssi);
-        bleData.setBroadServiceUuids(serviceUuids);
+    void leScan(ScanBle bleData) {
         mBleScanHandler.obtainMessage(MSG_ON_BLE_SCAN, bleData).sendToTarget();
 
     }

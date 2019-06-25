@@ -40,6 +40,16 @@ public class SendDataQueue extends AbsBleSend {
     private static final long MAX_DELAY = 1000 * 3L;
 
     @Override
+    public void setResolveDataLength(int length) {
+        mBleSend.setResolveDataLength(length);
+    }
+
+    @Override
+    public void setPrintData(boolean print) {
+        mBleSend.setPrintData(print);
+    }
+
+    @Override
     public void sendData(byte[] data) {
 
         long currentTimeMillis = System.currentTimeMillis();
@@ -58,8 +68,16 @@ public class SendDataQueue extends AbsBleSend {
         }
         mLastSendMillis = currentTimeMillis;
         mSendTimes++;
+
         Message message = mSendHandler.obtainMessage(MSG_SEND, data);
         mSendHandler.sendMessageDelayed(message, delay);
+
+    }
+
+    @Override
+    public void sendData(byte[] data, long delay) {
+
+        mSendHandler.obtainMessage(MSG_SEND_DELAY, (int) delay, (int) delay, data).sendToTarget();
 
     }
 
@@ -85,19 +103,16 @@ public class SendDataQueue extends AbsBleSend {
     }
 
     private static final int MSG_SEND = 0x01;
+    private static final int MSG_SEND_DELAY = 0x02;
 
     private void handleMessage(Message msg) {
 
-/*        try {
-            Thread.sleep(delay);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }*/
-
-        final byte[] buf = (byte[]) msg.obj;
-        mBleSend.sendData(buf);
-
-        mSendTimes--;
+        if (msg.what == MSG_SEND) {
+            mBleSend.sendData((byte[]) msg.obj);
+            mSendTimes--;
+        } else if (msg.what == MSG_SEND_DELAY) {
+            mBleSend.sendData((byte[]) msg.obj, msg.arg1);
+        }
     }
 
 

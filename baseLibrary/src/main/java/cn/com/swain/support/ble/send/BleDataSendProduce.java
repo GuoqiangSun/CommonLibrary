@@ -106,6 +106,12 @@ public class BleDataSendProduce {
 
     public static SpannableStringBuilder serviceAddColor(String str, int serviceCount) {
 
+        return serviceAddColor(str,serviceCount,Color.RED);
+
+    }
+
+    public static SpannableStringBuilder serviceAddColor(String str, int serviceCount,int color) {
+
         SpannableStringBuilder style = new SpannableStringBuilder(str);
 
         String of = "services:";
@@ -132,7 +138,7 @@ public class BleDataSendProduce {
             // String substring = str.substring(bstart, bend);
             // Log.e(TAG, "" + substring);
 
-            style.setSpan(new BackgroundColorSpan(Color.RED), bstart, bend,
+            style.setSpan(new BackgroundColorSpan(color), bstart, bend,
                     Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
             int fstart = str.indexOf(of1, from1);
@@ -146,7 +152,7 @@ public class BleDataSendProduce {
             // String fsubstring = str.substring(fstart, fend);
             // Log.e(TAG, "" + fsubstring);
 
-            style.setSpan(new ForegroundColorSpan(Color.RED), fstart, fend,
+            style.setSpan(new ForegroundColorSpan(color), fstart, fend,
                     Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
 
 

@@ -4,8 +4,8 @@ import java.io.IOException;
 
 import cn.com.swain.baselib.clone.DeepCloneException;
 import cn.com.swain.baselib.clone.IDeepCloneable;
-import cn.com.swain.baselib.log.Tlog;
 import cn.com.swain.baselib.clone.SerialManager;
+import cn.com.swain.baselib.log.Tlog;
 import cn.com.swain.support.protocolEngine.ProtocolBuild;
 import cn.com.swain.support.protocolEngine.datagram.ProtocolDatagram.AbsProtocolDataPack;
 import cn.com.swain.support.protocolEngine.datagram.ProtocolDatagram.XX.XXProtocolComData;
@@ -28,8 +28,8 @@ public class SocketDataArray extends AbsProtocolDataPack implements Cloneable, I
 
     private final String TAG = AbsProtocolProcessor.TAG;
 
-    private final IEscapeDataArray mEscapeDataArray;
-    private final AbsProtocolDataPack mAbsProtocolDataPack;
+    protected final IEscapeDataArray mEscapeDataArray;
+    protected final AbsProtocolDataPack mAbsProtocolDataPack;
 
     private static final int DATA_BODY = 12;
 
@@ -99,8 +99,14 @@ public class SocketDataArray extends AbsProtocolDataPack implements Cloneable, I
         this.used = false;
     }
 
+    // 正在被使用
     public final boolean isUsed() {
         return this.used;
+    }
+
+    // 没有正在被使用
+    public final boolean isUnUsed() {
+        return !this.used;
     }
 
     /**
@@ -164,6 +170,181 @@ public class SocketDataArray extends AbsProtocolDataPack implements Cloneable, I
     public ComModel getComModel() {
         return mModel;
     }
+
+
+    /****************/
+    @Override
+    public void onAddHead(byte b) {
+
+        mEscapeDataArray.onAddHead(b);
+    }
+
+    @Override
+    public boolean isHeadByte(byte b) {
+        return mEscapeDataArray.isHeadByte(b);
+    }
+
+    @Override
+    public void onAddTail(byte b) {
+
+        mEscapeDataArray.onAddTail(b);
+    }
+
+    @Override
+    public boolean isTailByte(byte b) {
+        return mEscapeDataArray.isTailByte(b);
+    }
+
+    @Override
+    public boolean isEscapeByte(byte b) {
+        return mEscapeDataArray.isEscapeByte(b);
+    }
+
+    @Override
+    public void onAddDataReverse(byte b) {
+        mEscapeDataArray.onAddDataReverse(b);
+    }
+
+    @Override
+    public void onAddPackageReverse(byte[] data) {
+
+        if (data == null) {
+            Tlog.e(TAG, " onAddPackageReverse() data == null ");
+            return;
+        }
+
+        changeStateToReverse();
+        mEscapeDataArray.onAddPackageReverse(data);
+    }
+
+    @Override
+    public void onAddDataEscape(byte b) {
+        mEscapeDataArray.onAddDataEscape(b);
+    }
+
+    @Override
+    public void onAddPackageEscape(byte[] data) {
+        if (data == null) {
+            Tlog.e(TAG, " onAddPackageEscape() data == null ");
+            return;
+        }
+        changeStateToEscape();
+        mEscapeDataArray.onAddPackageEscape(data);
+    }
+
+    @Override
+    public boolean checkIsSpecialByte(byte b) {
+        return mEscapeDataArray.checkIsSpecialByte(b);
+    }
+
+    /****************/
+    @Override
+    public byte getByte(int index) {
+        return mEscapeDataArray.getByte(index);
+    }
+
+    @Override
+    public byte[] toArray() {
+        return mEscapeDataArray.toArray();
+    }
+
+    @Override
+    public byte[] toArray(int srcPoint, int length) {
+        if (mEscapeDataArray.getPoint() < (srcPoint + length)) {
+            Tlog.e(TAG, " toArray(int int) srcPoint: " + srcPoint + " length: " + length + " mDataPoint: " + mEscapeDataArray.getPoint());
+            return null;
+        }
+        return mEscapeDataArray.toArray(srcPoint, length);
+    }
+
+    @Override
+    public boolean copyArray(byte[] data) {
+
+        if (data == null) {
+            Tlog.e(TAG, " copyArray(byte[]) data == null ");
+            return false;
+        }
+
+        if (data.length < mEscapeDataArray.getPoint()) {
+            Tlog.e(TAG, " copyArray(byte[])  data.length(" + data.length + ")<point(" + mEscapeDataArray.getPoint() + ")");
+            return false;
+        }
+
+        return mEscapeDataArray.copyArray(data);
+    }
+
+    @Override
+    public boolean copyArray(byte[] data, int srcPoint, int length) {
+
+        if (data == null) {
+            Tlog.e(TAG, "  readArray(byte[] int int) data is null ");
+            return false;
+        }
+
+        if (mEscapeDataArray.getPoint() < (srcPoint + length)) {
+            Tlog.e(TAG, "  copyArray(byte[] int int) srcPoint: " + srcPoint + " length: " + length + " point: " + mEscapeDataArray.getPoint());
+            return false;
+        }
+
+        return mEscapeDataArray.copyArray(data, srcPoint, length);
+    }
+
+    /****************/
+    @Override
+    public int getPoint() {
+        return mEscapeDataArray.getPoint();
+    }
+
+    @Override
+    public int getCapacity() {
+        return mEscapeDataArray.getCapacity();
+    }
+
+    @Override
+    public boolean isEscapeState() {
+        return mEscapeDataArray.isEscapeState();
+    }
+
+    @Override
+    public boolean isReverseState() {
+        return mEscapeDataArray.isReverseState();
+    }
+
+    @Override
+    public String getStateStr() {
+        return mEscapeDataArray.getStateStr();
+    }
+
+    @Override
+    public void changeStateToEscape() {
+        mEscapeDataArray.changeStateToEscape();
+    }
+
+    @Override
+    public void changeStateToReverse() {
+        mEscapeDataArray.changeStateToReverse();
+    }
+
+    @Override
+    public void fillEmpty() {
+        mEscapeDataArray.fillEmpty();
+    }
+
+    @Override
+    public void reset() {
+        this.mEscapeDataArray.reset();
+        clearModel();
+        setParams(null);
+    }
+
+    @Override
+    public void release() {
+        this.mEscapeDataArray.release();
+        setParams(null);
+        this.obj = null;
+        this.mModel = null;
+    }
+
 
     /****************/
 
@@ -446,178 +627,6 @@ public class SocketDataArray extends AbsProtocolDataPack implements Cloneable, I
         return toArray();
     }
 
-    /****************/
-    @Override
-    public void onAddHead(byte b) {
-
-        mEscapeDataArray.onAddHead(b);
-    }
-
-    @Override
-    public boolean isHeadByte(byte b) {
-        return mEscapeDataArray.isHeadByte(b);
-    }
-
-    @Override
-    public void onAddTail(byte b) {
-
-        mEscapeDataArray.onAddTail(b);
-    }
-
-    @Override
-    public boolean isTailByte(byte b) {
-        return mEscapeDataArray.isTailByte(b);
-    }
-
-    @Override
-    public boolean isEscapeByte(byte b) {
-        return mEscapeDataArray.isEscapeByte(b);
-    }
-
-    @Override
-    public void onAddDataReverse(byte b) {
-        mEscapeDataArray.onAddDataReverse(b);
-    }
-
-    @Override
-    public void onAddPackageReverse(byte[] data) {
-
-        if (data == null) {
-            Tlog.e(TAG, " onAddPackageReverse() data == null ");
-            return;
-        }
-
-        changeStateToReverse();
-        mEscapeDataArray.onAddPackageReverse(data);
-    }
-
-    @Override
-    public void onAddDataEscape(byte b) {
-        mEscapeDataArray.onAddDataEscape(b);
-    }
-
-    @Override
-    public void onAddPackageEscape(byte[] data) {
-        if (data == null) {
-            Tlog.e(TAG, " onAddPackageEscape() data == null ");
-            return;
-        }
-        changeStateToEscape();
-        mEscapeDataArray.onAddPackageEscape(data);
-    }
-
-    @Override
-    public boolean checkIsSpecialByte(byte b) {
-        return mEscapeDataArray.checkIsSpecialByte(b);
-    }
-
-    /****************/
-    @Override
-    public byte getByte(int index) {
-        return mEscapeDataArray.getByte(index);
-    }
-
-    @Override
-    public byte[] toArray() {
-        return mEscapeDataArray.toArray();
-    }
-
-    @Override
-    public byte[] toArray(int srcPoint, int length) {
-        if (mEscapeDataArray.getPoint() < (srcPoint + length)) {
-            Tlog.e(TAG, " toArray(int int) srcPoint: " + srcPoint + " length: " + length + " mDataPoint: " + mEscapeDataArray.getPoint());
-            return null;
-        }
-        return mEscapeDataArray.toArray(srcPoint, length);
-    }
-
-    @Override
-    public boolean copyArray(byte[] data) {
-
-        if (data == null) {
-            Tlog.e(TAG, " copyArray(byte[]) data == null ");
-            return false;
-        }
-
-        if (data.length < mEscapeDataArray.getPoint()) {
-            Tlog.e(TAG, " copyArray(byte[])  data.length(" + data.length + ")<point(" + mEscapeDataArray.getPoint() + ")");
-            return false;
-        }
-
-        return mEscapeDataArray.copyArray(data);
-    }
-
-    @Override
-    public boolean copyArray(byte[] data, int srcPoint, int length) {
-
-        if (data == null) {
-            Tlog.e(TAG, "  readArray(byte[] int int) data is null ");
-            return false;
-        }
-
-        if (mEscapeDataArray.getPoint() < (srcPoint + length)) {
-            Tlog.e(TAG, "  copyArray(byte[] int int) srcPoint: " + srcPoint + " length: " + length + " point: " + mEscapeDataArray.getPoint());
-            return false;
-        }
-
-        return mEscapeDataArray.copyArray(data, srcPoint, length);
-    }
-
-    /****************/
-    @Override
-    public int getPoint() {
-        return mEscapeDataArray.getPoint();
-    }
-
-    @Override
-    public int getCapacity() {
-        return mEscapeDataArray.getCapacity();
-    }
-
-    @Override
-    public boolean isEscapeState() {
-        return mEscapeDataArray.isEscapeState();
-    }
-
-    @Override
-    public boolean isReverseState() {
-        return mEscapeDataArray.isReverseState();
-    }
-
-    @Override
-    public String getStateStr() {
-        return mEscapeDataArray.getStateStr();
-    }
-
-    @Override
-    public void changeStateToEscape() {
-        mEscapeDataArray.changeStateToEscape();
-    }
-
-    @Override
-    public void changeStateToReverse() {
-        mEscapeDataArray.changeStateToReverse();
-    }
-
-    @Override
-    public void fillEmpty() {
-        mEscapeDataArray.fillEmpty();
-    }
-
-    @Override
-    public void reset() {
-        this.mEscapeDataArray.reset();
-        setParams(null);
-        clearModel();
-    }
-
-    @Override
-    public void release() {
-        this.mEscapeDataArray.release();
-        setParams(null);
-        this.obj = null;
-        this.mModel = null;
-    }
 
     /****************/
 
@@ -642,7 +651,7 @@ public class SocketDataArray extends AbsProtocolDataPack implements Cloneable, I
 
         try {
             String s = SerialManager.writeObject(this);
-            return (SocketDataArray)SerialManager.readObject(s);
+            return (SocketDataArray) SerialManager.readObject(s);
         } catch (IOException e) {
             e.printStackTrace();
             throw new DeepCloneException(e);

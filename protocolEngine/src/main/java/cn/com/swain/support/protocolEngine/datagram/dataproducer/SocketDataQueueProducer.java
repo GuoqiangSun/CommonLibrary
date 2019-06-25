@@ -103,7 +103,7 @@ public class SocketDataQueueProducer implements ISocketDataProducer {
 
         for (int i = point; i < size; i++) {
             SocketDataArray mSocketDataArray = mSocketDataArrays[points[i]];
-            if (mSocketDataArray != null && !mSocketDataArray.isUsed()) {
+            if (mSocketDataArray != null && mSocketDataArray.isUnUsed()) {
                 if (Tlog.isDebug()) {
                     Tlog.v(TAG, name + " getSocketDataArray: point " + point + " size:" + size);
                 }

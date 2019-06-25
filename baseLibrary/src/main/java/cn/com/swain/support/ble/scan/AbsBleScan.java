@@ -1,9 +1,5 @@
 package cn.com.swain.support.ble.scan;
 
-import android.os.ParcelUuid;
-
-import java.util.List;
-
 /**
  * author: Guoqiang_Sun
  * date : 2018/4/2 0002
@@ -41,6 +37,6 @@ public abstract class AbsBleScan {
 
     public abstract void removeCheckScanResult();
 
-    abstract void leScan(String name ,String address, int rssi,List<ParcelUuid> serviceUuids);
+    abstract void leScan(ScanBle bleData);
 
 }

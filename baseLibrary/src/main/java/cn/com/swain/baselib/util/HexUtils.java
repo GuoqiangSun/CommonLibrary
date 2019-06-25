@@ -127,7 +127,7 @@ public class HexUtils {
      *
      * @param data aaff010922880a0faf
      * @return byte[]
-     *  @throws RuntimeException 如果源十六进制字符数组是一个奇怪的长度(列如 'abc')，将抛出运行时异常
+     * @throws RuntimeException 如果源十六进制字符数组是一个奇怪的长度(列如 'abc')，将抛出运行时异常
      */
     public static byte[] decodeHex(String data) {
         return decodeHex(data.toCharArray());

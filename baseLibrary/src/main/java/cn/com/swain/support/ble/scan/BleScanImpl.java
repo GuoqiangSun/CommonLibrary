@@ -164,7 +164,15 @@ class BleScanImpl {
             final int rssi = result.getRssi();
             final String address = result.getDevice().getAddress();
             final String name = result.getDevice().getName();
-            mOnLeScan.leScan(name, address, rssi, serviceUuids);
+
+            final ScanBle bleData = new ScanBle();
+            bleData.setAddress(address);
+            bleData.setName(name);
+            bleData.setRssi(rssi);
+            bleData.setBroadServiceUuids(serviceUuids);
+            bleData.setScanRecord(scanRecord.getBytes());
+
+            mOnLeScan.leScan(bleData);
 
         }
 
@@ -193,7 +201,15 @@ class BleScanImpl {
             final String name = device.getName();
             final List<ParcelUuid> serviceUuids = myScanRecord.getServiceUuids();
             final String address = device.getAddress();
-            mOnLeScan.leScan(name, address, rssi, serviceUuids);
+
+            final ScanBle bleData = new ScanBle();
+            bleData.setAddress(address);
+            bleData.setName(name);
+            bleData.setRssi(rssi);
+            bleData.setBroadServiceUuids(serviceUuids);
+            bleData.setScanRecord(scanRecord);
+
+            mOnLeScan.leScan(bleData);
 
         }
     }

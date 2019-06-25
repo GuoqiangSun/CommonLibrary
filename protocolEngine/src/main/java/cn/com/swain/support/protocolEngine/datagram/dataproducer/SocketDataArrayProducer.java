@@ -49,7 +49,7 @@ public class SocketDataArrayProducer implements ISocketDataProducer {
 
         boolean has = false;
         for (SocketDataArray mSocketDataArray : mCache) {
-            if (!mSocketDataArray.isUsed()) {
+            if (mSocketDataArray.isUnUsed()) {
                 mProduceSocketDataArray = mSocketDataArray;
                 has = true;
             }

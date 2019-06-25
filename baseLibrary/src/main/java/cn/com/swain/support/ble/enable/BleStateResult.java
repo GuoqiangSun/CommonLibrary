@@ -75,11 +75,11 @@ public class BleStateResult implements Serializable {
 
 
     public boolean checkFinish() {
-        if (getCurTimes() < getTotalTimes()) {
-            return false;
-        }
+        return getCurTimes() >= getTotalTimes();
+    }
 
-        return true;
+    public void setIBleStateCallBack(IBleStateCallBack mBleStateCallBack) {
+        this.mBleStateCallBack = mBleStateCallBack;
     }
 
     public IBleStateCallBack mBleStateCallBack;

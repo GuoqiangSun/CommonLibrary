@@ -8,7 +8,13 @@ package cn.com.swain.support.ble.send;
 
 public abstract class AbsBleSend {
 
+    public abstract void setResolveDataLength(int length);
+
+    public abstract void setPrintData(boolean print);
+
     public abstract void sendData(byte[] data);
+
+    public abstract void sendData(byte[] data, long delay);
 
     public abstract String getUuidStr();
 
