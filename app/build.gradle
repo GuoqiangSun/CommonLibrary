@@ -14,8 +14,8 @@ android {
         applicationId "cn.com.common.lib.test"
         minSdkVersion 19
         targetSdkVersion 27
-        versionCode 2
-        versionName "2.0"
+        versionCode 3
+        versionName "3.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         signingConfig signingConfigs.config
     }
