@@ -304,7 +304,7 @@ public final class PermissionRequest {
      * 被拒绝了
      * 需要请求权限的理由
      */
-    public boolean needRationaleForPermission(String permissionsStr) {
+    public boolean needRationaleForPermission(String permissionStr) {
         Activity activity = getActivity();
         if (activity == null) {
             Tlog.e(TAG, " needPermissionRationale activity==null ");
@@ -312,9 +312,9 @@ public final class PermissionRequest {
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (!ActivityCompat.shouldShowRequestPermissionRationale(activity, permissionsStr)) {
+            if (!ActivityCompat.shouldShowRequestPermissionRationale(activity, permissionStr)) {
                 // 权限被禁止
-                Tlog.v(TAG, " should Show Request " + permissionsStr + " Rationale ");
+                Tlog.v(TAG, " should Show Request " + permissionStr + " Rationale ");
                 return true;
             }
         }

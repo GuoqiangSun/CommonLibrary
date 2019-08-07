@@ -229,7 +229,7 @@ public class SerialManager {
     private static class Singleton implements Serializable {
 
         /**
-         * 去掉以后,只有反序列化又会生成一个实例
+         * 去掉以后,反序列化又会生成一个实例
          */
         private Object readResolve() {
             return singleton;

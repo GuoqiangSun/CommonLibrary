@@ -1,4 +1,4 @@
-package cn.com.swain.baselib.app.utils;
+package cn.com.swain.baselib.display;
 
 import android.graphics.Color;
 import android.os.Build;

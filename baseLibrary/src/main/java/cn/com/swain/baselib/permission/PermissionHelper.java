@@ -15,7 +15,7 @@ import android.view.MotionEvent;
 import android.view.WindowManager;
 
 import cn.com.swain.baselib.log.Tlog;
-import cn.com.swain.baselib.app.utils.StatusBarUtil;
+import cn.com.swain.baselib.display.StatusBarUtil;
 
 /**
  * author: Guoqiang_Sun
