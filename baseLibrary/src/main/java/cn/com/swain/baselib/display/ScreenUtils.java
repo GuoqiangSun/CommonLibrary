@@ -37,16 +37,46 @@ public class ScreenUtils {
 
     /**
      * Get Density
+     * 屏幕密度倍数（0.75（ldpi） / 1.0(mdpi) / 1.5(hdpi) /2(xhdpi) /3(xxhdpi) /4(xxxhdpi) ）
      */
-    private static float getDensity(Context context) {
+    public static float getDensity(Context context) {
         return getDisplayMetrics(context).density;
     }
 
     /**
      * Get Dpi
+     * 屏幕密度DPI（120 / 160 / 240/ 320/ 480/ 640）
      */
-    private static int getDpi(Context context) {
+    public static int getDpi(Context context) {
         return getDisplayMetrics(context).densityDpi;
+    }
+
+    /**
+     * 密度转换像素
+     */
+    public static float dip2pxF(float dipValue, float scale) {
+        return dipValue * scale;
+    }
+
+    /**
+     * 密度转换像素
+     */
+    public static int dip2px(float dipValue, float scale) {
+        return (int) (dipValue * scale + 0.5f);
+    }
+
+    /**
+     * 像素转换密度
+     */
+    public static float px2dipF(float pxValue, float scale) {
+        return pxValue / scale;
+    }
+
+    /**
+     * 像素转换密度
+     */
+    public static int px2dip(float pxValue, float scale) {
+        return (int) (pxValue / scale + 0.5f);
     }
 
     /**
@@ -161,7 +191,11 @@ public class ScreenUtils {
      * Android 获取控件相对于屏幕位置
      *
      * @param v
-     * @return
+     * @return int[]
+     * index=0 : x in screen
+     * index=1 : y in screen
+     * index=2 : width
+     * index=3 : height
      */
     public static int[] getLocationOnScreen(View v) {
         int[] loc = new int[4];
@@ -174,7 +208,11 @@ public class ScreenUtils {
      * Android 获取控件相对于屏幕位置
      *
      * @param v
-     * @return
+     * @@param loc
+     * index=0 : x in screen
+     * index=1 : y in screen
+     * index=2 : width
+     * index=3 : height
      */
     public static void getLocationOnScreen(View v, int[] loc) {
         int[] location = new int[2];
@@ -196,7 +234,11 @@ public class ScreenUtils {
      * Android 获取控件相对于Activity位置
      *
      * @param v
-     * @return
+     * @return int[]
+     * index=0 : x in window
+     * index=1 : y in window
+     * index=2 : width
+     * index=3 : height
      */
     public static int[] getLocationInWindow(View v) {
         int[] loc = new int[4];
@@ -209,7 +251,10 @@ public class ScreenUtils {
      * Android 获取控件相对于Activity位置
      *
      * @param v
-     * @return
+     * @param loc index=0 : x in window
+     *            index=1 : y in window
+     *            index=2 : width
+     *            index=3 : height
      */
     public static void getLocationInWindow(View v, int[] loc) {
         int[] location = new int[2];

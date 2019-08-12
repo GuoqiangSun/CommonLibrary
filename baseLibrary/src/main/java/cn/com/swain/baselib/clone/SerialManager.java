@@ -56,12 +56,12 @@ public class SerialManager {
     }
 
 
-    public static void saveObj(Context mContext, Object o, String path) {
+    public static boolean saveObj(Context mContext, Object o, String path) {
 
         File cacheDir = mContext.getCacheDir();
         File serialDir = new File(cacheDir, path);
 
-        saveObj(o, serialDir);
+        return saveObj(o, serialDir);
 
     }
 
