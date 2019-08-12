@@ -88,13 +88,22 @@ public class MathUtils {
      * 计算斜边边长
      *
      * @param A 左边点A
-     * @param B 左边点B
+     * @param B 右边点B
      * @return 边长长度
      */
     public static double calculationBevel(PointF A, PointF B) {
         return calculationBevel(A.x, A.y, B.x, B.y);
     }
 
+    /**
+     * 计算斜边边长
+     *
+     * @param ax 左边点x
+     * @param ay 左边点y
+     * @param bx 右边点x
+     * @param by 右边点y
+     * @return 边长长度
+     */
     public static double calculationBevel(float ax, float ay, float bx, float by) {
         if (ay == by) {
             return Math.abs(bx - ax);
@@ -102,6 +111,88 @@ public class MathUtils {
             return Math.abs(by - ay);
         }
         return Math.sqrt(Math.pow(Math.abs(bx - ax), 2) + Math.pow(Math.abs(by - ay), 2));
+    }
+
+
+    /**
+     * 已知 开始点,角度 和斜边边长 ,求结束点
+     *
+     * @param mAngle     角度
+     * @param bevel      边长
+     * @param startPoint 开始点
+     * @return xy
+     */
+    public static float[] calculationEnd(float mAngle, float bevel, PointF startPoint) {
+        return calculationStart(mAngle, bevel, startPoint.x, startPoint.y);
+    }
+
+    /**
+     * 已知 开始点,角度 和斜边边长 ,求结束点
+     *
+     * @param mAngle     角度
+     * @param bevel      边长
+     * @param startPoint 开始点
+     * @return xy
+     */
+    public static float[] calculationEnd(float mAngle, float bevel, PointS startPoint) {
+        return calculationStart(mAngle, bevel, startPoint.x, startPoint.y);
+    }
+
+    /**
+     * 已知 开始点,角度 和斜边边长 ,求结束点
+     *
+     * @param mAngle 角度
+     * @param bevel  边长
+     * @param startx 开始点x
+     * @param starty 开始点y
+     * @return xy
+     */
+    public static float[] calculationEnd(float mAngle, float bevel, float startx, float starty) {
+        float[] xy = new float[2];
+        xy[0] = (float) (startx + MathUtils.sin(mAngle) * bevel);
+        xy[1] = (float) (starty + MathUtils.cos(mAngle) * bevel);
+        return xy;
+    }
+
+
+    /**
+     * 已知 结束点,角度 和斜边边长 ,求开始点
+     *
+     * @param mAngle   角度
+     * @param bevel    边长
+     * @param endPoint 结束点
+     * @return xy
+     */
+    public static float[] calculationStart(float mAngle, float bevel, PointF endPoint) {
+        return calculationStart(mAngle, bevel, endPoint.x, endPoint.y);
+    }
+
+    /**
+     * 已知 结束点,角度 和斜边边长 ,求开始点
+     *
+     * @param mAngle   角度
+     * @param bevel    边长
+     * @param endPoint 结束点
+     * @return xy
+     */
+    public static float[] calculationStart(float mAngle, float bevel, PointS endPoint) {
+        return calculationStart(mAngle, bevel, endPoint.x, endPoint.y);
+    }
+
+    /**
+     * 已知 结束点,角度 和斜边边长 ,求开始点
+     *
+     * @param mAngle 角度
+     * @param bevel  边长
+     * @param endx   结束点x
+     * @param endy   结束点y
+     * @return xy
+     */
+    public static float[] calculationStart(float mAngle, float bevel, float endx, float endy) {
+        float[] xy = new float[2];
+        xy[0] = (float) (endx - MathUtils.sin(mAngle) * bevel);
+        xy[1] = (float) (endy - MathUtils.cos(mAngle) * bevel);
+        return xy;
     }
 
     /**
@@ -274,33 +365,18 @@ public class MathUtils {
                                float rotatex, float rotatey,
                                PointF newPoint,
                                double degree) {
-
-        float x0 = (rotatex - coordinatex) * (float) cos(degree)
-                - (rotatey - coordinatey) * (float) sin(degree)
-                + coordinatex;
-        float y0 = (rotatex - coordinatex) * (float) sin(degree)
-                + (rotatey - coordinatey) * (float) cos(degree)
-                + coordinatey;
-        // 计算完后再赋值,防止 newPoint == rotatePoint;
-        newPoint.x = x0;
-        newPoint.y = y0;
+        float[] nrotate = nrotate(coordinatex, coordinatey, rotatex, rotatey, degree);
+        newPoint.x = nrotate[0];
+        newPoint.y = nrotate[1];
     }
-
 
     public static void nrotate(float coordinatex, float coordinatey,
                                float rotatex, float rotatey,
                                PointS newPoint,
                                double degree) {
-
-        float x0 = (rotatex - coordinatex) * (float) cos(degree)
-                - (rotatey - coordinatey) * (float) sin(degree)
-                + coordinatex;
-        float y0 = (rotatex - coordinatex) * (float) sin(degree)
-                + (rotatey - coordinatey) * (float) cos(degree)
-                + coordinatey;
-        // 计算完后再赋值,防止 newPoint == rotatePoint;
-        newPoint.x = x0;
-        newPoint.y = y0;
+        float[] nrotate = nrotate(coordinatex, coordinatey, rotatex, rotatey, degree);
+        newPoint.x = nrotate[0];
+        newPoint.y = nrotate[1];
     }
 
 
@@ -391,18 +467,9 @@ public class MathUtils {
                                float rotatex, float rotatey,
                                PointS newPoint,
                                double degree) {
-
-        float x0 =
-                (rotatex - coordinatex) * (float) cos(degree)
-                        + (rotatey - coordinatey) * (float) sin(degree)
-                        + coordinatex;
-        float y0 =
-                (rotatey - coordinatey) * (float) cos(degree)
-                        - (rotatex - coordinatex) * (float) sin(degree)
-                        + coordinatey;
-        // 计算完后再赋值,防止 newPoint == rotatePoint;
-        newPoint.x = x0;
-        newPoint.y = y0;
+        float[] srotate = srotate(coordinatex, coordinatey, rotatex, rotatey, degree);
+        newPoint.x = srotate[0];
+        newPoint.y = srotate[1];
     }
 
 
@@ -410,18 +477,9 @@ public class MathUtils {
                                float rotatex, float rotatey,
                                PointF newPoint,
                                double degree) {
-
-        float x0 =
-                (rotatex - coordinatex) * (float) cos(degree)
-                        + (rotatey - coordinatey) * (float) sin(degree)
-                        + coordinatex;
-        float y0 =
-                (rotatey - coordinatey) * (float) cos(degree)
-                        - (rotatex - coordinatex) * (float) sin(degree)
-                        + coordinatey;
-        // 计算完后再赋值,防止 newPoint == rotatePoint;
-        newPoint.x = x0;
-        newPoint.y = y0;
+        float[] srotate = srotate(coordinatex, coordinatey, rotatex, rotatey, degree);
+        newPoint.x = srotate[0];
+        newPoint.y = srotate[1];
     }
 
     public static float[] srotate(float coordinatex, float coordinatey,
@@ -439,6 +497,22 @@ public class MathUtils {
         return point;
     }
 
+    private static final SortRect.RectCompare mPointFRectCompare = new SortRect.RectCompare<PointF>() {
+        @Override
+        public float getX(PointF mPoint) {
+            return mPoint.x;
+        }
+
+        @Override
+        public float getY(PointF mPoint) {
+            return mPoint.y;
+        }
+
+        @Override
+        public int compare(PointF o1, PointF o2) {
+            return Float.compare(o1.x * o1.y, o2.x * o2.y);
+        }
+    };
 
     /**
      * 对ABCD点按照
@@ -454,35 +528,8 @@ public class MathUtils {
      *                B     C
      */
     public static void sortABCD(PointF[] pointFS) {
-
-        float minX = Float.MAX_VALUE;
-        float maxX = Float.MIN_VALUE;
-
-        float minY = Float.MAX_VALUE;
-        float maxY = Float.MIN_VALUE;
-
-        for (PointF mPointF : pointFS) {
-            if (mPointF.x < minX) {
-                minX = mPointF.x;
-            }
-            if (mPointF.x > maxX) {
-                maxX = mPointF.x;
-            }
-
-            if (mPointF.y < minY) {
-                minY = mPointF.y;
-            }
-            if (mPointF.y > maxY) {
-                maxY = mPointF.y;
-            }
-        }
-
-        PointF middlePoint = new PointF();
-        middlePoint.x = minX + (maxX - minX) / 2;
-        middlePoint.y = minY + (maxY - minY) / 2;
-        sortABCD(pointFS, middlePoint);
+        SortRect.sortABCD(pointFS, mPointFRectCompare);
     }
-
 
     /**
      * 对ABCD点按照
@@ -499,46 +546,25 @@ public class MathUtils {
      * @param middlePoint ABCD 中间点
      */
     public static void sortABCD(PointF[] pointFS, PointF middlePoint) {
-
-        Arrays.sort(pointFS, new Comparator<PointF>() {
-            @Override
-            public int compare(PointF o1, PointF o2) {
-                return Float.compare(o1.x * o1.y, o2.x * o2.y);
-            }
-        });
-
-        PointF minPointF = pointFS[0];
-        int minPointIndex = 0;
-        PointF maxPointF = pointFS[3];
-        int maxPointIndex = 3;
-        for (int i = 0; i < pointFS.length; i++) {
-            if (pointFS[i].x < middlePoint.x && pointFS[i].y < middlePoint.y) {
-                minPointF = pointFS[i];
-                minPointIndex = i;
-            } else if (pointFS[i].x > middlePoint.x && pointFS[i].y > middlePoint.y) {
-                maxPointF = pointFS[i];
-                maxPointIndex = i;
-            }
-        }
-        PointF pointF1 = pointFS[1];
-        PointF pointF2 = pointFS[2];
-        for (int i = 0; i < pointFS.length; i++) {
-            if (i != minPointIndex &&
-                    pointFS[i].x < middlePoint.x && pointFS[i].y > minPointF.y) {
-                pointF1 = pointFS[i];
-            }
-            if (i != maxPointIndex &&
-                    pointFS[i].x > middlePoint.x && pointFS[i].y < maxPointF.y) {
-                pointF2 = pointFS[i];
-            }
-        }
-
-        pointFS[0] = minPointF;
-        pointFS[1] = pointF1;
-        pointFS[2] = maxPointF;
-        pointFS[3] = pointF2;
-
+        SortRect.sortABCD(pointFS, middlePoint, mPointFRectCompare);
     }
+
+    private static final SortRect.RectCompare mPointSRectCompare = new SortRect.RectCompare<PointS>() {
+        @Override
+        public float getX(PointS mPoint) {
+            return mPoint.x;
+        }
+
+        @Override
+        public float getY(PointS mPoint) {
+            return mPoint.y;
+        }
+
+        @Override
+        public int compare(PointS o1, PointS o2) {
+            return Float.compare(o1.x * o1.y, o2.x * o2.y);
+        }
+    };
 
     /**
      * 对ABCD点按照
@@ -554,33 +580,7 @@ public class MathUtils {
      *                B     C
      */
     public static void sortABCD(PointS[] pointFS) {
-
-        float minX = Float.MAX_VALUE;
-        float maxX = Float.MIN_VALUE;
-
-        float minY = Float.MAX_VALUE;
-        float maxY = Float.MIN_VALUE;
-
-        for (PointS mPointF : pointFS) {
-            if (mPointF.x < minX) {
-                minX = mPointF.x;
-            }
-            if (mPointF.x > maxX) {
-                maxX = mPointF.x;
-            }
-
-            if (mPointF.y < minY) {
-                minY = mPointF.y;
-            }
-            if (mPointF.y > maxY) {
-                maxY = mPointF.y;
-            }
-        }
-
-        PointS middlePoint = new PointS();
-        middlePoint.x = minX + (maxX - minX) / 2;
-        middlePoint.y = minY + (maxY - minY) / 2;
-        sortABCD(pointFS, middlePoint);
+        SortRect.sortABCD(pointFS, mPointSRectCompare);
     }
 
 
@@ -599,45 +599,7 @@ public class MathUtils {
      * @param middlePoint ABCD 中间点
      */
     public static void sortABCD(PointS[] pointFS, PointS middlePoint) {
-
-        Arrays.sort(pointFS, new Comparator<PointS>() {
-            @Override
-            public int compare(PointS o1, PointS o2) {
-                return Float.compare(o1.x * o1.y, o2.x * o2.y);
-            }
-        });
-
-        PointS minPointF = pointFS[0];
-        int minPointIndex = 0;
-        PointS maxPointF = pointFS[3];
-        int maxPointIndex = 3;
-        for (int i = 0; i < pointFS.length; i++) {
-            if (pointFS[i].x < middlePoint.x && pointFS[i].y < middlePoint.y) {
-                minPointF = pointFS[i];
-                minPointIndex = i;
-            } else if (pointFS[i].x > middlePoint.x && pointFS[i].y > middlePoint.y) {
-                maxPointF = pointFS[i];
-                maxPointIndex = i;
-            }
-        }
-        PointS pointF1 = pointFS[1];
-        PointS pointF2 = pointFS[2];
-        for (int i = 0; i < pointFS.length; i++) {
-            if (i != minPointIndex &&
-                    pointFS[i].x < middlePoint.x && pointFS[i].y > minPointF.y) {
-                pointF1 = pointFS[i];
-            }
-            if (i != maxPointIndex &&
-                    pointFS[i].x > middlePoint.x && pointFS[i].y < maxPointF.y) {
-                pointF2 = pointFS[i];
-            }
-        }
-
-        pointFS[0] = minPointF;
-        pointFS[1] = pointF1;
-        pointFS[2] = maxPointF;
-        pointFS[3] = pointF2;
-
+        SortRect.sortABCD(pointFS, middlePoint, mPointSRectCompare);
     }
 
     /**

@@ -39,32 +39,14 @@ public class LinearFunction implements Serializable {
      * 两点求 k b
      */
     public void calculationLinearFunction(PointS pa, PointS pb) {
-        if (pa.x == pb.x) {
-            k = 0;
-            b = pa.x;
-        } else if (pa.y == pb.y) {
-            k = 0;
-            b = pa.y;
-        } else {
-            k = (pa.y - pb.y) / (pa.x - pb.x);
-            b = pa.y - pa.x * k;
-        }
+        calculationLinearFunction(pa.x, pa.y, pb.x, pb.y);
     }
 
     /**
      * 两点求 k b
      */
     public void calculationLinearFunction(PointF pa, PointF pb) {
-        if (pa.x == pb.x) {
-            k = 0;
-            b = pa.x;
-        } else if (pa.y == pb.y) {
-            k = 0;
-            b = pa.y;
-        } else {
-            k = (pa.y - pb.y) / (pa.x - pb.x);
-            b = pa.y - pa.x * k;
-        }
+        calculationLinearFunction(pa.x, pa.y, pb.x, pb.y);
     }
 
     public void calculationLinearFunction(float ax, float ay, float bx, float by) {
@@ -89,7 +71,7 @@ public class LinearFunction implements Serializable {
     }
 
     /**
-     * 已知 k 和 点 求 函数
+     * 已知 k 和 点 求函数
      */
     public void calculationLinearFunction(float k, PointS pa) {
         this.k = k;
@@ -97,7 +79,7 @@ public class LinearFunction implements Serializable {
     }
 
     /**
-     * 已知 k 和 点 求 函数
+     * 已知 k 和 点 求函数
      */
     public void calculationLinearFunction(float k, PointF pa) {
         this.k = k;
@@ -105,7 +87,7 @@ public class LinearFunction implements Serializable {
     }
 
     /**
-     * 已知 k 和 点 求 函数
+     * 已知 k 和 点 求函数
      */
     public void calculationLinearFunction(float k, float ax, float ay) {
         this.k = k;
@@ -113,21 +95,21 @@ public class LinearFunction implements Serializable {
     }
 
     /**
-     * 已知本函数的 k  和 点 函数
+     * 已知本函数的 k  和 点 求函数
      */
     public void calculationLinearFunction(PointS pa) {
         this.b = pa.y - this.k * pa.x;
     }
 
     /**
-     * 已知本函数的 k  和 点 函数
+     * 已知本函数的 k  和 点 求函数
      */
     public void calculationLinearFunction(PointF pa) {
         this.b = pa.y - this.k * pa.x;
     }
 
     /**
-     * 已知本函数的 k  和 点 函数
+     * 已知本函数的 k  和 点 求函数
      */
     public void calculationLinearFunction(float ax, float ay) {
         this.b = ay - this.k * ax;
