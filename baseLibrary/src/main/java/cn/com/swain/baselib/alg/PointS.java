@@ -1,4 +1,4 @@
-package cn.com.swain.baselib.display;
+package cn.com.swain.baselib.alg;
 
 import android.graphics.Point;
 import android.graphics.PointF;
@@ -22,19 +22,26 @@ public class PointS implements Serializable {
         this.y = y;
     }
 
+    public PointS(float[] xy) {
+        if (xy != null && xy.length >= 2) {
+            this.x = xy[0];
+            this.y = xy[1];
+        }
+    }
+
     public PointS(Point p) {
-        this.x = p.x;
-        this.y = p.y;
+            this.x = p.x;
+            this.y = p.y;
     }
 
     public PointS(PointF p) {
-        this.x = p.x;
-        this.y = p.y;
+            this.x = p.x;
+            this.y = p.y;
     }
 
     public PointS(PointS p) {
-        this.x = p.x;
-        this.y = p.y;
+            this.x = p.x;
+            this.y = p.y;
     }
 
     /**
@@ -43,6 +50,13 @@ public class PointS implements Serializable {
     public final void set(float x, float y) {
         this.x = x;
         this.y = y;
+    }
+
+    public final void set(float[] xy) {
+        if (xy != null && xy.length >= 2) {
+            this.x = xy[0];
+            this.y = xy[1];
+        }
     }
 
     public final void set(Point p) {

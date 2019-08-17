@@ -45,11 +45,11 @@ public class PermissionSingleton {
         map.clear();
     }
 
-    private synchronized PermissionRequest getPermissionRequestNoCreate(Activity act) {
-        return map.get(act.hashCode());
-    }
 
-    private synchronized PermissionRequest getPermissionRequest(Activity act) {
+    /**
+     * 获取PermissionRequest ,有则直接返回，没有创建再返回
+     */
+    private synchronized PermissionRequest getPermissionRequestAndCreate(Activity act) {
         PermissionRequest permissionRequest = map.get(act.hashCode());
         if (permissionRequest == null) {
             synchronized (this) {
@@ -61,6 +61,48 @@ public class PermissionSingleton {
             }
         }
         return permissionRequest;
+    }
+
+    /**
+     * 获取缓存中的第一个PermissionRequest
+     */
+    private synchronized PermissionRequest getFirstPermissionRequest() {
+        return map.valueAt(0);
+    }
+
+    /**
+     * 获取PermissionRequest ,直接返回
+     */
+    private PermissionRequest getPermissionRequestNoCreate(Activity act) {
+        return getPermissionRequestNoCreate(act.hashCode());
+    }
+
+    /**
+     * 获取PermissionRequest ,直接返回
+     */
+    private synchronized PermissionRequest getPermissionRequestNoCreate(int hasCode) {
+        return map.get(hasCode);
+    }
+
+    /**
+     * 是否存在此activity的PermissionRequest
+     */
+    public boolean exitPermissionRequest(Activity act) {
+        return exitPermissionRequest(act.hashCode());
+    }
+
+    /**
+     * 是否存在此activity.hashCode的PermissionRequest
+     */
+    public synchronized boolean exitPermissionRequest(int hashCode) {
+        return getPermissionRequestNoCreate(hashCode) != null;
+    }
+
+    /**
+     * 注册一个PermissionRequest
+     */
+    public synchronized void regPermissionRequest(Activity act) {
+        getPermissionRequestAndCreate(act);
     }
 
     public void release(Activity act) {
@@ -78,36 +120,162 @@ public class PermissionSingleton {
 
     public void requestPermissions(Activity act,
                                    String... permissionArray) {
-        getPermissionRequest(act).requestPermissions(permissionArray);
+        getPermissionRequestAndCreate(act).requestPermissions(permissionArray);
+    }
+
+    public boolean requestPermissions(int hashCode,
+                                      String... permissionArray) {
+        PermissionRequest permissionRequest = getPermissionRequestNoCreate(hashCode);
+        if (permissionRequest != null) {
+            permissionRequest.requestPermissions(permissionArray);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean requestPermissions(String... permissionArray) {
+        PermissionRequest permissionRequest = getFirstPermissionRequest();
+        if (permissionRequest != null) {
+            permissionRequest.requestPermissions(permissionArray);
+            return true;
+        }
+        return false;
     }
 
     public void requestPermissions(Activity act,
                                    PermissionRequest.OnPermissionFinish mFinish,
                                    String... permissionArray) {
-        getPermissionRequest(act).requestPermissions(mFinish, permissionArray);
+        getPermissionRequestAndCreate(act).requestPermissions(mFinish, permissionArray);
+    }
+
+    public boolean requestPermissions(int hashCode,
+                                      PermissionRequest.OnPermissionFinish mFinish,
+                                      String... permissionArray) {
+        PermissionRequest permissionRequest = getPermissionRequestNoCreate(hashCode);
+        if (permissionRequest != null) {
+            permissionRequest.requestPermissions(mFinish, permissionArray);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean requestPermissions(PermissionRequest.OnPermissionFinish mFinish,
+                                      String... permissionArray) {
+        PermissionRequest permissionRequest = getFirstPermissionRequest();
+        if (permissionRequest != null) {
+            permissionRequest.requestPermissions(mFinish, permissionArray);
+            return true;
+        }
+        return false;
     }
 
     public void requestPermissions(Activity act,
                                    PermissionRequest.OnPermissionResult mResult,
                                    String... permissionArray) {
-        getPermissionRequest(act).requestPermissions(mResult, permissionArray);
+        getPermissionRequestAndCreate(act).requestPermissions(mResult, permissionArray);
     }
+
+    public boolean requestPermissions(int hashCode,
+                                      PermissionRequest.OnPermissionResult mResult,
+                                      String... permissionArray) {
+        PermissionRequest permissionRequest = getPermissionRequestNoCreate(hashCode);
+        if (permissionRequest != null) {
+            permissionRequest.requestPermissions(mResult, permissionArray);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean requestPermissions(PermissionRequest.OnPermissionResult mResult,
+                                      String... permissionArray) {
+        PermissionRequest permissionRequest = getFirstPermissionRequest();
+        if (permissionRequest != null) {
+            permissionRequest.requestPermissions(mResult, permissionArray);
+            return true;
+        }
+        return false;
+    }
+
 
     public void requestPermissions(Activity act,
                                    PermissionRequest.OnPermissionFinish mFinish,
                                    PermissionRequest.OnPermissionResult mResult,
                                    String... permissionArray) {
-        getPermissionRequest(act).requestPermissions(mFinish, mResult, permissionArray);
+        getPermissionRequestAndCreate(act).requestPermissions(mFinish, mResult, permissionArray);
     }
 
-    public void requestPermission(Activity act, String permissionStr) {
-        getPermissionRequest(act).requestPermission(permissionStr);
+    public boolean requestPermissions(int hashCode,
+                                      PermissionRequest.OnPermissionFinish mFinish,
+                                      PermissionRequest.OnPermissionResult mResult,
+                                      String... permissionArray) {
+        PermissionRequest permissionRequest = getPermissionRequestNoCreate(hashCode);
+        if (permissionRequest != null) {
+            permissionRequest.requestPermissions(mFinish, mResult, permissionArray);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean requestPermissions(PermissionRequest.OnPermissionFinish mFinish,
+                                      PermissionRequest.OnPermissionResult mResult,
+                                      String... permissionArray) {
+        PermissionRequest permissionRequest = getFirstPermissionRequest();
+        if (permissionRequest != null) {
+            permissionRequest.requestPermissions(mFinish, mResult, permissionArray);
+            return true;
+        }
+        return false;
+    }
+
+    public void requestPermission(Activity act,
+                                  String permissionStr) {
+        getPermissionRequestAndCreate(act).requestPermission(permissionStr);
+    }
+
+    public boolean requestPermission(int hashCode,
+                                     String permissionStr) {
+        PermissionRequest permissionRequest = getPermissionRequestNoCreate(hashCode);
+        if (permissionRequest != null) {
+            permissionRequest.requestPermission(permissionStr);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean requestPermission(String permissionStr) {
+        PermissionRequest permissionRequest = getFirstPermissionRequest();
+        if (permissionRequest != null) {
+            permissionRequest.requestPermission(permissionStr);
+            return true;
+        }
+        return false;
     }
 
     public void requestPermission(Activity act,
                                   PermissionRequest.OnPermissionResult mResult,
                                   String permissionStr) {
-        getPermissionRequest(act).requestPermission(mResult, permissionStr);
+        getPermissionRequestAndCreate(act).requestPermission(mResult, permissionStr);
+    }
+
+    public boolean requestPermission(int hashCode,
+                                     PermissionRequest.OnPermissionResult mResult,
+                                     String permissionStr) {
+        PermissionRequest permissionRequest = getPermissionRequestNoCreate(hashCode);
+        if (permissionRequest != null) {
+            permissionRequest.requestPermission(mResult, permissionStr);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean requestPermission(PermissionRequest.OnPermissionResult mResult,
+                                     String permissionStr) {
+        PermissionRequest permissionRequest = getFirstPermissionRequest();
+        if (permissionRequest != null) {
+            permissionRequest.requestPermission(mResult, permissionStr);
+            return true;
+        }
+        return false;
     }
 
     public boolean checkSelfPermission(Context act, String permissionStr) {
@@ -121,11 +289,47 @@ public class PermissionSingleton {
         return true;
     }
 
+    public boolean checkSelfPermission(int hashCode, String permissionStr) {
+
+        PermissionRequest permissionRequest = getPermissionRequestNoCreate(hashCode);
+        if (permissionRequest != null) {
+            return permissionRequest.checkSelfPermission(permissionStr);
+        }
+        return false;
+    }
+
+    public boolean checkSelfPermission(String permissionStr) {
+
+        PermissionRequest permissionRequest = getFirstPermissionRequest();
+        if (permissionRequest != null) {
+            return permissionRequest.checkSelfPermission(permissionStr);
+        }
+        return false;
+    }
+
     public boolean needRationaleForPermission(Activity act, String permissionStr) {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             // 权限被禁止
             return !ActivityCompat.shouldShowRequestPermissionRationale(act, permissionStr);
+        }
+        return false;
+    }
+
+    public boolean needRationaleForPermission(int hashCode, String permissionStr) {
+
+        PermissionRequest permissionRequest = getPermissionRequestNoCreate(hashCode);
+        if (permissionRequest != null) {
+            return permissionRequest.needRationaleForPermission(permissionStr);
+        }
+        return false;
+    }
+
+    public boolean needRationaleForPermission(String permissionStr) {
+
+        PermissionRequest permissionRequest = getFirstPermissionRequest();
+        if (permissionRequest != null) {
+            return permissionRequest.needRationaleForPermission(permissionStr);
         }
         return false;
     }

@@ -1,4 +1,4 @@
-package cn.com.swain.baselib.display;
+package cn.com.swain.baselib.alg;
 
 import android.graphics.PointF;
 
@@ -118,29 +118,34 @@ public class LinearFunction implements Serializable {
     /**
      * mLinearFunction 和 本函数的交点
      */
-    public PointF intersection(LinearFunction mLinearFunction, PointF p) {
+    public void intersection(LinearFunction mLinearFunction, PointF p) {
         p.x = (mLinearFunction.b - this.b) / (this.k - mLinearFunction.k);
         p.y = this.k * p.x + this.b;
-        return p;
     }
 
     /**
      * mLinearFunction 和 本函数的交点
      */
-    public PointS intersection(LinearFunction mLinearFunction, PointS p) {
+    public void intersection(LinearFunction mLinearFunction, PointS p) {
         p.x = (mLinearFunction.b - this.b) / (this.k - mLinearFunction.k);
         p.y = this.k * p.x + this.b;
-        return p;
     }
 
     /**
      * mLinearFunction 和 本函数的交点
      */
-    public PointS intersection(LinearFunction mLinearFunction) {
-        PointS p = new PointS();
-        p.x = (mLinearFunction.b - this.b) / (this.k - mLinearFunction.k);
-        p.y = this.k * p.x + this.b;
-        return p;
+    public PointS intersectionS(LinearFunction mLinearFunction) {
+        PointS pointS = new PointS();
+        intersection(mLinearFunction, pointS);
+        return pointS;
     }
 
+    /**
+     * mLinearFunction 和 本函数的交点
+     */
+    public PointF intersectionF(LinearFunction mLinearFunction) {
+        PointF pointF = new PointF();
+        intersection(mLinearFunction, pointF);
+        return pointF;
+    }
 }

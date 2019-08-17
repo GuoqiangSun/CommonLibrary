@@ -1,9 +1,6 @@
-package cn.com.swain.baselib.display;
+package cn.com.swain.baselib.alg;
 
 import android.graphics.PointF;
-
-import java.util.Arrays;
-import java.util.Comparator;
 
 /**
  * author Guoqiang_Sun
@@ -117,31 +114,31 @@ public class MathUtils {
     /**
      * 已知 开始点,角度 和斜边边长 ,求结束点
      *
-     * @param mAngle     角度
+     * @param mAngle     开始点角度
      * @param bevel      边长
      * @param startPoint 开始点
      * @return xy
      */
     public static float[] calculationEnd(float mAngle, float bevel, PointF startPoint) {
-        return calculationStart(mAngle, bevel, startPoint.x, startPoint.y);
+        return calculationEnd(mAngle, bevel, startPoint.x, startPoint.y);
     }
 
     /**
      * 已知 开始点,角度 和斜边边长 ,求结束点
      *
-     * @param mAngle     角度
+     * @param mAngle     开始点角度
      * @param bevel      边长
      * @param startPoint 开始点
      * @return xy
      */
     public static float[] calculationEnd(float mAngle, float bevel, PointS startPoint) {
-        return calculationStart(mAngle, bevel, startPoint.x, startPoint.y);
+        return calculationEnd(mAngle, bevel, startPoint.x, startPoint.y);
     }
 
     /**
      * 已知 开始点,角度 和斜边边长 ,求结束点
      *
-     * @param mAngle 角度
+     * @param mAngle 开始点角度
      * @param bevel  边长
      * @param startx 开始点x
      * @param starty 开始点y
@@ -158,7 +155,7 @@ public class MathUtils {
     /**
      * 已知 结束点,角度 和斜边边长 ,求开始点
      *
-     * @param mAngle   角度
+     * @param mAngle   开始点角度
      * @param bevel    边长
      * @param endPoint 结束点
      * @return xy
@@ -170,7 +167,7 @@ public class MathUtils {
     /**
      * 已知 结束点,角度 和斜边边长 ,求开始点
      *
-     * @param mAngle   角度
+     * @param mAngle   开始点角度
      * @param bevel    边长
      * @param endPoint 结束点
      * @return xy
@@ -182,7 +179,7 @@ public class MathUtils {
     /**
      * 已知 结束点,角度 和斜边边长 ,求开始点
      *
-     * @param mAngle 角度
+     * @param mAngle 开始点角度
      * @param bevel  边长
      * @param endx   结束点x
      * @param endy   结束点y
@@ -499,6 +496,11 @@ public class MathUtils {
 
     private static final SortRect.RectCompare mPointFRectCompare = new SortRect.RectCompare<PointF>() {
         @Override
+        public PointF create() {
+            return new PointF();
+        }
+
+        @Override
         public float getX(PointF mPoint) {
             return mPoint.x;
         }
@@ -506,6 +508,16 @@ public class MathUtils {
         @Override
         public float getY(PointF mPoint) {
             return mPoint.y;
+        }
+
+        @Override
+        public void setX(PointF mPoint, float x) {
+            mPoint.x = x;
+        }
+
+        @Override
+        public void setY(PointF mPoint, float y) {
+            mPoint.y = y;
         }
 
         @Override
@@ -527,29 +539,24 @@ public class MathUtils {
      *                A     D
      *                B     C
      */
-    public static void sortABCD(PointF[] pointFS) {
-        SortRect.sortABCD(pointFS, mPointFRectCompare);
+    public static void sortABCDByMiddle(PointF[] pointFS) {
+        SortRect.sortABCDByMiddle(pointFS, mPointFRectCompare);
     }
 
-    /**
-     * 对ABCD点按照
-     * * A 点在左上
-     * * B 点在左下
-     * * C 点在右下
-     * * D 点在右上
-     * 的方式排序
-     *
-     * @param pointFS     :::::
-     *                    <p>
-     *                    A     D
-     *                    B     C
-     * @param middlePoint ABCD 中间点
-     */
-    public static void sortABCD(PointF[] pointFS, PointF middlePoint) {
-        SortRect.sortABCD(pointFS, middlePoint, mPointFRectCompare);
+    public static void sortABCDByArea(PointF[] pointFS) {
+        SortRect.sortABCDByArea(pointFS, mPointFRectCompare);
+    }
+
+    public static void sortABCDByMiddle(PointF[] pointFS, PointF middlePoint) {
+        SortRect.sortABCDByMiddle(pointFS, middlePoint, mPointFRectCompare);
     }
 
     private static final SortRect.RectCompare mPointSRectCompare = new SortRect.RectCompare<PointS>() {
+        @Override
+        public PointS create() {
+            return new PointS();
+        }
+
         @Override
         public float getX(PointS mPoint) {
             return mPoint.x;
@@ -558,6 +565,16 @@ public class MathUtils {
         @Override
         public float getY(PointS mPoint) {
             return mPoint.y;
+        }
+
+        @Override
+        public void setX(PointS mPoint, float x) {
+            mPoint.x = x;
+        }
+
+        @Override
+        public void setY(PointS mPoint, float y) {
+            mPoint.y = y;
         }
 
         @Override
@@ -579,28 +596,20 @@ public class MathUtils {
      *                A     D
      *                B     C
      */
-    public static void sortABCD(PointS[] pointFS) {
-        SortRect.sortABCD(pointFS, mPointSRectCompare);
+    public static void sortABCDByMiddle(PointS[] pointFS) {
+//        use time:163840
+        SortRect.sortABCDByMiddle(pointFS, mPointSRectCompare);
     }
 
-
-    /**
-     * 对ABCD点按照
-     * * A 点在左上
-     * * B 点在左下
-     * * C 点在右下
-     * * D 点在右上
-     * 的方式排序
-     *
-     * @param pointFS     :::::
-     *                    <p>
-     *                    A     D
-     *                    B     C
-     * @param middlePoint ABCD 中间点
-     */
-    public static void sortABCD(PointS[] pointFS, PointS middlePoint) {
-        SortRect.sortABCD(pointFS, middlePoint, mPointSRectCompare);
+    public static void sortABCDByArea(PointS[] pointFS) {
+//        use time:839339
+        SortRect.sortABCDByArea(pointFS, mPointSRectCompare);
     }
+
+    public static void sortABCDByMiddle(PointS[] pointFS, PointS middlePoint) {
+        SortRect.sortABCDByMiddle(pointFS, middlePoint, mPointSRectCompare);
+    }
+
 
     /**
      * 四舍五入
@@ -629,8 +638,30 @@ public class MathUtils {
     public static void main(String[] args) {
 //        test345rotate();
 //        testRound();
-        textRandomRotate();
+//        textRandomRotate();
 //        testRotateNS();
+        testStart();
+    }
+
+    private static void testStart() {
+        float angle = 36.869896f;
+        float[] floats = MathUtils.calculationStart2(90 - angle, 5, 4, 0);
+        System.out.println("x:" + (int) floats[0] + " y:" + (int) floats[1]);
+
+        floats = MathUtils.calculationStart(angle, 5, -4, 0);
+        System.out.println("x:" + (int) floats[0] + " y:" + (int) floats[1]);
+
+        floats =  MathUtils.calculationEnd(angle,5,floats[0],floats[1]);
+        System.out.println("x:" + (int) floats[0] + " y:" + (int) floats[1]);
+    }
+
+    private static float[] calculationStart2(float mAngle, float bevel, float endPointx, float endPointy) {
+        float[] xy = new float[2];
+        double vX = MathUtils.sin(mAngle) * bevel;
+        double vY = MathUtils.cos(mAngle) * bevel;
+        xy[0] = (float) (endPointx - vX);
+        xy[1] = (float) (endPointy - vY);
+        return xy;
     }
 
     private static void testRotateNS() {
