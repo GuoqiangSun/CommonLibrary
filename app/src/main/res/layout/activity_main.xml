@@ -5,8 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="horizontal"
     android:paddingTop="10dp"
-    tools:context=".main.MainActivity"
-    >
+    tools:context=".main.MainActivity">
 
     <LinearLayout
         android:layout_width="0dp"
@@ -15,24 +14,24 @@
         android:orientation="vertical">
 
         <Button
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:onClick="skipBleScan"
-            android:text="BleScan"
+            android:text="BleTest"
             android:textAllCaps="false" />
 
         <Button
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:onClick="skipProtocol"
-            android:text="skipProtocol"
+            android:text="ProtocolTest"
             android:textAllCaps="false" />
 
 
         <Button
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:onClick="scanOR"
@@ -40,7 +39,7 @@
             android:textAllCaps="false" />
 
         <Button
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:onClick="p2pClient"
@@ -49,7 +48,7 @@
 
 
         <Button
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:onClick="shake"
@@ -58,7 +57,7 @@
 
 
         <Button
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:onClick="colorLight"
@@ -67,7 +66,7 @@
 
 
         <Button
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:onClick="screenRate"
@@ -76,7 +75,7 @@
 
 
         <Button
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:onClick="skipUsb"
@@ -85,27 +84,19 @@
 
 
         <Button
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:onClick="skipFloatWindow"
-            android:text="skipFloatWindow"
+            android:text="FloatWindowTest"
             android:textAllCaps="false" />
 
         <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:onClick="test"
-            android:text="test"
-            android:textAllCaps="false" />
-
-        <Button
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:onClick="ocr"
-            android:text="ocr"
+            android:text="车票识别"
             android:textAllCaps="false" />
 
     </LinearLayout>
@@ -117,7 +108,7 @@
         android:orientation="vertical">
 
         <Button
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:onClick="linearTxt"
@@ -125,7 +116,7 @@
             android:textAllCaps="false" />
 
         <Button
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:onClick="skipScrollTxt"
@@ -133,23 +124,23 @@
             android:textAllCaps="false" />
 
         <Button
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:onClick="skipMultiUdp"
-            android:text="testMultiUdp"
+            android:text="MultiUdpTest"
             android:textAllCaps="false" />
 
         <Button
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:onClick="skipFastUdp"
-            android:text="testUdp"
+            android:text="UdpTest"
             android:textAllCaps="false" />
 
         <Button
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:onClick="skipFun"
@@ -157,43 +148,35 @@
             android:textAllCaps="false" />
 
         <Button
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:onClick="requestPermission"
-            android:text="requestPermission"
+            android:text="请求权限"
             android:textAllCaps="false" />
 
         <Button
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:onClick="requestPermission1"
-            android:text="requestPermission1"
+            android:text="请求单个权限"
             android:textAllCaps="false" />
 
         <Button
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:onClick="skipIr"
-            android:text="skipIr"
+            android:text="IrTest"
             android:textAllCaps="false" />
 
         <Button
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:onClick="facedetec"
-            android:text="facedetec"
-            android:textAllCaps="false" />
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:onClick="facedetec1"
-            android:text="facedetec1"
+            android:onClick="faceDetec"
+            android:text="faceDetection"
             android:textAllCaps="false" />
 
     </LinearLayout>

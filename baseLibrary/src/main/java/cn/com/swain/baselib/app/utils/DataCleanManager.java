@@ -7,69 +7,76 @@ import android.os.Environment;
 
 import java.io.File;
 
+import cn.com.swain.baselib.file.FileUtil;
+
 /**
  * author: Guoqiang_Sun
  * date: 2018/11/27 0027
- * Desc: 主要功能有清除内/外缓存，清除数据库，清除sharedPreference，清除files和清除自定义目录
+ * Desc: 主要功能有 :
+ * *        清除内/外缓存，
+ * *        清除数据库，
+ * *       清除sharedPreference，
+ * *       清除files,
+ * *      清除自定义目录.
  */
 @SuppressLint("SdCardPath")
 public class DataCleanManager {
 
     /**
-     * 清除本应用内部缓存(/data/data/com.xxx.xxx/cache) * * @param context
+     * 清除本应用内部缓存(/data/data/com.xxx.xxx/cache)
      */
     public static void cleanInternalCache(Context context) {
-        deleteFilesByDirectory(context.getCacheDir());
+        FileUtil.deleteDirectoryFiles(context.getCacheDir());
     }
 
     /**
-     * 清除本应用所有数据库(/data/data/com.xxx.xxx/databases) * * @param context
+     * 清除本应用所有数据库(/data/data/com.xxx.xxx/databases)
      */
     public static void cleanDatabases(Context context) {
-        deleteFilesByDirectory(new File("/data/data/" + context.getPackageName() + "/databases"));
+        FileUtil.deleteDirectoryFiles(new File("/data/data/" + context.getPackageName() + "/databases"));
     }
 
     /**
-     * * 清除本应用SharedPreference(/data/data/com.xxx.xxx/shared_prefs) * * @param
+     * * 清除本应用SharedPreference(/data/data/com.xxx.xxx/shared_prefs)
      * context
      */
     public static void cleanSharedPreference(Context context) {
-        deleteFilesByDirectory(new File("/data/data/" + context.getPackageName() + "/shared_prefs"));
+        FileUtil.deleteDirectoryFiles(new File("/data/data/" + context.getPackageName() + "/shared_prefs"));
     }
 
     /**
-     * 按名字清除本应用数据库 * * @param context * @param dbName
+     * 按名字清除本应用数据库
      */
     public static void cleanDatabaseByName(Context context, String dbName) {
         context.deleteDatabase(dbName);
     }
 
     /**
-     * 清除/data/data/com.xxx.xxx/files下的内容 * * @param context
+     * 清除/data/data/com.xxx.xxx/files下的内容
      */
     public static void cleanFiles(Context context) {
-        deleteFilesByDirectory(context.getFilesDir());
+        FileUtil.deleteDirectoryFiles(context.getFilesDir());
     }
 
     /**
-     * * 清除外部cache下的内容(/mnt/sdcard/android/data/com.xxx.xxx/cache) * * @param
+     * * 清除外部cache下的内容(/mnt/sdcard/android/data/com.xxx.xxx/cache)
      * context
      */
     public static void cleanExternalCache(Context context) {
         if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-            deleteFilesByDirectory(context.getExternalCacheDir());
+            FileUtil.deleteDirectoryFiles(context.getExternalCacheDir());
         }
     }
 
     /**
-     * 清除自定义路径下的文件，使用需小心，请不要误删。而且只支持目录下的文件删除 * * @param filePath
+     * 清除自定义路径下的文件，使用需小心，请不要误删。
      */
     public static void cleanCustomCache(String filePath) {
-        deleteFilesByDirectory(new File(filePath));
+        FileUtil.deleteDirectoryFiles(new File(filePath));
     }
 
     /**
-     * 清除本应用所有的数据 * * @param context * @param filepath
+     * 清除本应用所有的数据
      */
     public static void cleanApplicationData(Context context) {
         cleanInternalCache(context);
@@ -80,27 +87,12 @@ public class DataCleanManager {
     }
 
     /**
-     * 清除本应用所有的数据 * * @param context * @param filepath
+     * 清除本应用所有的数据
      */
     public static void cleanApplicationData(Context context, String... filepath) {
-        cleanInternalCache(context);
-        cleanExternalCache(context);
-        cleanDatabases(context);
-        cleanSharedPreference(context);
-        cleanFiles(context);
+        cleanApplicationData(context);
         for (String filePath : filepath) {
             cleanCustomCache(filePath);
-        }
-    }
-
-    /**
-     * 删除方法 这里只会删除某个文件夹下的文件，如果传入的directory是个文件，将不做处理 * * @param directory
-     */
-    private static void deleteFilesByDirectory(File directory) {
-        if (directory != null && directory.exists() && directory.isDirectory()) {
-            for (File item : directory.listFiles()) {
-                item.delete();
-            }
         }
     }
 

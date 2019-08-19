@@ -369,4 +369,37 @@ public class FileUtil {
         }
     }
 
+
+    /**
+     * 清楚文件夹下所有文件
+     */
+    public static void deleteDirectoryFiles(File directory) {
+        if (directory != null && directory.exists()) {
+            if (directory.isDirectory()) {
+                File[] files = directory.listFiles();
+                for (File item : files) {
+                    if (item.isDirectory()) {
+                        deleteDirectoryFiles(item);
+                    } else {
+                        item.delete();
+                    }
+                }
+            } else {
+                directory.delete();
+            }
+        }
+    }
+
+    /**
+     * 删除某个文件夹下的文件，如果传入的directory是个文件，将不做处理
+     */
+    public static void deleteFiles(File directory) {
+        if (directory != null && directory.exists() && directory.isDirectory()) {
+            File[] files = directory.listFiles();
+            for (File item : files) {
+                item.delete();
+            }
+        }
+    }
+
 }

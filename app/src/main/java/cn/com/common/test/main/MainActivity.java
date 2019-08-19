@@ -6,10 +6,10 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.Toast;
 
 import cn.com.common.test.R;
 import cn.com.common.test.facedetect.TutorialOnFaceDetect;
-import cn.com.common.test.facedetect.TutorialOnFaceDetect1;
 import cn.com.common.test.global.FileManager;
 import cn.com.common.test.ir.InfraredActivity;
 import cn.com.common.test.light.ColorLightActivity;
@@ -18,7 +18,6 @@ import cn.com.common.test.p2p.p2pAndroid.P2pClientActivity;
 import cn.com.common.test.scanOR.ScanORCodeActivity;
 import cn.com.common.test.shake.ShakeActivity;
 import cn.com.common.test.suspension.SuspensionActivity;
-import cn.com.common.test.test.TestActivity;
 import cn.com.common.test.testBle.BleScanActivity;
 import cn.com.common.test.testFun.FunctionActivity;
 import cn.com.common.test.testProtocol.TestProtocolActivity;
@@ -185,6 +184,7 @@ public class MainActivity extends AppCompatActivity {
             public boolean onPermissionRequestResult(String permission, boolean granted) {
 
                 Tlog.d(permission + " granted: " + granted);
+                Toast.makeText(getApplicationContext(), permission + (granted ? ":granted" : ":denied"), Toast.LENGTH_LONG).show();
 
                 if (Manifest.permission.ACCESS_COARSE_LOCATION.equals(permission)) {
                     return true;
@@ -204,6 +204,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onPermissionRequestResult(String permission, boolean granted) {
                 Tlog.d(permission + " granted: " + granted);
+                Toast.makeText(getApplicationContext(),
+                        permission + (granted ? ":granted" : ":denied"),
+                        Toast.LENGTH_LONG).show();
                 return false;
             }
         }, PermissionGroup.LOCATION);
@@ -235,17 +238,8 @@ public class MainActivity extends AppCompatActivity {
         startActivity(new Intent(this, SuspensionActivity.class));
     }
 
-    public void test(View view) {
-        startActivity(new Intent(this, TestActivity.class));
-    }
-
-
-    public void facedetec(View view) {
+    public void faceDetec(View view) {
         startActivity(new Intent(this, TutorialOnFaceDetect.class));
-    }
-
-    public void facedetec1(View view) {
-        startActivity(new Intent(this, TutorialOnFaceDetect1.class));
     }
 
     public void ocr(View view) {
