@@ -61,7 +61,7 @@ public class SuspendService extends Service {
         Tlog.v(" SuspendService onDestroy");
         super.onDestroy();
         isStarted = false;
-        if (mNavigationView != null) {
+        if (mNavigationView != null && windowManager!=null) {
             windowManager.removeView(mNavigationView);
         }
     }
@@ -84,7 +84,7 @@ public class SuspendService extends Service {
         }
 
         layoutParams.format = PixelFormat.RGBA_8888;
-        layoutParams.gravity = Gravity.LEFT | Gravity.TOP;
+        layoutParams.gravity = Gravity.START | Gravity.TOP;
         layoutParams.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
                 | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
 //        layoutParams.width = 260;

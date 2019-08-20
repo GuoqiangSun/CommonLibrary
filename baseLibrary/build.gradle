@@ -6,8 +6,8 @@ android {
     defaultConfig {
         minSdkVersion 18
         targetSdkVersion 27
-        versionCode 3231
-        versionName "3.2.31"
+        versionCode 3232
+        versionName "3.2.32"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
@@ -40,9 +40,9 @@ publish {
     //项目名称
     artifactId = 'baselib'
     //版本号
-    publishVersion = '3.2.31'
+    publishVersion = '3.2.32'
     //描述，不重要
-    desc = 'add alg utils'
+    desc = '优化serialManager,add udp support'
     //网站，不重要
     website = 'https://www.startai.com.cn'
 

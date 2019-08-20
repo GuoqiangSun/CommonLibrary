@@ -18,7 +18,7 @@ import java.util.Comparator;
  * * D 点在右上
  * 的方式排序
  *
- * *               pointFS :::::
+ * *               point :::::
  * *                <p>
  * *                A     D
  * *                B     C

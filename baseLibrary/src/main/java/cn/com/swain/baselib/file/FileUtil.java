@@ -369,6 +369,16 @@ public class FileUtil {
         }
     }
 
+    /**
+     * 系统缓存文件路径
+     *
+     * @param mContext Context
+     * @param fileName 文件名
+     * @return 缓存文件路径
+     */
+    public static File getCacheFile(Context mContext, String fileName) {
+        return new File(mContext.getCacheDir(), fileName);
+    }
 
     /**
      * 清楚文件夹下所有文件

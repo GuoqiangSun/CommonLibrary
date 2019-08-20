@@ -63,7 +63,6 @@ dependencies {
     implementation project(':baseLibrary')
 //    implementation project(':FastBle')
     implementation project(':protocolEngine')
-    implementation project(':fastudp')
 
     implementation 'pub.devrel:easypermissions:1.1.0'
     //zxing二维码识别 基础包

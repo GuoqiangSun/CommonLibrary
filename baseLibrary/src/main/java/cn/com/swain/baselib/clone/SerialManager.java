@@ -1,6 +1,7 @@
 package cn.com.swain.baselib.clone;
 
 import android.content.Context;
+import android.os.Build;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -12,7 +13,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.ObjectStreamException;
 import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
+
+import cn.com.swain.baselib.file.FileUtil;
 
 /**
  * author: Guoqiang_Sun
@@ -21,7 +26,7 @@ import java.io.Serializable;
  */
 public class SerialManager {
 
-    // 序列化对象为String字符串，先对序列化后的结果进行BASE64编码，否则不能直接进行反序列化
+    // 序列化对象为String字符串
     // 如果是内部类，需要是静态内部类public static class
     public static String writeObject(Object o) throws IOException {
 
@@ -32,17 +37,29 @@ public class SerialManager {
         oos.close();
         bos.close();
         // return new BASE64Encoder().encode(bos.toByteArray());
-
-        return new String(bos.toByteArray(), "ISO-8859-1");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            return new String(bos.toByteArray(), StandardCharsets.ISO_8859_1);
+        } else {
+            return new String(bos.toByteArray(), charsetName);
+        }
     }
 
-    // 反序列化String字符串为对象
+    private static final String charsetName = "ISO-8859-1";
 
+    // 反序列化String字符串为对象
     public static Object readObject(String object)
             throws IOException, ClassNotFoundException {
         // ByteArrayInputStream bis = new ByteArrayInputStream(new
         // BASE64Decoder().decodeBuffer(object));
-        ByteArrayInputStream bis = new ByteArrayInputStream(object.getBytes("ISO-8859-1"));
+
+        byte[] bytes;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            bytes = object.getBytes(StandardCharsets.ISO_8859_1);
+        } else {
+            bytes = object.getBytes(charsetName);
+        }
+
+        ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
         ObjectInputStream ois = new ObjectInputStream(bis);
         Object o = null;
         try {
@@ -55,16 +72,25 @@ public class SerialManager {
         return o;
     }
 
-
-    public static boolean saveObj(Context mContext, Object o, String path) {
-
-        File cacheDir = mContext.getCacheDir();
-        File serialDir = new File(cacheDir, path);
-
-        return saveObj(o, serialDir);
-
+    /**
+     * 对象流保存在context.cache 目录下
+     *
+     * @param o        对象
+     * @param mContext Context
+     * @param fileName 文件名称
+     * @return 是否保存成功
+     */
+    public static boolean saveObj(Object o, Context mContext, String fileName) {
+        return saveObj(o, FileUtil.getCacheFile(mContext, fileName));
     }
 
+    /**
+     * 对象流保存在path文件
+     *
+     * @param o    对象
+     * @param path 文件名称
+     * @return 是否保持成功
+     */
     public static boolean saveObj(Object o, String path) {
 
         if (o == null || path == null) {
@@ -75,11 +101,18 @@ public class SerialManager {
 
     }
 
-    public static boolean saveObj(Object o, File serialDir) {
+    /**
+     * 对象流保存在path文件
+     *
+     * @param o          对象
+     * @param serialPath 文件
+     * @return 是否保持成功
+     */
+    public static boolean saveObj(Object o, File serialPath) {
 
         FileOutputStream fos = null;
         try {
-            fos = new FileOutputStream(serialDir);
+            fos = new FileOutputStream(serialPath);
             byte[] bytes = writeObject(o).getBytes();
 
             fos.write(bytes);
@@ -109,16 +142,23 @@ public class SerialManager {
         return false;
     }
 
-    public static Object getObj(Context mContext, String path) {
-
-        File cacheDir = mContext.getCacheDir();
-        File serialDir = new File(cacheDir, path);
-
-        return getObj(serialDir);
-
+    /**
+     * context.cache 目录下的 fileName 获取对象
+     *
+     * @param mContext Context
+     * @param fileName 文件名称
+     * @return Object
+     */
+    public static Object getObj(Context mContext, String fileName) {
+        return getObj(FileUtil.getCacheFile(mContext, fileName));
     }
 
-
+    /**
+     * path文件下获取对象
+     *
+     * @param path 文件名称
+     * @return Object
+     */
     public static Object getObj(String path) {
 
         if (path == null) {
@@ -128,21 +168,28 @@ public class SerialManager {
         return getObj(new File(path));
     }
 
-    public static Object getObj(File serialDir) {
+    /**
+     * serialPath文件下获取对象
+     *
+     * @param serialPath 文件
+     * @return Object
+     */
+    public static Object getObj(File serialPath) {
 
-        if (serialDir == null || !serialDir.exists()) {
+        if (serialPath == null || !serialPath.exists()) {
             return null;
         }
 
         FileInputStream fis = null;
         try {
-            fis = new FileInputStream(serialDir);
+            fis = new FileInputStream(serialPath);
             int available = fis.available();
             byte[] buf = new byte[available];
-            fis.read(buf);
-
-            return readObject(new String(buf));
-
+            int read = fis.read(buf);
+            if (read > 0) {
+                return readObject(new String(buf));
+            }
+            return null;
         } catch (FileNotFoundException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -216,12 +263,30 @@ public class SerialManager {
             this.age = age;
         }
 
-        public String name;
+        public transient String name;
         public int age;
+
+        private void writeObject(java.io.ObjectOutputStream out)
+                throws IOException {
+            System.out.println(" Serializable writeObject ");
+//            out.defaultWriteObject();
+        }
+
+        private void readObject(java.io.ObjectInputStream in)
+                throws IOException, ClassNotFoundException {
+            System.out.println(" Serializable readObject ");
+//            in.defaultReadObject();
+        }
+
+        private void readObjectNoData()
+                throws ObjectStreamException {
+            System.out.println(" Serializable readObjectNoData ");
+        }
+
 
         @Override
         public String toString() {
-            return "people--name:" + name + " age:" + age;
+            return "people--name:" + name + " age:" + age + " h:" + hashCode();
         }
     }
 
@@ -232,6 +297,7 @@ public class SerialManager {
          * 去掉以后,反序列化又会生成一个实例
          */
         private Object readResolve() {
+            System.out.println(" Serializable readResolve ");
             return singleton;
         }
 

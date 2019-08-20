@@ -30,18 +30,18 @@ public class PointS implements Serializable {
     }
 
     public PointS(Point p) {
-            this.x = p.x;
-            this.y = p.y;
+        this.x = p.x;
+        this.y = p.y;
     }
 
     public PointS(PointF p) {
-            this.x = p.x;
-            this.y = p.y;
+        this.x = p.x;
+        this.y = p.y;
     }
 
     public PointS(PointS p) {
-            this.x = p.x;
-            this.y = p.y;
+        this.x = p.x;
+        this.y = p.y;
     }
 
     /**

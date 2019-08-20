@@ -4,8 +4,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.widget.Toast;
 
+import cn.com.common.test.R;
 import cn.com.swain.baselib.log.Tlog;
 import cn.com.swain.baselib.permission.FloatPermissionHelper;
 import cn.com.swain.baselib.permission.FloatWindowPermission;
@@ -22,7 +24,8 @@ public class SuspensionActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        skipProductDetection("123");
+        setContentView(R.layout.activity_float_window);
+        mSuspendIntent = new Intent(SuspensionActivity.this, SuspendService.class);
     }
 
     @Override
@@ -32,6 +35,14 @@ public class SuspensionActivity extends AppCompatActivity {
     }
 
 
+    public void startService(View view) {
+        skipProductDetection();
+    }
+
+    public void stopService(View view) {
+        stopService(mSuspendIntent);
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
@@ -40,19 +51,16 @@ public class SuspensionActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    private String productMac;
     private Intent mSuspendIntent;
 
-    public void skipProductDetection(String conMac) {
+    public void skipProductDetection() {
 //        Intent i = new Intent(this, ProductDetectionActivity.class);
-//        i.putExtra(ProductDetectionActivity.NAME_CUR_DEVICE, conMac);
 //        startActivity(i);
-        productMac = conMac;
-        skipService(productMac);
+        skipService();
 
     }
 
-    private void skipService(String conMac) {
+    private void skipService() {
         FloatWindowPermission instance = FloatPermissionHelper.getInstance();
         instance.regFloatWindowPermissionListener(new FloatWindowPermission.OnFloatWindowPermissionLsn() {
             @Override
@@ -66,7 +74,6 @@ public class SuspensionActivity extends AppCompatActivity {
                 }
 
                 if (grant) {
-                    mSuspendIntent = new Intent(SuspensionActivity.this, SuspendService.class);
                     startService(mSuspendIntent);
                 } else {
                     Toast.makeText(SuspensionActivity.this, "当前无权限，请授权", Toast.LENGTH_SHORT).show();
@@ -76,6 +83,5 @@ public class SuspensionActivity extends AppCompatActivity {
         instance.applyFloatPermission(this);
 
     }
-
 
 }

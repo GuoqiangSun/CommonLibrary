@@ -32,6 +32,7 @@ import cn.com.swain.baselib.log.Tlog;
 import cn.com.swain.baselib.permission.PermissionGroup;
 import cn.com.swain.baselib.permission.PermissionHelper;
 import cn.com.swain.baselib.permission.PermissionRequest;
+import cn.com.swain.baselib.permission.PermissionSingleton;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -90,8 +91,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private PermissionRequest mPermissionRequest;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -99,8 +98,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Tlog.startRecord();
 
-        mPermissionRequest = new PermissionRequest(this);
-        mPermissionRequest.requestPermissions(new PermissionRequest.OnPermissionResult() {
+
+        PermissionSingleton.getInstance().requestPermissions(this, new PermissionRequest.OnPermissionResult() {
             @Override
             public boolean onPermissionRequestResult(String permission, boolean granted) {
                 Tlog.v(" OrientationActivity requestPermissions " + permission + " " + granted);
@@ -124,18 +123,14 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         Tlog.v(" OrientationActivity onDestroy ");
         Tlog.stopRecord();
-        if (mPermissionRequest != null) {
-            mPermissionRequest.release();
-        }
+        PermissionSingleton.getInstance().release(this);
         super.onDestroy();
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (mPermissionRequest != null) {
-            mPermissionRequest.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        }
+        PermissionSingleton.getInstance().onRequestPermissionsResult(this, requestCode, permissions, grantResults);
     }
 
     public void skipBleScan(View v) {

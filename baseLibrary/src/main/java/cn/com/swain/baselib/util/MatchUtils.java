@@ -1,8 +1,5 @@
 package cn.com.swain.baselib.util;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 /**
  * author: Guoqiang_Sun
  * date: 2018/11/27 0027
@@ -86,7 +83,7 @@ public class MatchUtils {
         return false;
     }
 
-    private static final String IP_REGEX = "^(1\\d{2}|2[0-4]\\d|25[0-5]|[1-9]\\d|[1-9])\\." +
+    public static final String IP_REGEX = "^(1\\d{2}|2[0-4]\\d|25[0-5]|[1-9]\\d|[1-9])\\." +
             "(1\\d{2}|2[0-4]\\d|25[0-5]|[1-9]\\d|\\d)\\." +
             "(1\\d{2}|2[0-4]\\d|25[0-5]|[1-9]\\d|\\d)\\." +
             "(1\\d{2}|2[0-4]\\d|25[0-5]|[1-9]\\d|\\d)$";
@@ -102,9 +99,46 @@ public class MatchUtils {
         return false;
     }
 
+    /**
+     * 公认端口（Well Known Ports）：从0到1023，
+     * 它们紧密绑定（binding）于一些服务。
+     * 通常这些端口的通讯明确表明了某种服务的协议。
+     * 例如：80端口实际上总是HTTP通讯。
+     */
+    public static boolean isWellKnownPort(int port) {
+        return IpUtil.isWellKnownPort(port);
+    }
 
-    private static final String CHAR_PATTERN_STR = "[ `~!@#$%^&*()+=|{}':;',\\[\\].<>/?~！@#￥%……&*（）——+|{}【】‘；：”“’。，、？]|\n|\r|\t";
-//    private static final String regEx = "[ _`~!@#$%^&*()+=|{}':;',\\[\\].<>/?~！@#￥%……&*（）——+|{}【】‘；：”“’。，、？]|\n|\r|\t";
+    /**
+     * 注册端口（Registered Ports）：从1024到49151。
+     * 它们松散地绑定于一些服务。
+     * 也就是说有许多服务绑定于这些端口，这些端口同样用于许多其它目的。
+     * 例如：许多系统处理动态端口从1024左右开始。
+     */
+    public static boolean isRegisteredPort(int port) {
+        return IpUtil.isRegisteredPort(port);
+    }
+
+    /**
+     * 动态和/或私有端口（Dynamic and/or Private Ports）：从49152到65535。
+     * 理论上，不应为服务分配这些端口。实际上，机器通常从1024起分配动态端口
+     * 。但也有例外：SUN的RPC端口从32768开始。
+     */
+    public static boolean isPrivatePort(int port) {
+        return IpUtil.isPrivatePort(port);
+    }
+
+    /**
+     * 有效端口： 从0到65535.
+     */
+    public static boolean isAvailablePort(int port) {
+        return IpUtil.isAvailablePort(port);
+    }
+
+    public static final String CHAR_PATTERN_STR =
+            "[ `~!@#$%^&*()+=|{}':;',\\[\\].<>/?~！@#￥%……&*（）——+|{}【】‘；：”“’。，、？]|\n|\r|\t";
+//    private static final String regEx =
+//    "[ _`~!@#$%^&*()+=|{}':;',\\[\\].<>/?~！@#￥%……&*（）——+|{}【】‘；：”“’。，、？]|\n|\r|\t";
 
 
     /**

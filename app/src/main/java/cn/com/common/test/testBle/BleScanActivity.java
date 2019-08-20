@@ -26,6 +26,7 @@ import cn.com.common.test.global.LooperManager;
 import cn.com.swain.baselib.log.Tlog;
 import cn.com.swain.baselib.permission.PermissionHelper;
 import cn.com.swain.baselib.permission.PermissionRequest;
+import cn.com.swain.baselib.permission.PermissionSingleton;
 import cn.com.swain.support.ble.enable.AbsBleEnable;
 import cn.com.swain.support.ble.enable.BleEnabler;
 import cn.com.swain.support.ble.scan.AbsBleScan;
@@ -89,7 +90,6 @@ public class BleScanActivity extends AppCompatActivity {
     private AbsBleScan mBleScan;
     private AbsBleEnable mBleEnabler;
 
-    private PermissionRequest mPermissionRequest;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -98,58 +98,10 @@ public class BleScanActivity extends AppCompatActivity {
 
 
         String[] permissionArray = new String[]{
-                Manifest.permission.WRITE_EXTERNAL_STORAGE,
-
-                Manifest.permission.ACCESS_COARSE_LOCATION,
-//                Manifest.permission_group.LOCATION
+//                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+//                Manifest.permission.ACCESS_COARSE_LOCATION,
+                Manifest.permission_group.LOCATION
         };
-
-
-        mPermissionRequest = new PermissionRequest(this);
-//        mPermissionRequest.requestPermission(new PermissionRequest.OnPermissionResult() {
-//            @Override
-//            public void onPermissionRequestResult(String permission, boolean granted) {
-//                Tlog.v(TAG, "HomeActivity  onPermissionRequestResult() " + permission + " " + granted);
-//            }
-//        }, permissionArray[0]);
-//
-//        mPermissionRequest.requestPermission(new PermissionRequest.OnPermissionResult() {
-//            @Override
-//            public void onPermissionRequestResult(String permission, boolean granted) {
-//                Tlog.v(TAG, "HomeActivity  onPermissionRequestResult() " + permission + " " + granted);
-//            }
-//        }, permissionArray[1]);
-
-
-//        mPermissionRequest.requestAllPermission(new PermissionRequest.OnPermissionFinish() {
-//            @Override
-//            public void onAllPermissionRequestFinish() {
-//                Tlog.d(TAG, "HomeActivity  onAllPermissionRequestFinish() ");
-//            }
-//        }, new PermissionRequest.OnPermissionResult() {
-//            @Override
-//            public void onPermissionRequestResult(String permission, boolean granted) {
-//                Tlog.v(TAG, "HomeActivity  onPermissionRequestResult() " + permission + " " + granted);
-//            }
-//        }, permissionArray);
-
-
-        PermissionHelper.requestPermission(this,
-                new PermissionRequest.OnPermissionResult() {
-                    @Override
-                    public boolean onPermissionRequestResult(String permission, boolean granted) {
-                        Tlog.v(TAG, "HomeActivity  onPermissionRequestResult() " + permission + " " + granted);
-                        return true;
-                    }
-                },
-                new PermissionRequest.OnPermissionFinish() {
-                    @Override
-                    public void onAllPermissionRequestFinish() {
-                        Tlog.d(TAG, "HomeActivity  onAllPermissionRequestFinish() ");
-                    }
-                },
-                permissionArray
-        );
 
         progress = (ProgressBar) findViewById(R.id.progressBar1);
         mTxtBleState = (TextView) findViewById(R.id.bt_state);
@@ -162,7 +114,6 @@ public class BleScanActivity extends AppCompatActivity {
         Looper workLooper = LooperManager.getInstance().getWorkLooper();
 
         mBleEnabler = new BleEnabler(getApplication(), workLooper);
-        mBleEnabler.beEnableBle();
 
         mBleScan = new BleScanAuto(getApplication(), workLooper, new IBleScanObserver() {
             @Override
@@ -182,9 +133,19 @@ public class BleScanActivity extends AppCompatActivity {
             }
         });
 
-        mBleScan.bsScanBleOnce();
+        PermissionSingleton.getInstance().requestPermissions(this, new PermissionRequest.OnPermissionResult() {
 
-        regBleState(mBleEnabler.beGetBleState());
+            @Override
+            public boolean onPermissionRequestResult(String permission, boolean granted) {
+                mBleEnabler.beEnableBle();
+                regBleState(mBleEnabler.beGetBleState());
+                if (granted) {
+                    mBleScan.bsScanBleOnce();
+                }
+                return false;
+            }
+        }, permissionArray);
+
 
         h.sendEmptyMessageDelayed(MSG_WHAT_HIDE, 3000);
     }
@@ -226,17 +187,13 @@ public class BleScanActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         mBleScan.bsStopScan();
-        if (mPermissionRequest != null) {
-            mPermissionRequest.release();
-        }
+        PermissionSingleton.getInstance().release(this);
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (mPermissionRequest != null) {
-            mPermissionRequest.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        }
+        PermissionSingleton.getInstance().onRequestPermissionsResult(this, requestCode, permissions, grantResults);
     }
 
     private class BleItemClick implements AdapterView.OnItemClickListener {
