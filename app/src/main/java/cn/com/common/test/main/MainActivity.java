@@ -17,6 +17,7 @@ import cn.com.common.test.ocr.OcrActivity;
 import cn.com.common.test.p2p.p2pAndroid.P2pClientActivity;
 import cn.com.common.test.scanOR.ScanORCodeActivity;
 import cn.com.common.test.shake.ShakeActivity;
+import cn.com.common.test.sip.WalkieTalkieActivity;
 import cn.com.common.test.suspension.SuspensionActivity;
 import cn.com.common.test.testBle.BleScanActivity;
 import cn.com.common.test.testFun.FunctionActivity;
@@ -110,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 return true;
             }
-        }, Manifest.permission.WRITE_EXTERNAL_STORAGE, PermissionGroup.LOCATION);
+        }, Manifest.permission.WRITE_EXTERNAL_STORAGE, PermissionGroup.LOCATION,Manifest.permission.USE_SIP);
 
         Tlog.v(" OrientationActivity onCreate ");
 
@@ -239,5 +240,9 @@ public class MainActivity extends AppCompatActivity {
 
     public void ocr(View view) {
         startActivity(new Intent(this, OcrActivity.class));
+    }
+
+    public void skipSip(View view) {
+        startActivity(new Intent(this, WalkieTalkieActivity.class));
     }
 }

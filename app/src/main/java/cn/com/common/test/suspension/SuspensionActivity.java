@@ -34,9 +34,8 @@ public class SuspensionActivity extends AppCompatActivity {
         FloatPermissionHelper.getInstance().unregFloatWindowPermissionListener();
     }
 
-
     public void startService(View view) {
-        skipProductDetection();
+        skipService();
     }
 
     public void stopService(View view) {
@@ -53,31 +52,27 @@ public class SuspensionActivity extends AppCompatActivity {
 
     private Intent mSuspendIntent;
 
-    public void skipProductDetection() {
-//        Intent i = new Intent(this, ProductDetectionActivity.class);
-//        startActivity(i);
-        skipService();
-
-    }
-
     private void skipService() {
         FloatWindowPermission instance = FloatPermissionHelper.getInstance();
         instance.regFloatWindowPermissionListener(new FloatWindowPermission.OnFloatWindowPermissionLsn() {
             @Override
             public void onFloatWindowPermissionResult(boolean grant) {
-                Tlog.d(TAG, " skipProductDetection canDrawOverlays " + grant);
-
-                if (SuspendService.isStarted) {
-                    Toast.makeText(SuspensionActivity.this, "NAV service is running", Toast.LENGTH_SHORT).show();
-                    Tlog.d(TAG, " skipProductDetection SuspendService.isStarted ");
-                    return;
-                }
+                Tlog.d(TAG, " skipProductDetection canDrawOverlays " + grant
+                        + " SuspendService.isStarted:" + SuspendService.isStarted);
 
                 if (grant) {
-                    startService(mSuspendIntent);
+                    if (SuspendService.isStarted) {
+                        Toast.makeText(SuspensionActivity.this, "NAV service is running", Toast.LENGTH_SHORT).show();
+                    } else {
+                        startService(mSuspendIntent);
+                    }
                 } else {
+                    if (SuspendService.isStarted) {
+                        stopService(mSuspendIntent);
+                    }
                     Toast.makeText(SuspensionActivity.this, "当前无权限，请授权", Toast.LENGTH_SHORT).show();
                 }
+
             }
         });
         instance.applyFloatPermission(this);

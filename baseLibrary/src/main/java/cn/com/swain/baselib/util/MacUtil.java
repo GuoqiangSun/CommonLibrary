@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
  */
 public class MacUtil {
 
-    private static final String MAC_ADDRESS = "([A-Fa-f0-9]{2}:){5}[A-Fa-f0-9]{2}";
+    private static final String MAC_ADDRESS = MatchUtils.MAC_ADDRESS;
 
     private static Pattern MAC_COMPILE;
 
@@ -19,7 +19,6 @@ public class MacUtil {
      * return true，合法
      */
     public static boolean macMatches(String text) {
-        // 这是真正的MAC地址；正则表达式;
         if (text != null && !text.isEmpty()) {
 
             if (MAC_COMPILE == null) {
@@ -33,9 +32,15 @@ public class MacUtil {
         return false;
     }
 
+    public static boolean macLenAvaliable(byte[] protocolParams, int start) {
+        return protocolParams != null
+                && protocolParams.length >= 6
+                && protocolParams.length > start + 5;
+    }
+
     public static String byteToMacStr(byte[] protocolParams, int start) {
 
-        if (protocolParams == null || protocolParams.length < start + 6) {
+        if (protocolParams == null || protocolParams.length <= start) {
             return "00:00:00:00:00:00";
         }
 
@@ -46,36 +51,73 @@ public class MacUtil {
         sb.append(Integer.toHexString(protocolParams[start] & 0xFF));
         sb.append(":");
 
+
+        if (protocolParams.length <= start + 1) {
+            sb.append("00:00:00:00:00");
+            return sb.toString().toUpperCase();
+        }
         if ((protocolParams[start + 1] & 0xFF) <= 0x0F) {
             sb.append("0");
         }
         sb.append(Integer.toHexString(protocolParams[start + 1] & 0xFF));
         sb.append(":");
 
+
+        if (protocolParams.length <= start + 2) {
+            sb.append("00:00:00:00");
+            return sb.toString().toUpperCase();
+        }
         if ((protocolParams[start + 2] & 0xFF) <= 0x0F) {
             sb.append("0");
         }
         sb.append(Integer.toHexString(protocolParams[start + 2] & 0xFF));
         sb.append(":");
 
+
+        if (protocolParams.length <= start + 3) {
+            sb.append("00:00:00");
+            return sb.toString().toUpperCase();
+        }
         if ((protocolParams[start + 3] & 0xFF) <= 0x0F) {
             sb.append("0");
         }
         sb.append(Integer.toHexString(protocolParams[start + 3] & 0xFF));
         sb.append(":");
 
+
+        if (protocolParams.length <= start + 4) {
+            sb.append("00:00");
+            return sb.toString().toUpperCase();
+        }
         if ((protocolParams[start + 4] & 0xFF) <= 0x0F) {
             sb.append("0");
         }
         sb.append(Integer.toHexString(protocolParams[start + 4] & 0xFF));
         sb.append(":");
 
+
+        if (protocolParams.length <= start + 5) {
+            sb.append("00");
+            return sb.toString().toUpperCase();
+        }
         if ((protocolParams[start + 5] & 0xFF) <= 0x0F) {
             sb.append("0");
         }
         sb.append(Integer.toHexString(protocolParams[start + 5] & 0xFF));
         return sb.toString().toUpperCase();
 
+    }
+
+    public static void main(String[] args) {
+        byte[] a = new byte[6];
+        a[0] = 1;
+        a[1] = 2;
+        a[2] = 3;
+        a[3] = 4;
+        a[4] = 5;
+        a[5] = 6;
+        String s = byteToMacStr(a, 0);
+        System.out.println("mac:" + s);
     }
 
 

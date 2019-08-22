@@ -6,6 +6,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+import cn.com.swain.baselib.log.Tlog;
+
 /**
  * author: Guoqiang_Sun
  * date: 2018/11/27 0027
@@ -45,6 +47,7 @@ public class CpuUtil {
             return Long.parseLong(cpuInfos[13]) + Long.parseLong(cpuInfos[14]) + Long.parseLong(cpuInfos[15])
                     + Long.parseLong(cpuInfos[16]);
         } catch (ArrayIndexOutOfBoundsException e) {
+            Tlog.w("getPidUseCpuTime()", e);
             return 0;
         }
 
@@ -79,6 +82,7 @@ public class CpuUtil {
             reader.close();
         } catch (IOException ex) {
             load = " ";
+            Tlog.w("getTotalCpuStr()", ex);
         }
 
         return load;

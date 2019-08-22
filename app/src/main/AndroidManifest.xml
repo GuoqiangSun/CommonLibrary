@@ -15,6 +15,16 @@
 
     <uses-feature android:name="android.hardware.usb.host" />
 
+<!--sip-->
+    <uses-permission android:name="android.permission.USE_SIP" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+
+
+    <uses-feature android:name="android.hardware.sip.voip" android:required="true" />
+    <uses-feature android:name="android.hardware.wifi" android:required="true" />
+    <uses-feature android:name="android.hardware.microphone" android:required="true" />
+
     <application
         android:name=".main.CommonApplication"
         android:allowBackup="true"
@@ -119,6 +129,12 @@
         <activity android:name=".suspension.SuspensionActivity" />
         <activity android:name=".facedetect.TutorialOnFaceDetect" />
         <activity android:name=".ocr.OcrActivity" />
+
+        <activity android:name=".sip.WalkieTalkieActivity"
+            android:configChanges="orientation|keyboardHidden">
+        </activity>
+        <activity android:name=".sip.SipSettings" android:label="set_preferences"/>
+        <receiver android:name=".sip.IncomingCallReceiver" android:label="Call Receiver"/>
 
         <service android:name=".suspension.SuspendService" />
     </application>

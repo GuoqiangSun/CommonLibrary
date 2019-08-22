@@ -179,5 +179,13 @@
             android:text="faceDetection"
             android:textAllCaps="false" />
 
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:onClick="skipSip"
+            android:text="sip"
+            android:textAllCaps="false" />
+
     </LinearLayout>
 </LinearLayout>

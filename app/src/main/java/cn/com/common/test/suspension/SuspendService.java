@@ -4,9 +4,13 @@ import android.app.AlertDialog;
 import android.app.Service;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.os.Build;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
+import android.os.Message;
 import android.support.annotation.Nullable;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
@@ -14,9 +18,16 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import java.text.SimpleDateFormat;
+import java.util.Locale;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import cn.com.common.test.R;
+import cn.com.swain.baselib.app.utils.CpuUtil;
 import cn.com.swain.baselib.log.Tlog;
 import cn.com.swain.baselib.permission.FloatPermissionHelper;
 
@@ -29,17 +40,67 @@ public class SuspendService extends Service {
     public static boolean isStarted = false;
 
     private WindowManager windowManager;
-    private WindowManager.LayoutParams layoutParams;
+    private Handler mUIHandler;
+    private ExecutorService executorService;
 
     @Override
     public void onCreate() {
         super.onCreate();
         Tlog.v(" SuspendService onCreate");
         isStarted = true;
-        createFloatingWindow();
-        showFloatingWindow();
+        windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
 
+        executorService = Executors.newSingleThreadExecutor();
+        mUIHandler = new Handler(Looper.getMainLooper()) {
+
+            int times;
+
+            @Override
+            public void handleMessage(Message msg) {
+                super.handleMessage(msg);
+
+                if (msg.what == MSG_CPU) {
+                    Float f = (Float) msg.obj;
+                    if (mCpuInfoTxt != null) {
+                        if (++times % 2 == 0) {
+                            mCpuInfoTxt.setText("cpu:" + String.valueOf(f));
+                        } else {
+                            mCpuInfoTxt.setText("cpu " + String.valueOf(f));
+                        }
+                    }
+                }
+
+            }
+        };
+        executorService.execute(new Runnable() {
+            @Override
+            public void run() {
+                while (true) {
+                    if (!testCpu) {
+                        synchronized (synObj) {
+                            Tlog.d(" SuspendService getCurProcessCpuRate wait...");
+                            try {
+                                synObj.wait();
+                            } catch (InterruptedException e) {
+                                Tlog.e(" SuspendService getCurProcessCpuRate wait", e);
+                                e.printStackTrace();
+                                break;
+                            }
+                        }
+                    }
+                    float curProcessCpuRate = CpuUtil.getCurProcessCpuRate(1000);
+                    Tlog.v(" curProcessCpuRate:" + curProcessCpuRate);
+                    Tlog.v(" cur:" + CpuUtil.getCurUseCpuTime() + " total:" + CpuUtil.getTotalCpuTime());
+                    mUIHandler.obtainMessage(MSG_CPU, curProcessCpuRate).sendToTarget();
+                }
+            }
+        });
+        showFloatingWindow();
     }
+
+    private final Object synObj = new byte[1];
+
+    static final int MSG_CPU = 0x01;
 
     @Nullable
     @Override
@@ -55,21 +116,28 @@ public class SuspendService extends Service {
     }
 
     private View mNavigationView;
+    private TextView mCpuInfoTxt;
 
     @Override
     public void onDestroy() {
         Tlog.v(" SuspendService onDestroy");
         super.onDestroy();
+        mUIHandler.removeCallbacksAndMessages(null);
         isStarted = false;
-        if (mNavigationView != null && windowManager!=null) {
-            windowManager.removeView(mNavigationView);
+        testCpu = false;
+        executorService.shutdown();
+        if (windowManager != null) {
+            if (mNavigationView != null) {
+                windowManager.removeView(mNavigationView);
+            }
+            if (mCpuInfoTxt != null) {
+                windowManager.removeView(mCpuInfoTxt);
+            }
         }
     }
 
-    private void createFloatingWindow() {
-        windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
-
-        layoutParams = new WindowManager.LayoutParams(
+    private WindowManager.LayoutParams createFloatingWindow() {
+        WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams(
                 WindowManager.LayoutParams.WRAP_CONTENT
                 , WindowManager.LayoutParams.WRAP_CONTENT
 //                ,WindowManager.LayoutParams.TYPE_APPLICATION
@@ -92,47 +160,85 @@ public class SuspendService extends Service {
         DisplayMetrics dm = getResources().getDisplayMetrics();
         layoutParams.x = dm.widthPixels / 2;
         layoutParams.y = dm.heightPixels / 2;
+        return layoutParams;
     }
 
     private synchronized void showFloatingWindow() {
 
-//        if ((Build.VERSION.SDK_INT < Build.VERSION_CODES.M || Settings.canDrawOverlays(this))) {
+        Tlog.v(" windowManager addView ");
+//        if ((Build.VERSION.SDK_INT < Build.VERSION_CODES.M || Settings.canDrawOverlays(this))) {}
 
-        if (FloatPermissionHelper.getInstance().checkPermission(getApplicationContext())) {
-
-            Tlog.v(" windowManager addView ");
-//        if (SettingsCompat.canDrawOverlays(getApplication())) {
-
-//            Button button = new Button(getApplicationContext());
-//            button.setText("detection");
-//            int i = Color.parseColor("#C6E2FF");
-//            button.setBackgroundColor(i);
-//            windowManager.addView(button, layoutParams);
-
-            ImageView imageView = new ImageView(getApplicationContext());
-            imageView.setClickable(true);
-            imageView.setFocusable(true);
-            imageView.setFocusableInTouchMode(true);
-            imageView.setBackgroundResource(R.mipmap.nav);
-            windowManager.addView(imageView, layoutParams);
-
-            mNavigationView = imageView;
-
-            mNavigationView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Toast.makeText(getApplicationContext(), " hello ", Toast.LENGTH_SHORT).show();
-                }
-            });
-
-            mNavigationView.setOnTouchListener(new FloatingOnTouchListener());
-
+        if (!FloatPermissionHelper.getInstance().checkPermission(getApplicationContext())) {
+            Toast.makeText(getApplicationContext(), "no float window permission", Toast.LENGTH_SHORT).show();
+            return;
         }
+
+        WindowManager.LayoutParams imgLayoutParams = createFloatingWindow();
+        ImageView imageView = new ImageView(getApplicationContext());
+        imageView.setClickable(true);
+        imageView.setFocusable(true);
+        imageView.setFocusableInTouchMode(true);
+        imageView.setBackgroundResource(R.mipmap.nav);
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getApplicationContext(), " hello ", Toast.LENGTH_SHORT).show();
+            }
+        });
+        imageView.setOnTouchListener(new FloatingOnTouchListener(imgLayoutParams));
+        mNavigationView = imageView;
+        windowManager.addView(imageView, imgLayoutParams);
+
+        TextView mCpuTxt = new TextView(getApplicationContext());
+        mCpuTxt.setClickable(true);
+        mCpuTxt.setFocusable(true);
+        mCpuTxt.setFocusableInTouchMode(true);
+        mCpuTxt.setTextSize(20f);
+        mCpuTxt.setTextColor(Color.RED);
+        mCpuTxt.setText("cpu");
+        WindowManager.LayoutParams txtLayoutParams = createFloatingWindow();
+        txtLayoutParams.y += 16f * 6;
+        FloatingOnTouchListener floatingOnTouchListener = new FloatingOnTouchListener(txtLayoutParams);
+        mCpuTxt.setOnTouchListener(floatingOnTouchListener);
+        mCpuTxt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (floatingOnTouchListener.click) {
+                    testCpuRate();
+                }
+            }
+        });
+        mCpuInfoTxt = mCpuTxt;
+        windowManager.addView(mCpuTxt, txtLayoutParams);
     }
 
-    private boolean click = true;
+
+    private boolean testCpu;
+
+    private void testCpuRate() {
+
+        testCpu = !testCpu;
+
+        Toast.makeText(getApplicationContext(), testCpu ? "start" : "stop", Toast.LENGTH_SHORT).show();
+
+        if (testCpu) {
+            synchronized (synObj) {
+                synObj.notify();
+            }
+        }
+
+    }
+
 
     private class FloatingOnTouchListener implements View.OnTouchListener {
+
+        private boolean click = true;
+        private WindowManager.LayoutParams fLayoutParams;
+
+        private FloatingOnTouchListener(WindowManager.LayoutParams layoutParams) {
+            this.fLayoutParams = layoutParams;
+        }
+
         private int x;
         private int y;
 
@@ -162,9 +268,9 @@ public class SuspendService extends Service {
                     int movedY = nowY - y;
                     x = nowX;
                     y = nowY;
-                    layoutParams.x = layoutParams.x + movedX;
-                    layoutParams.y = layoutParams.y + movedY;
-                    windowManager.updateViewLayout(view, layoutParams);
+                    fLayoutParams.x = fLayoutParams.x + movedX;
+                    fLayoutParams.y = fLayoutParams.y + movedY;
+                    windowManager.updateViewLayout(view, fLayoutParams);
                     break;
                 case MotionEvent.ACTION_UP:
 

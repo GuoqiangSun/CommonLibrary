@@ -1,12 +1,15 @@
 package cn.com.common.test.testFun;
 
 import android.Manifest;
+import android.net.sip.SipManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.speech.tts.TextToSpeech;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,14 +32,19 @@ import cn.com.swain.baselib.jsInterface.IotContent.response.ResponseMethod;
 import cn.com.swain.baselib.log.Tlog;
 import cn.com.swain.baselib.app.utils.CpuUtil;
 import cn.com.swain.baselib.permission.PermissionRequest;
+import cn.com.swain.baselib.util.WiFiUtil;
 
 public class FunctionActivity extends AppCompatActivity {
 
-    private ExecutorService executorService;
-    private Handler mUIHandler;
+
+
     TextView mWifiInfoTxt;
 
     PermissionRequest request;
+    TextToSpeech textToSpeech;
+    EditText mSpeechEdt;
+
+    private String TAG = "testFun";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,77 +53,30 @@ public class FunctionActivity extends AppCompatActivity {
 
         request = new PermissionRequest(this);
 
-        final TextView mCpuInfoTxt = findViewById(R.id.cpu_info_txt);
-
         mWifiInfoTxt = findViewById(R.id.wifi_mac_txt);
 
-        executorService = Executors.newCachedThreadPool();
-
-        mUIHandler = new Handler(Looper.getMainLooper()) {
+        mSpeechEdt = findViewById(R.id.speech_edt);
+        textToSpeech = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
             @Override
-            public void handleMessage(Message msg) {
-                super.handleMessage(msg);
-
-                if (msg.what == MSG_CPU) {
-                    Float f = (Float) msg.obj;
-                    mCpuInfoTxt.setText(String.valueOf(f));
+            public void onInit(int status) {
+                Tlog.v(TAG, " TextToSpeech onInit::" + status);
+                if (status != TextToSpeech.ERROR) {
+                    textToSpeech.setLanguage(Locale.UK);
                 }
-
             }
-        };
+        });
 
+//        SipManager sipManager = SipManager.newInstance(getApplicationContext());
 
         testAbsBusinessJson();
     }
 
-    static final int MSG_CPU = 0x01;
-
     @Override
     protected void onDestroy() {
-        testCpu = false;
-        executorService.shutdown();
         super.onDestroy();
         request.release();
-    }
-
-    private boolean testCpu;
-
-    public void testCpuRate(View view) {
-
-        testCpu = !testCpu;
-
-        Toast.makeText(getApplicationContext(), testCpu ? "start" : "stop", Toast.LENGTH_SHORT).show();
-
-        if (testCpu) {
-
-            for (int i = 0; i < 1; i++) {
-                final int j = i;
-                executorService.execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss.SSS", Locale.getDefault());
-                        int k = 0;
-                        while (testCpu) {
-                            long currentTimeMillis = System.currentTimeMillis();
-                            Tlog.v("abc", j + " -- " + ++k + " -- " + dateFormat.format(currentTimeMillis));
-                        }
-                    }
-                });
-            }
-
-            executorService.execute(new Runnable() {
-                @Override
-                public void run() {
-                    while (testCpu) {
-                        float curProcessCpuRate = CpuUtil.getCurProcessCpuRate(1000);
-                        Tlog.v(" curProcessCpuRate:" + curProcessCpuRate);
-                        Tlog.v(" cur:" + CpuUtil.getCurUseCpuTime() + " total:" + CpuUtil.getTotalCpuTime());
-                        mUIHandler.obtainMessage(MSG_CPU, curProcessCpuRate).sendToTarget();
-                    }
-                }
-            });
-        }
-
+        textToSpeech.stop();
+        textToSpeech.shutdown();
     }
 
     public void getWiFiMac(View view) {
@@ -125,7 +86,7 @@ public class FunctionActivity extends AppCompatActivity {
             @Override
             public boolean onPermissionRequestResult(String permission, boolean granted) {
 
-                mWifiInfoTxt.setText(getWifiMacAddress());
+                mWifiInfoTxt.setText(WiFiUtil.getWifiMacAddress());
 
                 return true;
             }
@@ -133,40 +94,12 @@ public class FunctionActivity extends AppCompatActivity {
 
     }
 
-
-    private String getWifiMacAddress() {
-        String defaultMac = "02:00:00:00:00:00";
-        try {
-            List<NetworkInterface> interfaces = Collections
-                    .list(NetworkInterface.getNetworkInterfaces());
-            for (NetworkInterface ntwInterface : interfaces) {
-
-                if (ntwInterface.getName().equalsIgnoreCase("wlan0")) {//之前是p2p0，修正为wlan
-                    byte[] byteMac = ntwInterface.getHardwareAddress();
-                    StringBuilder strBuilder = new StringBuilder();
-                    if (byteMac != null) {
-                        for (byte aByteMac : byteMac) {
-                            strBuilder.append(String
-                                    .format("%02X:", aByteMac));
-                        }
-                    }
-
-                    if (strBuilder.length() > 0) {
-                        strBuilder.deleteCharAt(strBuilder.length() - 1);
-                    }
-
-                    return strBuilder.toString();
-                }
-
-            }
-        } catch (Exception e) {
-//             Log.d(TAG, e.getMessage());
-        }
-        return defaultMac;
+    public void speech(View view) {
+        String s = mSpeechEdt.getText().toString();
+        textToSpeech.speak(s, TextToSpeech.QUEUE_FLUSH, null);
     }
 
-
-    private void testAbsBusinessJson(){
+    private void testAbsBusinessJson() {
 
         JSONObject jsonObject = originaPkg();
         String s = jsonObject.toString();

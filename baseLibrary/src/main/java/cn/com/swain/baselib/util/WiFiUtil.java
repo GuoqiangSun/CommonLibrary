@@ -8,6 +8,8 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 
+import java.net.NetworkInterface;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -412,4 +414,39 @@ public class WiFiUtil {
         }
         return (config.wepKeys[0] != null) ? SECURITY_WEP : SECURITY_NONE;
     }
+
+    /**
+     * 获取WiFi_Mac
+     * {@link android.Manifest.permission#ACCESS_COARSE_LOCATION} permission.
+     */
+    public static String getWifiMacAddress() {
+        try {
+            List<NetworkInterface> interfaces = Collections
+                    .list(NetworkInterface.getNetworkInterfaces());
+            for (NetworkInterface ntwInterface : interfaces) {
+
+                if (ntwInterface.getName().equalsIgnoreCase("wlan0")) {
+                    byte[] byteMac = ntwInterface.getHardwareAddress();
+                    StringBuilder strBuilder = new StringBuilder();
+                    if (byteMac != null) {
+                        for (byte aByteMac : byteMac) {
+                            strBuilder.append(String
+                                    .format("%02X:", aByteMac));
+                        }
+                    }
+
+                    if (strBuilder.length() > 0) {
+                        strBuilder.deleteCharAt(strBuilder.length() - 1);
+                    }
+
+                    return strBuilder.toString();
+                }
+
+            }
+        } catch (Exception e) {
+//             Log.d(TAG, e.getMessage());
+        }
+        return "02:00:00:00:00:00";
+    }
+
 }
