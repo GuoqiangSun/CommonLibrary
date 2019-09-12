@@ -1,5 +1,6 @@
 package cn.com.swain.baselib.alg;
 
+import android.graphics.Point;
 import android.graphics.PointF;
 
 import java.io.Serializable;
@@ -63,11 +64,28 @@ public class LinearFunction implements Serializable {
     }
 
     public float calculationX(float y) {
-        return (y - b) / k;
+        return k == 0 ? y : (y - b) / k;
     }
 
+    public void calculationX(PointS pa) {
+        pa.x = calculationX(pa.y);
+    }
+
+    public void calculationX(PointF pa) {
+        pa.x = calculationX(pa.y);
+    }
+
+
     public float calculationY(float x) {
-        return k * x + b;
+        return k == 0 ? x : k * x + b;
+    }
+
+    public void calculationY(PointS pa) {
+        pa.y = calculationY(pa.x);
+    }
+
+    public void calculationY(PointF pa) {
+        pa.y = calculationY(pa.x);
     }
 
     /**
@@ -113,6 +131,17 @@ public class LinearFunction implements Serializable {
      */
     public void calculationLinearFunction(float ax, float ay) {
         this.b = ay - this.k * ax;
+    }
+
+    /**
+     * 平行
+     */
+    public boolean parallel(float k1, float k2) {
+        return k1 == k2;
+    }
+
+    public boolean parallel() {
+        return k == 0;
     }
 
     /**

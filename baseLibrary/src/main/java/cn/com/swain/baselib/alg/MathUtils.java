@@ -613,6 +613,8 @@ public class MathUtils {
 
     /**
      * 四舍五入
+     * round(10.0124456, 3)=10.012
+     * round(10.0125456, 3)=10.013
      *
      * @param value    原始数据
      * @param accuracy 10的指数
@@ -624,23 +626,138 @@ public class MathUtils {
     }
 
     /**
-     * 四舍五入
+     * 不舍入一
+     * roundA(10.0160456, 3) =10.017
+     * roundA(10.0165456, 3) =10.017
      *
      * @param value    原始数据
      * @param accuracy 10的指数
      * @return 四舍五入的数
      */
-    public static double round2(double value, int accuracy) {
+    public static double roundA(double value, int accuracy) {
         double pow = Math.pow(10, -accuracy - 1) * 5;
         return round(value + pow, accuracy);
     }
 
+    /**
+     * 不入全舍
+     * roundA(10.0160456, 3) =10.016
+     * roundA(10.0165456, 3) =10.016
+     *
+     * @param value    原始数据
+     * @param accuracy 10的指数
+     * @return 四舍五入的数
+     */
+    public static double roundD(double value, int accuracy) {
+        double pow = Math.pow(10, -accuracy - 1) * 5;
+        return round(value - pow, accuracy);
+    }
+
+    /**
+     * 数组反转,首位调换
+     *
+     * @param chars 数组
+     * @param <T>   类型
+     */
+    public static <T> void reserveBuf(T[] chars) {
+        T t;
+        final int length = chars.length;
+        for (int i = 0; i < length / 2; i++) {
+            t = chars[i];
+            chars[i] = chars[length - 1 - i];
+            chars[length - 1 - i] = t;
+        }
+    }
+
+
+    /**
+     * （1）先找到所有波峰和波谷
+     * （2）对信号求均值
+     * （3）滤掉所有大于均值的波谷和小于均值的波峰
+     * （4）合并剩下的波峰波谷中相邻的波峰，相邻的波谷，使其满足波峰／波谷的规律
+     * （5）统计剩下的波峰
+     */
+    public static int getPeakNum(float[] data) {
+        int peak = 0;
+
+        float[] PeakAndTrough = new float[data.length];
+
+        //需要三个不同的值进行比较，取lo,mid，hi分别为三值
+        for (int lo = 0, mid = 1, hi = 2; hi < data.length; hi++) {
+            //先令data[lo]不等于data[mid]
+            while (mid < data.length && data[mid] == data[lo]) {
+                mid++;
+            }
+
+            hi = mid + 1;
+
+            //令data[hi]不等于data[mid]
+            while (hi < data.length && data[hi] == data[mid]) {
+                hi++;
+            }
+
+            if (hi >= data.length) {
+                break;
+            }
+
+            //检测是否为峰值
+            if (data[mid] > data[lo] && data[mid] > data[hi]) {
+                PeakAndTrough[mid] = 1;       //1代表波峰
+                System.out.println(" 波峰 " + mid);
+            } else if (data[mid] < data[lo] && data[mid] < data[hi]) {
+                PeakAndTrough[mid] = -1;      //-1代表波谷
+                System.out.println(" 波谷 " + mid);
+            }
+
+            lo = mid;
+            mid = hi;
+        }
+
+        //计算均值
+        float ave = 0;
+        for (int i = 0; i < data.length; i++) {
+            ave += data[i];
+        }
+        ave /= data.length;
+
+        //排除大于均值的波谷和小于均值的波峰
+        for (int i = 0; i < PeakAndTrough.length; i++) {
+            if ((PeakAndTrough[i] > 0 && data[i] < ave) || (PeakAndTrough[i] < 0 && data[i] > ave)) {
+                System.out.println("PeakAndTrough[" + i + "] = 0;");
+                PeakAndTrough[i] = 0;
+            }
+        }
+
+        //统计波峰数量
+        for (int i = 0; i < PeakAndTrough.length; ) {
+            while (i < PeakAndTrough.length && PeakAndTrough[i] <= 0) {
+                i++;
+            }
+
+            if (i >= PeakAndTrough.length) {
+                break;
+            }
+
+            System.out.println("peak++  i==" + i);
+            peak++;
+
+            while (i < PeakAndTrough.length && PeakAndTrough[i] >= 0) {
+                i++;
+            }
+        }
+
+        return peak;
+    }
+
+
+    /////////////////////TEST/////////////////////////////
+
     public static void main(String[] args) {
 //        test345rotate();
-//        testRound();
+        testRound();
 //        textRandomRotate();
 //        testRotateNS();
-        testStart();
+//        testStart();
     }
 
     private static void testStart() {
@@ -651,7 +768,7 @@ public class MathUtils {
         floats = MathUtils.calculationStart(angle, 5, -4, 0);
         System.out.println("x:" + (int) floats[0] + " y:" + (int) floats[1]);
 
-        floats =  MathUtils.calculationEnd(angle,5,floats[0],floats[1]);
+        floats = MathUtils.calculationEnd(angle, 5, floats[0], floats[1]);
         System.out.println("x:" + (int) floats[0] + " y:" + (int) floats[1]);
     }
 
@@ -811,10 +928,24 @@ public class MathUtils {
     }
 
     private static void testRound() {
-        double round = MathUtils.round(10.0125456, 3);
+        double round = MathUtils.round(10.0124456, 3);
         System.out.println(" round : " + round);
-        double round2 = MathUtils.round2(10.0125456, 3);
-        System.out.println(" round2 : " + round2);
+        double round3 = MathUtils.round(10.0125456, 3);
+        System.out.println(" roundD : " + round3);
+
+        double round2 = MathUtils.roundA(10.0124456, 3);
+        System.out.println(" roundA : " + round2);
+        double round4 = MathUtils.roundA(10.0125456, 3);
+        System.out.println(" round4 : " + round4);
+        double round5 = MathUtils.roundA(10.0120456, 3);
+        System.out.println(" round4 : " + round5);
+
+        double round6 = MathUtils.roundD(10.0124456, 3);
+        System.out.println(" round6 : " + round6);
+        double round7 = MathUtils.roundD(10.0125456, 3);
+        System.out.println(" round7 : " + round7);
+        double round8 = MathUtils.roundD(10.0120456, 3);
+        System.out.println(" round8 : " + round8);
     }
 
 }

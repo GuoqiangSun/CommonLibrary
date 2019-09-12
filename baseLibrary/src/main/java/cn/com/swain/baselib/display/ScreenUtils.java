@@ -10,6 +10,8 @@ import android.view.Display;
 import android.view.View;
 import android.view.WindowManager;
 
+import cn.com.swain.baselib.alg.PointS;
+
 /**
  * author Guoqiang_Sun
  * date 2019/7/30
@@ -187,18 +189,31 @@ public class ScreenUtils {
     }
 
 
+    public static void getLocationOnScreen(View v, PointS mPointS) {
+        int[] locationOnScreen = getLocationOnScreen(v);
+        mPointS.set(locationOnScreen[0], locationOnScreen[1]);
+    }
+
+    public static void getLocationOnScreen(View v, PointF mPointF) {
+        int[] locationOnScreen = getLocationOnScreen(v);
+        mPointF.set(locationOnScreen[0], locationOnScreen[1]);
+    }
+
+    public static void getLocationOnScreen(View v, Point mPoint) {
+        int[] locationOnScreen = getLocationOnScreen(v);
+        mPoint.set(locationOnScreen[0], locationOnScreen[1]);
+    }
+
     /**
      * Android 获取控件相对于屏幕位置
      *
-     * @param v
+     * @param v v
      * @return int[]
      * index=0 : x in screen
      * index=1 : y in screen
-     * index=2 : width
-     * index=3 : height
      */
     public static int[] getLocationOnScreen(View v) {
-        int[] loc = new int[4];
+        int[] loc = new int[2];
         getLocationOnScreen(v, loc);
         return loc;
     }
@@ -207,41 +222,58 @@ public class ScreenUtils {
     /**
      * Android 获取控件相对于屏幕位置
      *
-     * @param v
+     * @param v v
      * @@param loc
      * index=0 : x in screen
      * index=1 : y in screen
-     * index=2 : width
-     * index=3 : height
      */
     public static void getLocationOnScreen(View v, int[] loc) {
-        int[] location = new int[2];
-        v.getLocationOnScreen(location);
-        loc[0] = location[0];
-        loc[1] = location[1];
-        int w = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
-        int h = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
-        v.measure(w, h);
-
-        loc[2] = v.getMeasuredWidth();
-        loc[3] = v.getMeasuredHeight();
-
-        //base = computeWH();
+        v.getLocationOnScreen(loc);
     }
 
+    public static PointS getLocationInWindowS(View v) {
+        PointS mPointS = new PointS();
+        getLocationInWindow(v, mPointS);
+        return mPointS;
+    }
+
+    public static void getLocationInWindow(View v, PointS mPointS) {
+        int[] locationOnScreen = getLocationInWindow(v);
+        mPointS.set(locationOnScreen[0], locationOnScreen[1]);
+    }
+
+    public static PointF getLocationInWindowF(View v) {
+        PointF mPointF = new PointF();
+        getLocationInWindow(v, mPointF);
+        return mPointF;
+    }
+
+    public static void getLocationInWindow(View v, PointF mPointF) {
+        int[] locationOnScreen = getLocationInWindow(v);
+        mPointF.set(locationOnScreen[0], locationOnScreen[1]);
+    }
+
+    public static Point getLocationInWindowI(View v) {
+        Point mPoint = new Point();
+        getLocationInWindow(v, mPoint);
+        return mPoint;
+    }
+
+    public static void getLocationInWindow(View v, Point mPoint) {
+        int[] locationOnScreen = getLocationInWindow(v);
+        mPoint.set(locationOnScreen[0], locationOnScreen[1]);
+    }
 
     /**
      * Android 获取控件相对于Activity位置
      *
-     * @param v
+     * @param v v
      * @return int[]
      * index=0 : x in window
      * index=1 : y in window
-     * index=2 : width
-     * index=3 : height
      */
     public static int[] getLocationInWindow(View v) {
-        int[] loc = new int[4];
+        int[] loc = new int[2];
         getLocationInWindow(v, loc);
         return loc;
     }
@@ -257,16 +289,94 @@ public class ScreenUtils {
      *            index=3 : height
      */
     public static void getLocationInWindow(View v, int[] loc) {
-        int[] location = new int[2];
-        v.getLocationInWindow(location);
-        loc[0] = location[0];
-        loc[1] = location[1];
+        v.getLocationInWindow(loc);
+    }
+
+    public static PointS getViewWHS(View v) {
+        PointS mPointS = new PointS();
+        getViewWH(v, mPointS);
+        return mPointS;
+    }
+
+    /**
+     * Android 测量控件的宽高
+     *
+     * @param v       v
+     * @param mPointS mPoint
+     *                index=0 : x in window
+     *                index=1 : y in window
+     */
+    public static void getViewWH(View v, PointS mPointS) {
+        int[] locationOnScreen = getViewWH(v);
+        mPointS.set(locationOnScreen[0], locationOnScreen[1]);
+    }
+
+    public static PointF getViewWHF(View v) {
+        PointF mPointF = new PointF();
+        getViewWH(v, mPointF);
+        return mPointF;
+    }
+
+    /**
+     * Android 测量控件的宽高
+     *
+     * @param v       v
+     * @param mPointF mPoint
+     *                index=0 : x in window
+     *                index=1 : y in window
+     */
+    public static void getViewWH(View v, PointF mPointF) {
+        int[] locationOnScreen = getViewWH(v);
+        mPointF.set(locationOnScreen[0], locationOnScreen[1]);
+    }
+
+    public static Point getViewWHI(View v) {
+        Point mPoint = new Point();
+        getViewWH(v, mPoint);
+        return mPoint;
+    }
+
+    /**
+     * Android 测量控件的宽高
+     *
+     * @param v      v
+     * @param mPoint mPoint
+     *               index=0 : x in window
+     *               index=1 : y in window
+     */
+    public static void getViewWH(View v, Point mPoint) {
+        int[] locationOnScreen = getViewWH(v);
+        mPoint.set(locationOnScreen[0], locationOnScreen[1]);
+    }
+
+    /**
+     * Android 测量控件的宽高
+     *
+     * @param v v
+     * @return int[]
+     * index=0 : width
+     * index=1 : height
+     */
+    public static int[] getViewWH(View v) {
+        int[] loc = new int[2];
+        getViewWH(v, loc);
+        return loc;
+    }
+
+    /**
+     * Android 测量控件的宽高
+     *
+     * @param v v
+     * @return int[]
+     * index=0 : width
+     * index=1 : height
+     */
+    public static void getViewWH(View v, int[] loc) {
         int w = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
         int h = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
         v.measure(w, h);
-
-        loc[2] = v.getMeasuredWidth();
-        loc[3] = v.getMeasuredHeight();
+        loc[0] = v.getMeasuredWidth();
+        loc[1] = v.getMeasuredHeight();
     }
 
 }
