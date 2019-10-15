@@ -6,8 +6,8 @@ android {
     defaultConfig {
         minSdkVersion 18
         targetSdkVersion 27
-        versionCode 3233
-        versionName "3.2.33"
+        versionCode 3238
+        versionName "3.2.35"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
@@ -40,9 +40,9 @@ publish {
     //项目名称
     artifactId = 'baselib'
     //版本号
-    publishVersion = '3.2.33'
+    publishVersion = '3.2.35'
     //描述，不重要
-    desc = 'add Comtrade'
+    desc = '增加系数转换'
     //网站，不重要
     website = 'https://www.startai.com.cn'
 

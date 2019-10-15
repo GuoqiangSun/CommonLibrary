@@ -1,11 +1,57 @@
 package cn.com.swain.baselib.util;
 
+import java.util.Arrays;
+
 /**
  * author: Guoqiang_Sun
  * date : 2018/7/11 0011
  * desc :
  */
 public class Bit {
+
+    private static final int[] BIT_NUM = new int[]{
+            0b1,
+            0b10,
+            0b100,
+            0b1000,
+            0b10000,
+            0b100000,
+            0b1000000,
+            0b10000000,
+            0b100000000,
+            0b1000000000,
+            0b10000000000,
+            0b100000000000,
+            0b1000000000000,
+            0b10000000000000,
+            0b100000000000000,
+            0b1000000000000000,
+            0b10000000000000000,
+            0b100000000000000000,
+            0b1000000000000000000,
+            0b10000000000000000000,
+            0b100000000000000000000,
+            0b1000000000000000000000,
+            0b10000000000000000000000,
+            0b100000000000000000000000,
+            0b1000000000000000000000000,
+            0b10000000000000000000000000,
+            0b100000000000000000000000000,
+            0b1000000000000000000000000000,
+            0b10000000000000000000000000000,
+            0b100000000000000000000000000000,
+            0b1000000000000000000000000000000,
+            0b10000000000000000000000000000000,
+    };
+
+    public static int[] getBitNumArray() {
+        return Arrays.copyOf(BIT_NUM, BIT_NUM.length);
+    }
+
+    public static int getBitNum(int point) {
+        checkPoint(point);
+        return BIT_NUM[point];
+    }
 
     private static final int EMPTY = 0x00000000;
     private static final int ONE = 0x00000001;
@@ -109,11 +155,27 @@ public class Bit {
     }
 
     /**
+     * 判断bitPoint位是否为 1
+     */
+    public final boolean isOneBit(int bitPoint) {
+        checkPoint(bitPoint);
+        return (this.device & BIT_NUM[bitPoint]) > 0;
+    }
+
+    /**
      * 判断bitPoint位是否为 0
      */
     public final boolean isZero(int bitPoint) {
         checkPoint(bitPoint);
         return ((this.device >> bitPoint) & 0x01) == 0;
+    }
+
+    /**
+     * 判断 num数中 point位 是否 是0
+     */
+    public final boolean isZeroBit(int bitPoint) {
+        checkPoint(bitPoint);
+        return (this.device & BIT_NUM[bitPoint]) == 0;
     }
 
     /**
@@ -143,7 +205,16 @@ public class Bit {
      */
     public static boolean isOne(int num, int point) {
         checkPoint(point);
-        return ((num >> point) & 1) == 0x01;
+        return ((num >> point) & 0x01) == 0x01;
+    }
+
+
+    /**
+     * 判断 num数中 point位 是否 是1
+     */
+    public static boolean isOneBit(int num, int point) {
+        checkPoint(point);
+        return (num & BIT_NUM[point]) > 0;
     }
 
     /**
@@ -151,7 +222,15 @@ public class Bit {
      */
     public static boolean isZero(int num, int point) {
         checkPoint(point);
-        return ((num >> point) & 1) == 0x00;
+        return ((num >> point) & 0x01) == 0x00;
+    }
+
+    /**
+     * 判断 num数中 point位 是否 是0
+     */
+    public static boolean isZeroBit(int num, int point) {
+        checkPoint(point);
+        return (num & BIT_NUM[point]) == 0x00;
     }
 
     public static void main(String[] args) {
@@ -164,9 +243,18 @@ public class Bit {
 
         System.out.println("mun" + i + " bit[" + 0 + "]" + " is one?" + one + "; is zero?" + zero);
 
+        boolean onebit = isOneBit(i, 0);
+        boolean zerobit = isZeroBit(i, 0);
+
+        System.out.println("mun" + i + " bit[" + 0 + "]" + " is one bit?" + onebit + "; is zero bit?" + zerobit);
+
         one = isOne(i, 4);
         zero = isZero(i, 4);
         System.out.println("mun" + i + " bit[" + 1 + "]" + " is one?" + one + "; is zero?" + zero);
+
+        onebit = isOneBit(i, 4);
+        zerobit = isZeroBit(i, 4);
+        System.out.println("mun" + i + " bit[" + 1 + "]" + " is one bit?" + onebit + "; is zero bit?" + zerobit);
 
         Bit mBit = new Bit(i);
         int tmpDevice = i - 1;

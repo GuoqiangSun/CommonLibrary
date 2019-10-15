@@ -8,7 +8,7 @@ import cn.com.swain.baselib.log.Tlog;
 /**
  * author Guoqiang_Sun
  * date 2019/9/9
- * desc
+ * desc 文件扫描
  */
 public class FileScanner {
 
@@ -70,19 +70,19 @@ public class FileScanner {
 //                Tlog.w(TAG, " list path.isDirectory() path.listFiles()=null; " + path.getPath());
                 }
             } else {
-                listFile(path, suffix, data);
+                compareFile(path, suffix, data);
             }
         }
     }
 
     /**
-     * 列出目录下所有的文件
+     * 比较文件后缀
      *
      * @param path   文件
      * @param suffix 文件的后缀
      * @param data   存放数据的集合
      */
-    private static void listFile(File path, String[] suffix, List<File> data) {
+    private static void compareFile(File path, String[] suffix, List<File> data) {
         String path1 = path.getPath();
 //        Tlog.v(TAG, " listFile:" + path1);
         for (String s : suffix) {

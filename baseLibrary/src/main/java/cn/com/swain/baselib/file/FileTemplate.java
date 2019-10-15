@@ -15,7 +15,7 @@ import cn.com.swain.baselib.app.utils.AppUtils;
 /**
  * author: Guoqiang_Sun
  * date : 2018/5/15 0015
- * desc :
+ * desc : 文件模板
  */
 public abstract class FileTemplate implements IApp {
 
