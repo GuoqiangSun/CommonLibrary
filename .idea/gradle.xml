@@ -8,17 +8,8 @@
         </compositeConfiguration>
         <option name="distributionType" value="DEFAULT_WRAPPED" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="modules">
-          <set>
-            <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/FastBle" />
-            <option value="$PROJECT_DIR$/app" />
-            <option value="$PROJECT_DIR$/baseLibrary" />
-            <option value="$PROJECT_DIR$/fastudp" />
-            <option value="$PROJECT_DIR$/protocolEngine" />
-          </set>
-        </option>
         <option name="resolveModulePerSourceSet" value="false" />
+        <option name="testRunner" value="PLATFORM" />
       </GradleProjectSettings>
     </option>
   </component>
